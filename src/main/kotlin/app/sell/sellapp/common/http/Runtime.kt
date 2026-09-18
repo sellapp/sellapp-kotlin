@@ -8682,7 +8682,7 @@ class BaseClient(
                 selectedStore?.takeIf { it.isNotBlank() }?.let { header("X-STORE", it) }
                 cookie?.let { header("Cookie", it) }
             }
-            .header("User-Agent", "SellApp kotlin/0.1.0")
+            .header("User-Agent", "SellApp kotlin/0.1.1")
             .build()
     }
 

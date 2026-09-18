@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "language": "kotlin",
   "repository": "sellapp/sellapp-kotlin",
-  "sourceSha": "8d8876b1921e931e18baf6f31ed48f79c5282f73",
+  "sourceSha": "e4051383c6618a31c201c050d55d7bdacd157f0c",
   "specSha256": "02043ebfc36589e78743f00a0f4a2f3ac9ac14914b9cf2910f04fc34ad2d0924",
   "runId": "0",
   "runAttempt": "1",
-  "treeDigest": "cc3fc3c2e59c0b3668ec5cc61d0a835b6da2d2055d9c2b88f4446bfa94963f4b",
-  "contentDigest": "ee245df4a22d4b76bba1d2fb32c7e26368925a58edda003bb73054a071aea344",
+  "treeDigest": "7f01bfb869cee0b409674ef33940791494fb93a3efeb136c93f360e881addf4a",
+  "contentDigest": "cb7fc18bd86c96b263f60cc5f2910a9cd7077b7ead9d2853227b22faeceabcca",
   "files": [
     {
       "path": ".github/scripts/native-ci.mjs",
@@ -47,12 +47,12 @@
     {
       "path": "README.md",
       "mode": "100644",
-      "sha256": "6942f98299b9def396cde17f58274061330c8bf96ca293df3a609098ce12e6ec"
+      "sha256": "68dc1aaed4717d0308888e3a0e636eae085cb7c758e6187dfdc99c64977543b6"
     },
     {
       "path": "build.gradle.kts",
       "mode": "100644",
-      "sha256": "618712ca856aff8dcf36cb67ff79fd4a6eff2999586b8405853289bf1cc6bb0f"
+      "sha256": "f457265de82902256eee5db777ad1c14013bc669a508629713d5cacaad78e0db"
     },
     {
       "path": "docs/methods.md",
@@ -472,12 +472,12 @@
     {
       "path": "examples/build.gradle.kts",
       "mode": "100644",
-      "sha256": "9ffed9c6305e9d2dbc8979246e6bcd71e292df09c285bc144ced974f6b5abd20"
+      "sha256": "12f85a2823cdf692acc9495d5ed29ac43c09067d4e8009b6d7a5c1dca33357bd"
     },
     {
       "path": "examples/check-package.mjs",
       "mode": "100644",
-      "sha256": "3111a2b47f10036e57bb859ddfdcbffcd934a288cce621f39924df8174aac618"
+      "sha256": "ef1f500e06e2affb2a31f3c497065f80c5a4cddac4c576bfaedeaa3ced4943c2"
     },
     {
       "path": "examples/gradle.properties",
@@ -512,12 +512,12 @@
     {
       "path": "generation-manifest.json",
       "mode": "100644",
-      "sha256": "49c8e06da60c1642ebff1a694c849886cdff8a49de3631faaeefbcf23da048b2"
+      "sha256": "945c8724b23841eb1cb2f1ad447e4eefee33ba23621aa5608667f79c7fb42456"
     },
     {
       "path": "gradle.properties",
       "mode": "100644",
-      "sha256": "e50acaf30453844392aff1e449c8cf50dcf3afe285666022d1ca605098abc8b8"
+      "sha256": "78ddd1eca6e0b4ce50cbfeaf4072f8eefdbf1c9b0d6e2bfa9f917d52d5063201"
     },
     {
       "path": "gradle/wrapper/gradle-wrapper.properties",
@@ -622,7 +622,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/common/http/Runtime.kt",
       "mode": "100644",
-      "sha256": "2183854de28fd72c201fbd248aebb844640165fcc471c0b92c9058da757205cd"
+      "sha256": "7afec1b23b072106646aabad9bca26278ddabc4f9287c0a6f701bc9ee8a24d55"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/common/json/ObjectMapperFactory.kt",

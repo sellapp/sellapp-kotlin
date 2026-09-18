@@ -34,7 +34,7 @@ function readArchive(file) {
 
 const execute = promisify(execFile);
 const libraries = resolve('examples/build/install/sellapp-onboarding/lib');
-const archive = readArchive(resolve(libraries, 'sellapp-0.1.0.jar'));
+const archive = readArchive(resolve(libraries, 'sellapp-0.1.1.jar'));
 for (const name of ['README.md', 'LICENSE.txt', 'NOTICE.txt', 'docs/usage.md', 'docs/methods.md', 'examples/README.md', 'examples/src/main/kotlin/Onboarding.kt']) assert(archive.has('META-INF/sellapp/' + name), 'Missing JAR documentation: ' + name);
 assert(archive.get('META-INF/sellapp/README.md').toString().startsWith('# SellApp Kotlin SDK'));
 for (const name of archive.keys()) assert(!/(^|\/)(test|tests|testdata|fixtures|build)(\/|$)/.test(name), 'Unwanted JAR content: ' + name);
