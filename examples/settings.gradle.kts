@@ -2,4 +2,6 @@
 
 rootProject.name = "sellapp-onboarding"
 
-includeBuild("..")
+val sdkSource = providers.environmentVariable("SELLAPP_KOTLIN_SOURCE").orNull
+
+if (sdkSource != null) includeBuild(sdkSource)

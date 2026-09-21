@@ -6,14 +6,16 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 
 import { inflateRawSync } from 'node:zlib';
-function readArchive(file) {
+function readArchive(file, maxEntries = 10000) {
+  assert(Number.isSafeInteger(maxEntries) && maxEntries > 0 && maxEntries <= 65535, 'Invalid ZIP entry limit');
   const bytes = readFileSync(file);
   assert(bytes.length <= 256 * 1024 * 1024, 'Archive is unexpectedly large');
   const footer = bytes.lastIndexOf(Buffer.from([0x50, 0x4b, 0x05, 0x06]));
   assert(footer >= 0 && footer + 22 <= bytes.length, 'Missing ZIP directory');
   const count = bytes.readUInt16LE(footer + 10);
-  assert(count < 10000, 'Unexpected ZIP entry count');
+  assert(count < maxEntries, 'Unexpected ZIP entry count');
   const files = new Map();
+  let expandedSize = 0;
   let offset = bytes.readUInt32LE(footer + 16);
   for (let index = 0; index < count; index++) {
     assert.equal(bytes.readUInt32LE(offset), 0x02014b50, 'Invalid ZIP directory entry');
@@ -26,7 +28,10 @@ function readArchive(file) {
     const start = local + 30 + bytes.readUInt16LE(local + 26) + bytes.readUInt16LE(local + 28);
     assert(start + size <= bytes.length && (method === 0 || method === 8), 'Unsupported ZIP entry');
     const compressed = bytes.subarray(start, start + size);
-    files.set(name, method === 0 ? compressed : inflateRawSync(compressed, { maxOutputLength: 32 * 1024 * 1024 }));
+    const contents = method === 0 ? compressed : inflateRawSync(compressed, { maxOutputLength: 32 * 1024 * 1024 });
+    expandedSize += contents.length;
+    assert(expandedSize <= 256 * 1024 * 1024, 'Expanded archive is unexpectedly large');
+    files.set(name, contents);
     offset += 46 + nameSize + extraSize + commentSize;
   }
   return files;
@@ -40,7 +45,11 @@ assert(archive.get('META-INF/sellapp/README.md').toString().startsWith('# SellAp
 for (const name of archive.keys()) assert(!/(^|\/)(test|tests|testdata|fixtures|build)(\/|$)/.test(name), 'Unwanted JAR content: ' + name);
 assert(!archive.has('sellapp/examples/OnboardingKt.class'), 'Example classes must not be included in the SDK JAR');
 const pom = readFileSync('build/publications/maven/pom-default.xml', 'utf8');
-for (const text of ['<groupId>app.sell</groupId>', '<artifactId>sellapp</artifactId>', '<url>https://sell.app/docs/api</url>', '<licenses>']) assert(pom.includes(text), 'Missing POM metadata: ' + text);
+for (const text of ['<groupId>app.sell</groupId>', '<artifactId>sellapp</artifactId>', '<url>https://sell.app/docs/api</url>', '<licenses>', '<developers>', '<connection>scm:git:https://github.com/sellapp/sellapp-kotlin.git</connection>', '<tag>v0.1.1</tag>']) assert(pom.includes(text), 'Missing POM metadata: ' + text);
+const sources = readArchive(resolve('build/libs/sellapp-0.1.1-sources.jar'));
+assert(sources.has('app/sell/sellapp/SellApp.kt'), 'Missing SDK sources');
+const reference = readArchive(resolve('build/libs/sellapp-0.1.1-javadoc.jar'), 30000);
+assert(reference.has('index.html') && [...reference.keys()].some((name) => name.endsWith('/-sell-app/index.html')), 'Missing generated Kotlin API documentation');
 const classpath = readdirSync(libraries).filter((name) => name.endsWith('.jar')).map((name) => resolve(libraries, name)).join(delimiter);
 let mode = 'first';
 let calls = 0;

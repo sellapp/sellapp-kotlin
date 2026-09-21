@@ -51,4 +51,4 @@ The example's pagination mode reads at most 30 products across pages. See docs/u
 
 When a request fails, the error handler prints its status, message, and request ID. Status-specific exceptions retain the complete API metadata.
 
-Ready to try the other modes? Run sh examples/gradlew run --args=suspend for the coroutine version, or --args=pagination to follow a bounded product listing.
+Ready to try the other modes? Run sh gradlew run --args=suspend for the coroutine version, or --args=pagination to follow a bounded product listing.

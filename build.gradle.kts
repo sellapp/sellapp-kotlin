@@ -3,6 +3,7 @@
 plugins {
     kotlin("jvm") version "2.1.20"
     id("maven-publish")
+    id("org.jetbrains.dokka") version "2.2.0"
 }
 
 group = "app.sell"
@@ -25,6 +26,26 @@ dependencyLocking { lockAllConfigurations() }
 
 kotlin { jvmToolchain(17) }
 
+java { withSourcesJar() }
+
+val javadocJar by
+    tasks.registering(Jar::class) {
+        archiveClassifier.set("javadoc")
+        from(tasks.dokkaGeneratePublicationHtml.flatMap { it.outputDirectory })
+        from(listOf("LICENSE.txt", "NOTICE.txt")) { into("META-INF/sellapp") }
+    }
+
+tasks.assemble { dependsOn(javadocJar) }
+
+tasks.withType<AbstractArchiveTask>().configureEach {
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
+}
+
+tasks.named<Jar>("sourcesJar") {
+    from(listOf("LICENSE.txt", "NOTICE.txt")) { into("META-INF/sellapp") }
+}
+
 sourceSets.test { kotlin.srcDir("examples/src/main/kotlin") }
 
 tasks.test { useJUnitPlatform() }
@@ -43,12 +64,31 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
+            artifact(javadocJar)
             artifactId = "sellapp"
             pom {
                 name.set("SellApp API Kotlin SDK")
-                description.set("SellApp API client for Kotlin/JVM")
+                description.set(
+                    "SellApp API client for Kotlin/JVM with typed requests, coroutine support, and pagination"
+                )
                 url.set("https://sell.app/docs/api")
-                scm { url.set("https://github.com/sellapp/sellapp-kotlin") }
+                scm {
+                    url.set("https://github.com/sellapp/sellapp-kotlin")
+                    connection.set("scm:git:https://github.com/sellapp/sellapp-kotlin.git")
+                    developerConnection.set(
+                        "scm:git:ssh://git@github.com/sellapp/sellapp-kotlin.git"
+                    )
+                    tag.set("v0.1.1")
+                }
+                developers {
+                    developer {
+                        id.set("sellapp")
+                        name.set("SellApp")
+                        url.set("https://sell.app")
+                        organization.set("SellApp")
+                        organizationUrl.set("https://sell.app")
+                    }
+                }
                 licenses {
                     license {
                         name.set("MIT")

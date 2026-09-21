@@ -6,41 +6,33 @@ Start by listing one product. No product ID to look up and no data to change; an
 
 Already know your way around? Jump to [configuration](https://github.com/sellapp/sellapp-kotlin/blob/main/docs/usage.md#client-configuration), [usage details](https://github.com/sellapp/sellapp-kotlin/blob/main/docs/usage.md), or the [method index](https://github.com/sellapp/sellapp-kotlin/blob/main/docs/methods.md).
 
-## Install from source
+## Install
 
-**Use the source checkout for now.** This SDK is pre-release. Its intended Maven coordinate—the package name Gradle uses—is `app.sell:sellapp`, but a published SellApp artifact has not yet been verified. The repository is private, so you need access to clone it.
-
-The build targets Java 17 and uses Kotlin 2.1.20 with the included Gradle 8.9 launcher. Clone the SDK and run its build:
-
-```sh
-git clone https://github.com/sellapp/sellapp-kotlin.git
-cd sellapp-kotlin
-sh gradlew build
-```
-
-The included [example project](https://github.com/sellapp/sellapp-kotlin/blob/main/examples/build.gradle.kts) is already wired to your local SDK checkout through a Gradle composite build. You can run it without creating another project.
-
-To connect your own Gradle project, add `includeBuild("../sellapp-kotlin")` to `settings.gradle.kts` and this dependency to `build.gradle.kts`. Adjust the path if the SDK checkout lives elsewhere:
+Use Java 17 or newer and Kotlin 2.1.20 or newer. Add Maven Central and the SDK dependency to your project's `build.gradle.kts`. The coordinate is the package name and version Gradle resolves:
 
 ```kotlin
+repositories { mavenCentral() }
+
 dependencies {
     implementation("app.sell:sellapp:0.1.1")
 }
 ```
 
-Gradle will resolve that dependency from the local composite build. **For later:** once publication is verified, the same dependency is planned to work with `mavenCentral()` and without `includeBuild`. Until then, keep the local build in place.
+The SDK is published on [Maven Central](https://central.sonatype.com/artifact/app.sell/sellapp). You do not need a source checkout to use it.
+
+To run the complete example below, copy the repository's [examples directory](https://github.com/sellapp/sellapp-kotlin/blob/main/examples) into a new folder. It includes a Gradle 8.9 launcher and an application project configured to resolve the SDK from Maven Central.
 
 ## Your first request
 
 Your API key identifies you, and your store slug selects the store. For a storefront at `launch-lab.sell.app`, the slug is `launch-lab`. Give the API key the `listing` ability. The [authentication guide](https://sell.app/docs/api/authentication) helps you get both ready.
 
-Put them in `SELLAPP_API_KEY` and `SELLAPP_STORE`. These environment variables are settings your terminal passes to the application, so your key can stay out of source files and Git history. From the SDK checkout, replace the fictitious values below and run these commands in a Bash-compatible shell:
+Put them in `SELLAPP_API_KEY` and `SELLAPP_STORE`. These environment variables are settings your terminal passes to the application, so your key can stay out of source files and Git history. From the example folder, replace the fictitious values below and run these commands in a Bash-compatible shell:
 
 ```sh
 export SELLAPP_API_KEY=sk_example_replace_me
 export SELLAPP_STORE=launch-lab
 export SELLAPP_API_BASE_URL=https://sell.app/api
-sh examples/gradlew run
+sh gradlew run
 ```
 
 You should see one product's ID and title, or a message confirming the store is empty. This reads your catalog without changing it. The example requires a URL so you choose the destination before it sends a request; `SELLAPP_API_BASE_URL` is an example setting, not an SDK environment setting.

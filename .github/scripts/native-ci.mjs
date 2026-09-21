@@ -66,7 +66,10 @@ const config = {
           "installDist",
           "--no-daemon",
           "--max-workers=1"
-        ]
+        ],
+        "env": {
+          "SELLAPP_KOTLIN_SOURCE": ".."
+        }
       },
       {
         "stage": "documentation",
@@ -74,7 +77,10 @@ const config = {
         "args": [
           "$SDK_ROOT/.github/scripts/validate-kotlin-operation-snippets.mjs",
           "$SDK_ROOT"
-        ]
+        ],
+        "env": {
+          "SELLAPP_KOTLIN_SOURCE": ".."
+        }
       },
       {
         "stage": "documentation",
