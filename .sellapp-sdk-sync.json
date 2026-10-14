@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "language": "kotlin",
   "repository": "sellapp/sellapp-kotlin",
-  "sourceSha": "2a8fd1a82c3091e60f332257fe4460785b0c6e9a",
-  "specSha256": "aea767326d7193deffe5004a5751f7e8f59e40b037636c8fc29b936699dfff2e",
+  "sourceSha": "5bfb944881c821f7c8b0af0e254d6f9bd16c0806",
+  "specSha256": "22a0f17c1c7099fa036382e9f037daa5b7e273d57605163d22042e03f964f1c8",
   "runId": "0",
   "runAttempt": "1",
-  "treeDigest": "cf625e7b0d1750cd4d87ae566648918ef67662df1e54ce5bdca990400dbe968b",
-  "contentDigest": "c93f8ab52c19a223ba9917b15be5fac721f1a966f626027b99cf028eea669720",
+  "treeDigest": "d389a20d03378ea7d17cf0687255bd9f1c17b000a53d1469f8899bfb85f187b6",
+  "contentDigest": "feae6a8fd2b2e416e69666db91f1e7947898a7ec8cb973365d875e476029949c",
   "files": [
     {
       "path": ".github/scripts/native-ci.mjs",
@@ -47,12 +47,12 @@
     {
       "path": "README.md",
       "mode": "100644",
-      "sha256": "5d28169bd14e1e3abe15ed2226f810d3a69b905270796cca420ed6b8c285a45b"
+      "sha256": "f3bca497a208e79288daf10af4b1cd3ccfdedaa1ee703d888f866c23b56ac643"
     },
     {
       "path": "build.gradle.kts",
       "mode": "100644",
-      "sha256": "662e37ecebafc5e641d0a0c26b36d72754c0e62757a2693514cffe1b5b5843a5"
+      "sha256": "acc7a2bbb9c611dd26bdb907876e90ed11edf61d7031537cc2921864f17e7d29"
     },
     {
       "path": "docs/methods.md",
@@ -62,7 +62,7 @@
     {
       "path": "docs/migration.md",
       "mode": "100644",
-      "sha256": "d2152af699fb26ebea01160423ee170c0d2516d1100b8188a4e583956b20528d"
+      "sha256": "fc66a4951d15ce6a3455cd4aac9a310b3f8db00af0c07ef4567bdb83c3f54bea"
     },
     {
       "path": "docs/operation-examples.json",
@@ -477,12 +477,12 @@
     {
       "path": "examples/build.gradle.kts",
       "mode": "100644",
-      "sha256": "6117cfb041fbace7cb5aaf9b805b2a4843c25b5c9c34bac2f19716697f44b727"
+      "sha256": "d493c3b59f6e496cc53bf661d751cc2aa372b2dfc2ec1e7250363653af77b676"
     },
     {
       "path": "examples/check-package.mjs",
       "mode": "100644",
-      "sha256": "62ff29570b337c411d16401f276093d33800e95336407a59988bee57a4cd5891"
+      "sha256": "e55d2997eeb10f45c1c728d94fae89153102fca2f8c54a45974ed5e86354c657"
     },
     {
       "path": "examples/gradle.properties",
@@ -517,12 +517,12 @@
     {
       "path": "generation-manifest.json",
       "mode": "100644",
-      "sha256": "583211b264d26db9df259be40be35ae3e5d1fd2cb18b996c323672b659cfabc3"
+      "sha256": "094c2aeb70e8c574b535ed68f841e207c84a5b766b6fca8657c86fe9ff8eb7c7"
     },
     {
       "path": "gradle.properties",
       "mode": "100644",
-      "sha256": "a658d71272ca3c30e925204bbdae9c0a85158ec44bd8a50babab8d275dcea325"
+      "sha256": "327c35baf96f5134ac91a94244f2755a51c7e3575323a03c65975ddefcf233c9"
     },
     {
       "path": "gradle/wrapper/gradle-wrapper.properties",
@@ -627,7 +627,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/common/http/Runtime.kt",
       "mode": "100644",
-      "sha256": "5560fe8ae0ca28b6ace787468147ce199ab8e1390e148806091b674cba066280"
+      "sha256": "697066755d0bfeb4257737058a9289bc92cbb216f91adc54ffdcd1d570f65e02"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/common/json/ObjectMapperFactory.kt",
@@ -8052,7 +8052,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkDismissSubscriptionActionRequestApplicationJson.kt",
       "mode": "100644",
-      "sha256": "073bd3acbb6aa79543e52212c464eeb20ee1b64d422cd6efaed5f6158f3208f2"
+      "sha256": "23f224f4303e95c137a93b0c7015f2f699a6f5fb44483b70ca349eb0d9186e88"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkDismissSubscriptionActionResponseValue200ApplicationJson.kt",
@@ -13582,7 +13582,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/subscriptionsactions/SubscriptionsActions.kt",
       "mode": "100644",
-      "sha256": "2e322f9e7ab13e68d57b4a326538251d4853e018f7e05ce7a949102130c5e2f6"
+      "sha256": "580b27a90e3662577b99a8b429449e6f0a750b7c32acef50f509c34008a6b5fd"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/tickets/Tickets.kt",

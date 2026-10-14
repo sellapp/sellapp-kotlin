@@ -219,16 +219,19 @@ class SubscriptionsActions(internal val sellapp: SellApp) {
      * subscription for its next change. Only a pending action can be dismissed, and the required
      * `note` is stored on the action as its `error` so the decision stays on the record. An action
      * in any other state returns `422` with the refusal sentence under `errors.subscription`, while
-     * a missing or over-long `note` returns an ordinary field error. Requires the `invoice` Sanctum
-     * ability. OAuth callers use the admin grant and select a store with X-STORE. Current
-     * membership and role permissions apply to every request.
+     * a missing or over-long `note` returns an ordinary field error. This operation does not replay
+     * completed dismissals: idempotency keys are ignored. After a lost response, retrieve the
+     * action before repeating the request; an already-dismissed action returns `422`. Requires the
+     * `invoice` Sanctum ability. OAuth callers use the admin grant and select a store with X-STORE.
+     * Current membership and role permissions apply to every request.
      *
      * @param productSubscription The productSubscription path parameter.
      * @param action The action path parameter.
      * @param note Why the action is being dismissed. The note is kept on the dismissed action as
      *   its error.
-     * @param idempotencyKey Optional idempotency key. You may also send this as the Idempotency-Key
-     *   header.
+     * @param idempotencyKey **Deprecated.** Accepted for compatibility but ignored by this
+     *   operation. Retrieve the action after an uncertain response; repeating a completed dismissal
+     *   returns 422.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkDismissSubscriptionActionResponseValue200ApplicationJson
      */
@@ -261,7 +264,7 @@ class SubscriptionsActions(internal val sellapp: SellApp) {
                         .SdkDismissSubscriptionActionResponseValue200ApplicationJson
                         .runtimeSchema,
                 operationId = "dismissSubscriptionAction",
-                supportsIdempotency = true,
+                supportsIdempotency = false,
             )
         return sellapp.baseClient.request(
             config,

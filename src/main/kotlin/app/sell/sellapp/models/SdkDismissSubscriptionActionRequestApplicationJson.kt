@@ -13,8 +13,11 @@ data class SdkDismissSubscriptionActionRequestApplicationJson(
     /** Why the action is being dismissed. The note is kept on the dismissed action as its error. */
     @JsonProperty("note") val note: String,
 
-    /** Optional idempotency key. You may also send this as the Idempotency-Key header. */
-    @JsonProperty("idempotency_key") val idempotencyKey: String? = null,
+    /**
+     * Accepted for compatibility but ignored by this operation. Retrieve the action after an
+     * uncertain response; repeating a completed dismissal returns 422.
+     */
+    @JsonProperty("idempotency_key") @Deprecated("Deprecated.") val idempotencyKey: String? = null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
