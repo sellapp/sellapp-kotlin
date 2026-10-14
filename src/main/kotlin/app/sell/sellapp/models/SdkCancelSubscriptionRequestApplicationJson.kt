@@ -24,7 +24,8 @@ data class SdkCancelSubscriptionRequestApplicationJson(
 
     /**
      * Request a prorated refund. Requires refund_last_payment=true. False requests a full
-     * latest-payment refund when refund_last_payment is enabled.
+     * latest-payment refund when refund_last_payment is enabled. Refused with `422` while a Stripe,
+     * PayPal, or Razorpay subscription is past due or unpaid.
      */
     @JsonProperty("pro_rated_refund")
     @get:JsonInclude(JsonInclude.Include.NON_NULL)

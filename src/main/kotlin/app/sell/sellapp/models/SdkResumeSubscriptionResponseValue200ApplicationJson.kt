@@ -2,6 +2,6 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SdkPauseSubscriptionResponseValue200ApplicationJson]. */
+/** Alias for [SdkKeepSubscriptionResponseValue200ApplicationJson]. */
 typealias SdkResumeSubscriptionResponseValue200ApplicationJson =
-    SdkPauseSubscriptionResponseValue200ApplicationJson
+    SdkKeepSubscriptionResponseValue200ApplicationJson

@@ -12,7 +12,10 @@ import java.time.OffsetDateTime
 
 /** PreviewSubscriptionRenewalDateChangeResponseValue200ApplicationJsonPropertyData model. */
 data class PreviewSubscriptionRenewalDateChangeResponseValue200ApplicationJsonPropertyData(
-    /** The preview token. */
+    /**
+     * The token the matching confirmation must send back. Previews expire 30 minutes after they are
+     * created.
+     */
     @JsonProperty("preview_token") val previewToken: String? = null,
 
     /** The expires at. */

@@ -3,40 +3,115 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.types.SubscriptionsStatus
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
+import java.time.OffsetDateTime
 
 /** GetSubscriptionResponseValue200ApplicationJsonPropertyData model. */
 data class GetSubscriptionResponseValue200ApplicationJsonPropertyData(
     /** The id. */
     @JsonProperty("id") val id: Long,
 
-    /** The status. */
-    @JsonProperty("status") val status: String,
+    /** The original order linked to this subscription, resolved from its first invoice line. */
+    @JsonProperty("invoice_id") val invoiceId: Long?,
 
-    /** The provider subscription id. */
+    /**
+     * The billing provider, such as `stripe`, `paypal`, `razorpay`, or `internal` for a
+     * subscription the store bills in house.
+     */
+    @JsonProperty("provider") val provider: String?,
+
+    /** Deprecated alias of provider_subscription_id. */
+    @JsonProperty("subscription_id")
+    @Deprecated("Deprecated alias of provider_subscription_id.")
+    val subscriptionId: String?,
+
+    /** Deprecated alias of provider_customer_id. */
+    @JsonProperty("customer_id")
+    @Deprecated("Deprecated alias of provider_customer_id.")
+    val customerId: String?,
+
+    /**
+     * The provider subscription identifier, or null for a subscription the store bills in house.
+     */
     @JsonProperty("provider_subscription_id") val providerSubscriptionId: String?,
 
-    /** The provider customer id. */
+    /** The provider customer identifier, or null for a subscription the store bills in house. */
     @JsonProperty("provider_customer_id") val providerCustomerId: String?,
 
     /** The customer. */
     @JsonProperty("customer")
-    val customer: GetSubscriptionResponseValue200ApplicationJsonPropertyDataPropertyCustomer,
+    val customer: GetSubscriptionResponseValue200ApplicationJsonPropertyDataPropertyCustomer?,
 
-    /** The subscription id. */
-    @JsonProperty("subscription_id") @Deprecated("Deprecated.") val subscriptionId: String? = null,
+    /** The customer email. */
+    @JsonProperty("customer_email") val customerEmail: String?,
 
-    /** The customer id. */
-    @JsonProperty("customer_id") @Deprecated("Deprecated.") val customerId: String? = null,
+    /** The status. */
+    @JsonProperty("status") val status: SubscriptionsStatus,
+
+    /** The current period start. */
+    @JsonProperty("current_period_start") val currentPeriodStart: OffsetDateTime?,
+
+    /** The current period end. */
+    @JsonProperty("current_period_end") val currentPeriodEnd: OffsetDateTime?,
+
+    /** The cancel at period end. */
+    @JsonProperty("cancel_at_period_end") val cancelAtPeriodEnd: Boolean,
+
+    /** The cancellation in progress. */
+    @JsonProperty("cancellation_in_progress") val cancellationInProgress: Boolean,
+
+    /** The store id. */
+    @JsonProperty("store_id") val storeId: Long?,
 
     /** The product variant id. */
-    @JsonProperty("product_variant_id")
+    @JsonProperty("product_variant_id") val productVariantId: Long?,
+
+    /** The created at. */
+    @JsonProperty("created_at") val createdAt: OffsetDateTime,
+
+    /** The updated at. */
+    @JsonProperty("updated_at") val updatedAt: OffsetDateTime,
+
+    /**
+     * When the trial the subscription started with ends, or `null` when it started without one. It
+     * keeps its value after the trial is over.
+     */
+    @JsonProperty("trial_ends_at") val trialEndsAt: OffsetDateTime? = null,
+
+    /**
+     * The variant the current period bills on. Falls back to product_variant_id while the
+     * subscription still bills its original plan.
+     */
+    @JsonProperty("current_plan_variant_id") val currentPlanVariantId: Long? = null,
+
+    /** Whether a subscription the store bills in house renews itself from the customer wallet. */
+    @JsonProperty("auto_renew")
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
-    val productVariantId: Long? = null,
+    val autoRenew: Boolean? = null,
+
+    /** When the subscription was paused, or `null` when it is not paused. */
+    @JsonProperty("paused_at") val pausedAt: OffsetDateTime? = null,
+
+    /** When a paused subscription resumes automatically, or `null` when no resume date was set. */
+    @JsonProperty("pause_resumes_at") val pauseResumesAt: OffsetDateTime? = null,
+
+    /** When the subscription was cancelled immediately, or `null` when it was not. */
+    @JsonProperty("canceled_immediately_at") val canceledImmediatelyAt: OffsetDateTime? = null,
+
+    /** When the customer last updated the payment method behind the subscription. */
+    @JsonProperty("payment_method_updated_at") val paymentMethodUpdatedAt: OffsetDateTime? = null,
+
+    /**
+     * When the customer last started a lifecycle action, from the customer portal or through a
+     * store integration acting for them on a plan change or payment method update. Seller and
+     * SellApp actions don't change it.
+     */
+    @JsonProperty("last_customer_action_at") val lastCustomerActionAt: OffsetDateTime? = null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -49,7 +124,7 @@ data class GetSubscriptionResponseValue200ApplicationJsonPropertyData(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"GetSubscriptionResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"status\":{\"kind\":\"primitive\",\"type\":\"string\"},\"subscription_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"customer_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"provider_subscription_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"provider_customer_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"customer\":{\"kind\":\"object\",\"modelName\":\"GetSubscriptionResponseValue200ApplicationJsonPropertyDataPropertyCustomer\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"email\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"email\"},\"external_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}},\"name\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}},\"locale\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"pattern\":\"^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*\$\"}}},\"metadata\":{\"kind\":\"object\",\"modelName\":\"GetSubscriptionResponseValue200ApplicationJsonPropertyDataPropertyCustomerPropertyMetadata\",\"properties\":{},\"required\":[],\"additionalProperties\":{\"kind\":\"object\",\"modelName\":\"ScalarMetadataValue\",\"properties\":{},\"required\":[],\"additionalProperties\":true},\"constraints\":{\"maxProperties\":50}}},\"required\":[\"id\",\"email\",\"external_id\",\"name\",\"locale\",\"metadata\"],\"additionalProperties\":true},\"product_variant_id\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"required\":[\"id\",\"status\",\"provider_subscription_id\",\"provider_customer_id\",\"customer\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"GetSubscriptionResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"invoice_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"provider\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"subscription_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"customer_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"provider_subscription_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"provider_customer_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"customer\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"object\",\"modelName\":\"GetSubscriptionResponseValue200ApplicationJsonPropertyDataPropertyCustomer\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"email\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"email\"},\"external_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}},\"name\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}},\"locale\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"pattern\":\"^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*\$\"}}},\"metadata\":{\"kind\":\"map\",\"items\":{\"kind\":\"object\",\"modelName\":\"ScalarMetadataValue\",\"properties\":{},\"required\":[],\"additionalProperties\":true},\"constraints\":{\"maxProperties\":50}}},\"required\":[\"id\",\"email\",\"external_id\",\"name\",\"locale\",\"metadata\"],\"additionalProperties\":true}},\"customer_email\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"status\":{\"kind\":\"enum\",\"values\":[\"ACTIVE\",\"PAST_DUE\",\"UNPAID\",\"CANCELED\",\"INCOMPLETE\",\"INCOMPLETE_EXPIRED\",\"TRIALING\"]},\"current_period_start\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"current_period_end\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"trial_ends_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"cancel_at_period_end\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"cancellation_in_progress\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"store_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"product_variant_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"current_plan_variant_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"auto_renew\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"paused_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"pause_resumes_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"canceled_immediately_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"payment_method_updated_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"last_customer_action_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"created_at\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"},\"updated_at\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"required\":[\"id\",\"invoice_id\",\"provider\",\"subscription_id\",\"customer_id\",\"provider_subscription_id\",\"provider_customer_id\",\"customer\",\"customer_email\",\"status\",\"current_period_start\",\"current_period_end\",\"cancel_at_period_end\",\"cancellation_in_progress\",\"store_id\",\"product_variant_id\",\"created_at\",\"updated_at\"],\"additionalProperties\":true}"
             )
     }
 }

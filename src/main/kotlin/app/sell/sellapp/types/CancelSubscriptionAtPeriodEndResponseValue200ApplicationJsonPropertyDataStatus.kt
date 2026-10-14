@@ -4,6 +4,6 @@
 
 package app.sell.sellapp.types
 
-/** Alias for [PauseSubscriptionResponseValue200ApplicationJsonPropertyDataStatus]. */
+/** Alias for [KeepSubscriptionResponseValue200ApplicationJsonPropertyDataStatus]. */
 typealias CancelSubscriptionAtPeriodEndResponseValue200ApplicationJsonPropertyDataStatus =
-    PauseSubscriptionResponseValue200ApplicationJsonPropertyDataStatus
+    KeepSubscriptionResponseValue200ApplicationJsonPropertyDataStatus

@@ -2259,7 +2259,7 @@
     "operationId": "createProductVariant",
     "resource": "productVariants",
     "method": "create",
-    "nativeSignature": "fun create(\n        product: String,\n        title: String,\n        description: String,\n        deliverable: CreateProductVariantRequestApplicationJsonPropertyDeliverable,\n        pricing: CreateProductVariantRequestApplicationJsonPropertyPricing,\n        paymentMethods: List<PaymentMethod>,\n        minimumPurchaseQuantity: Long? = null,\n        maximumPurchaseQuantity: Long? = null,\n        bulkDiscount: List<CreateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>? =\n            null,\n        otherSettings: CreateProductVariantRequestApplicationJsonPropertyOtherSettings? = null,\n        expectedUpdatedAt: OffsetDateTime? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkCreateProductVariantResponseValue201ApplicationJson",
+    "nativeSignature": "fun create(\n        product: String,\n        title: String,\n        description: String,\n        deliverable: CreateProductVariantRequestApplicationJsonPropertyDeliverable,\n        pricing: CreateProductVariantRequestApplicationJsonPropertyPricing,\n        paymentMethods: List<PaymentMethod>,\n        minimumPurchaseQuantity: Long? = null,\n        maximumPurchaseQuantity: Long? = null,\n        bulkDiscount: List<CreateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>? =\n            null,\n        customPaymentMethodIds: List<String>? = null,\n        otherSettings: CreateProductVariantRequestApplicationJsonPropertyOtherSettings? = null,\n        expectedUpdatedAt: OffsetDateTime? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkCreateProductVariantResponseValue201ApplicationJson",
     "signatures": [
       {
         "name": "create",
@@ -2315,6 +2315,12 @@
           {
             "name": "bulkDiscount",
             "type": "List<CreateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "customPaymentMethodIds",
+            "type": "List<String>?",
             "optional": true,
             "passingStyle": "named"
           },
@@ -2393,7 +2399,7 @@
     "operationId": "replaceProductVariantWithPut",
     "resource": "productVariants",
     "method": "replace",
-    "nativeSignature": "fun replace(\n        product: String,\n        variant: String,\n        title: String? = null,\n        description: String? = null,\n        deliverable: ReplaceProductVariantWithPutRequestApplicationJsonPropertyDeliverable? = null,\n        pricing: ReplaceProductVariantWithPutRequestApplicationJsonPropertyPricing? = null,\n        minimumPurchaseQuantity: Long? = null,\n        maximumPurchaseQuantity: Long? = null,\n        bulkDiscount:\n            List<ReplaceProductVariantWithPutRequestApplicationJsonPropertyBulkDiscountItem>? =\n            null,\n        paymentMethods: List<PaymentMethod>? = null,\n        otherSettings: ReplaceProductVariantWithPutRequestApplicationJsonPropertyOtherSettings? =\n            null,\n        expectedUpdatedAt: OffsetDateTime? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkReplaceProductVariantWithPutResponseValue200ApplicationJson",
+    "nativeSignature": "fun replace(\n        product: String,\n        variant: String,\n        title: String? = null,\n        description: String? = null,\n        deliverable: ReplaceProductVariantWithPutRequestApplicationJsonPropertyDeliverable? = null,\n        pricing: ReplaceProductVariantWithPutRequestApplicationJsonPropertyPricing? = null,\n        minimumPurchaseQuantity: Long? = null,\n        maximumPurchaseQuantity: Long? = null,\n        bulkDiscount:\n            List<ReplaceProductVariantWithPutRequestApplicationJsonPropertyBulkDiscountItem>? =\n            null,\n        paymentMethods: List<PaymentMethod>? = null,\n        customPaymentMethodIds: List<String>? = null,\n        otherSettings: ReplaceProductVariantWithPutRequestApplicationJsonPropertyOtherSettings? =\n            null,\n        expectedUpdatedAt: OffsetDateTime? = null,\n        stock: Long? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkReplaceProductVariantWithPutResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "replace",
@@ -2459,6 +2465,12 @@
             "passingStyle": "named"
           },
           {
+            "name": "customPaymentMethodIds",
+            "type": "List<String>?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
             "name": "otherSettings",
             "type": "ReplaceProductVariantWithPutRequestApplicationJsonPropertyOtherSettings?",
             "optional": true,
@@ -2467,6 +2479,12 @@
           {
             "name": "expectedUpdatedAt",
             "type": "OffsetDateTime?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "stock",
+            "type": "Long?",
             "optional": true,
             "passingStyle": "named"
           },
@@ -2487,7 +2505,7 @@
     "operationId": "updateProductVariant",
     "resource": "productVariants",
     "method": "update",
-    "nativeSignature": "fun update(\n        product: String,\n        variant: String,\n        title: PatchField<String> = PatchField.Absent,\n        description: PatchField<String> = PatchField.Absent,\n        deliverable: PatchField<UpdateProductVariantRequestApplicationJsonPropertyDeliverable> =\n            PatchField.Absent,\n        pricing: PatchField<UpdateProductVariantRequestApplicationJsonPropertyPricing> =\n            PatchField.Absent,\n        minimumPurchaseQuantity: PatchField<Long> = PatchField.Absent,\n        maximumPurchaseQuantity: PatchField<Long?> = PatchField.Absent,\n        bulkDiscount:\n            PatchField<List<UpdateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>> =\n            PatchField.Absent,\n        paymentMethods: PatchField<List<PaymentMethod>> = PatchField.Absent,\n        otherSettings: PatchField<UpdateProductVariantRequestApplicationJsonPropertyOtherSettings> =\n            PatchField.Absent,\n        expectedUpdatedAt: PatchField<OffsetDateTime> = PatchField.Absent,\n        requestOptions: RequestOptions? = null,\n    ): SdkUpdateProductVariantResponseValue200ApplicationJson",
+    "nativeSignature": "fun update(\n        product: String,\n        variant: String,\n        title: PatchField<String> = PatchField.Absent,\n        description: PatchField<String> = PatchField.Absent,\n        deliverable: PatchField<UpdateProductVariantRequestApplicationJsonPropertyDeliverable> =\n            PatchField.Absent,\n        pricing: PatchField<UpdateProductVariantRequestApplicationJsonPropertyPricing> =\n            PatchField.Absent,\n        minimumPurchaseQuantity: PatchField<Long> = PatchField.Absent,\n        maximumPurchaseQuantity: PatchField<Long?> = PatchField.Absent,\n        bulkDiscount:\n            PatchField<List<UpdateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>> =\n            PatchField.Absent,\n        paymentMethods: PatchField<List<PaymentMethod>> = PatchField.Absent,\n        customPaymentMethodIds: PatchField<List<String>> = PatchField.Absent,\n        otherSettings: PatchField<UpdateProductVariantRequestApplicationJsonPropertyOtherSettings> =\n            PatchField.Absent,\n        expectedUpdatedAt: PatchField<OffsetDateTime> = PatchField.Absent,\n        stock: PatchField<Long?> = PatchField.Absent,\n        requestOptions: RequestOptions? = null,\n    ): SdkUpdateProductVariantResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "update",
@@ -2553,6 +2571,12 @@
             "passingStyle": "named"
           },
           {
+            "name": "customPaymentMethodIds",
+            "type": "PatchField<List<String>>",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
             "name": "otherSettings",
             "type": "PatchField<UpdateProductVariantRequestApplicationJsonPropertyOtherSettings>",
             "optional": true,
@@ -2561,6 +2585,12 @@
           {
             "name": "expectedUpdatedAt",
             "type": "PatchField<OffsetDateTime>",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "stock",
+            "type": "PatchField<Long?>",
             "optional": true,
             "passingStyle": "named"
           },
@@ -2581,7 +2611,7 @@
     "operationId": "deleteProductVariant",
     "resource": "productVariants",
     "method": "delete",
-    "nativeSignature": "fun delete(\n        product: String,\n        variant: String,\n        requestOptions: RequestOptions? = null,\n    )",
+    "nativeSignature": "fun delete(\n        product: String,\n        variant: String,\n        expectedUpdatedAt: OffsetDateTime? = null,\n        requestOptions: RequestOptions? = null,\n    )",
     "signatures": [
       {
         "name": "delete",
@@ -2596,6 +2626,12 @@
             "name": "variant",
             "type": "String",
             "optional": false,
+            "passingStyle": "named"
+          },
+          {
+            "name": "expectedUpdatedAt",
+            "type": "OffsetDateTime?",
+            "optional": true,
             "passingStyle": "named"
           },
           {
@@ -3096,6 +3132,144 @@
     "sourceFile": "src/main/kotlin/app/sell/sellapp/subscriptions/Subscriptions.kt"
   },
   {
+    "operationId": "listSubscriptions",
+    "resource": "subscriptions",
+    "method": "list",
+    "nativeSignature": "fun list(\n        limit: Int? = null,\n        page: Long? = null,\n        pagination: Boolean? = null,\n        status: List<SubscriptionsStatus>? = null,\n        requestOptions: RequestOptions? = null,\n    ): Page<SdkListSubscriptionsResponseValue200ApplicationJson>",
+    "signatures": [
+      {
+        "name": "list",
+        "params": [
+          {
+            "name": "limit",
+            "type": "Int?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "page",
+            "type": "Long?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "pagination",
+            "type": "Boolean?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "status",
+            "type": "List<SubscriptionsStatus>?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "requestOptions",
+            "type": "RequestOptions?",
+            "optional": true,
+            "passingStyle": "named"
+          }
+        ],
+        "returnType": "Page<SdkListSubscriptionsResponseValue200ApplicationJson>",
+        "async": false
+      }
+    ],
+    "sourceFile": "src/main/kotlin/app/sell/sellapp/subscriptions/Subscriptions.kt"
+  },
+  {
+    "operationId": "searchSubscriptions",
+    "resource": "subscriptions",
+    "method": "search",
+    "nativeSignature": "fun search(\n        limit: Long? = null,\n        page: Long? = null,\n        pagination: Boolean? = null,\n        filters: List<SearchSubscriptionsRequestApplicationJsonPropertyFiltersItem>? = null,\n        sort: List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>? = null,\n        search: SearchSubscriptionsRequestApplicationJsonPropertySearch? = null,\n        includes: List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>? = null,\n        requestOptions: RequestOptions? = null,\n    ): Page<SdkSearchSubscriptionsResponseValue200ApplicationJson>",
+    "signatures": [
+      {
+        "name": "search",
+        "params": [
+          {
+            "name": "limit",
+            "type": "Long?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "page",
+            "type": "Long?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "pagination",
+            "type": "Boolean?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "filters",
+            "type": "List<SearchSubscriptionsRequestApplicationJsonPropertyFiltersItem>?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "sort",
+            "type": "List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "search",
+            "type": "SearchSubscriptionsRequestApplicationJsonPropertySearch?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "includes",
+            "type": "List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "requestOptions",
+            "type": "RequestOptions?",
+            "optional": true,
+            "passingStyle": "named"
+          }
+        ],
+        "returnType": "Page<SdkSearchSubscriptionsResponseValue200ApplicationJson>",
+        "async": false
+      }
+    ],
+    "sourceFile": "src/main/kotlin/app/sell/sellapp/subscriptions/Subscriptions.kt"
+  },
+  {
+    "operationId": "getSubscription",
+    "resource": "subscriptions",
+    "method": "get",
+    "nativeSignature": "fun get(\n        productSubscription: String,\n        requestOptions: RequestOptions? = null,\n    ): SdkGetSubscriptionResponseValue200ApplicationJson",
+    "signatures": [
+      {
+        "name": "get",
+        "params": [
+          {
+            "name": "productSubscription",
+            "type": "String",
+            "optional": false,
+            "passingStyle": "named"
+          },
+          {
+            "name": "requestOptions",
+            "type": "RequestOptions?",
+            "optional": true,
+            "passingStyle": "named"
+          }
+        ],
+        "returnType": "SdkGetSubscriptionResponseValue200ApplicationJson",
+        "async": false
+      }
+    ],
+    "sourceFile": "src/main/kotlin/app/sell/sellapp/subscriptions/Subscriptions.kt"
+  },
+  {
     "operationId": "getSubscriptionCapabilities",
     "resource": "subscriptions",
     "method": "getCapabilities",
@@ -3216,6 +3390,40 @@
     "sourceFile": "src/main/kotlin/app/sell/sellapp/subscriptions/Subscriptions.kt"
   },
   {
+    "operationId": "keepSubscription",
+    "resource": "subscriptions",
+    "method": "keep",
+    "nativeSignature": "fun keep(\n        productSubscription: String,\n        idempotencyKey: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkKeepSubscriptionResponseValue200ApplicationJson",
+    "signatures": [
+      {
+        "name": "keep",
+        "params": [
+          {
+            "name": "productSubscription",
+            "type": "String",
+            "optional": false,
+            "passingStyle": "named"
+          },
+          {
+            "name": "idempotencyKey",
+            "type": "String?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "requestOptions",
+            "type": "RequestOptions?",
+            "optional": true,
+            "passingStyle": "named"
+          }
+        ],
+        "returnType": "SdkKeepSubscriptionResponseValue200ApplicationJson",
+        "async": false
+      }
+    ],
+    "sourceFile": "src/main/kotlin/app/sell/sellapp/subscriptions/Subscriptions.kt"
+  },
+  {
     "operationId": "pauseSubscription",
     "resource": "subscriptions",
     "method": "pause",
@@ -3299,7 +3507,7 @@
     "operationId": "updateSubscriptionPaymentMethod",
     "resource": "subscriptions",
     "method": "updatePaymentMethod",
-    "nativeSignature": "fun updatePaymentMethod(\n        productSubscription: String,\n        idempotencyKey: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): String",
+    "nativeSignature": "fun updatePaymentMethod(\n        productSubscription: String,\n        idempotencyKey: String? = null,\n        returnUrl: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkUpdateSubscriptionPaymentMethodResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "updatePaymentMethod",
@@ -3317,13 +3525,19 @@
             "passingStyle": "named"
           },
           {
+            "name": "returnUrl",
+            "type": "String?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
             "name": "requestOptions",
             "type": "RequestOptions?",
             "optional": true,
             "passingStyle": "named"
           }
         ],
-        "returnType": "String",
+        "returnType": "SdkUpdateSubscriptionPaymentMethodResponseValue200ApplicationJson",
         "async": false
       }
     ],
@@ -3333,7 +3547,7 @@
     "operationId": "previewSubscriptionPlanChange",
     "resource": "subscriptions",
     "method": "previewPlanChange",
-    "nativeSignature": "fun previewPlanChange(\n        productSubscription: String,\n        targetVariantId: Long,\n        idempotencyKey: String? = null,\n        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =\n            null,\n        prorationBehavior:\n            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =\n            null,\n        metadata: PreviewSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? = null,\n        requestOptions: RequestOptions? = null,\n    ): String",
+    "nativeSignature": "fun previewPlanChange(\n        productSubscription: String,\n        targetVariantId: Long,\n        idempotencyKey: String? = null,\n        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =\n            null,\n        prorationBehavior:\n            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =\n            null,\n        metadata: PreviewSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkPreviewSubscriptionPlanChangeResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "previewPlanChange",
@@ -3381,7 +3595,7 @@
             "passingStyle": "named"
           }
         ],
-        "returnType": "String",
+        "returnType": "SdkPreviewSubscriptionPlanChangeResponseValue200ApplicationJson",
         "async": false
       }
     ],
@@ -3391,7 +3605,7 @@
     "operationId": "confirmSubscriptionPlanChange",
     "resource": "subscriptions",
     "method": "confirmPlanChange",
-    "nativeSignature": "fun confirmPlanChange(\n        productSubscription: String,\n        targetVariantId: Long,\n        previewToken: String,\n        idempotencyKey: String? = null,\n        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =\n            null,\n        prorationBehavior:\n            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =\n            null,\n        metadata: ConfirmSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? = null,\n        requestOptions: RequestOptions? = null,\n    ): String",
+    "nativeSignature": "fun confirmPlanChange(\n        productSubscription: String,\n        targetVariantId: Long,\n        previewToken: String,\n        idempotencyKey: String? = null,\n        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =\n            null,\n        prorationBehavior:\n            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =\n            null,\n        metadata: ConfirmSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkConfirmSubscriptionPlanChangeResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "confirmPlanChange",
@@ -3445,7 +3659,7 @@
             "passingStyle": "named"
           }
         ],
-        "returnType": "String",
+        "returnType": "SdkConfirmSubscriptionPlanChangeResponseValue200ApplicationJson",
         "async": false
       }
     ],
@@ -3562,45 +3776,35 @@
     "sourceFile": "src/main/kotlin/app/sell/sellapp/subscriptions/Subscriptions.kt"
   },
   {
-    "operationId": "listSubscriptions",
-    "resource": "subscriptions",
+    "operationId": "listSubscriptionActions",
+    "resource": "subscriptionsActions",
     "method": "list",
-    "nativeSignature": "fun list(\n        requestOptions: RequestOptions? = null\n    ): Page<ListSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>",
+    "nativeSignature": "fun list(\n        productSubscription: String,\n        limit: Int? = null,\n        page: Long? = null,\n        pagination: Boolean? = null,\n        requestOptions: RequestOptions? = null,\n    ): Page<SdkListSubscriptionActionsResponseValue200ApplicationJson>",
     "signatures": [
       {
         "name": "list",
         "params": [
           {
-            "name": "requestOptions",
-            "type": "RequestOptions?",
-            "optional": true,
+            "name": "productSubscription",
+            "type": "String",
+            "optional": false,
             "passingStyle": "named"
-          }
-        ],
-        "returnType": "Page<ListSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>",
-        "async": false
-      }
-    ],
-    "sourceFile": "src/main/kotlin/app/sell/sellapp/subscriptions/Subscriptions.kt"
-  },
-  {
-    "operationId": "searchSubscriptions",
-    "resource": "subscriptions",
-    "method": "search",
-    "nativeSignature": "fun search(\n        search: String? = null,\n        status: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): Page<SearchSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>",
-    "signatures": [
-      {
-        "name": "search",
-        "params": [
+          },
           {
-            "name": "search",
-            "type": "String?",
+            "name": "limit",
+            "type": "Int?",
             "optional": true,
             "passingStyle": "named"
           },
           {
-            "name": "status",
-            "type": "String?",
+            "name": "page",
+            "type": "Long?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "pagination",
+            "type": "Boolean?",
             "optional": true,
             "passingStyle": "named"
           },
@@ -3611,17 +3815,17 @@
             "passingStyle": "named"
           }
         ],
-        "returnType": "Page<SearchSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>",
+        "returnType": "Page<SdkListSubscriptionActionsResponseValue200ApplicationJson>",
         "async": false
       }
     ],
-    "sourceFile": "src/main/kotlin/app/sell/sellapp/subscriptions/Subscriptions.kt"
+    "sourceFile": "src/main/kotlin/app/sell/sellapp/subscriptionsactions/SubscriptionsActions.kt"
   },
   {
-    "operationId": "getSubscription",
-    "resource": "subscriptions",
+    "operationId": "getSubscriptionAction",
+    "resource": "subscriptionsActions",
     "method": "get",
-    "nativeSignature": "fun get(\n        productSubscription: String,\n        requestOptions: RequestOptions? = null,\n    ): SdkGetSubscriptionResponseValue200ApplicationJson",
+    "nativeSignature": "fun get(\n        productSubscription: String,\n        action: String,\n        requestOptions: RequestOptions? = null,\n    ): SdkGetSubscriptionActionResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "get",
@@ -3633,17 +3837,69 @@
             "passingStyle": "named"
           },
           {
+            "name": "action",
+            "type": "String",
+            "optional": false,
+            "passingStyle": "named"
+          },
+          {
             "name": "requestOptions",
             "type": "RequestOptions?",
             "optional": true,
             "passingStyle": "named"
           }
         ],
-        "returnType": "SdkGetSubscriptionResponseValue200ApplicationJson",
+        "returnType": "SdkGetSubscriptionActionResponseValue200ApplicationJson",
         "async": false
       }
     ],
-    "sourceFile": "src/main/kotlin/app/sell/sellapp/subscriptions/Subscriptions.kt"
+    "sourceFile": "src/main/kotlin/app/sell/sellapp/subscriptionsactions/SubscriptionsActions.kt"
+  },
+  {
+    "operationId": "dismissSubscriptionAction",
+    "resource": "subscriptionsActions",
+    "method": "dismiss",
+    "nativeSignature": "fun dismiss(\n        productSubscription: String,\n        action: String,\n        note: String,\n        idempotencyKey: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkDismissSubscriptionActionResponseValue200ApplicationJson",
+    "signatures": [
+      {
+        "name": "dismiss",
+        "params": [
+          {
+            "name": "productSubscription",
+            "type": "String",
+            "optional": false,
+            "passingStyle": "named"
+          },
+          {
+            "name": "action",
+            "type": "String",
+            "optional": false,
+            "passingStyle": "named"
+          },
+          {
+            "name": "note",
+            "type": "String",
+            "optional": false,
+            "passingStyle": "named"
+          },
+          {
+            "name": "idempotencyKey",
+            "type": "String?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "requestOptions",
+            "type": "RequestOptions?",
+            "optional": true,
+            "passingStyle": "named"
+          }
+        ],
+        "returnType": "SdkDismissSubscriptionActionResponseValue200ApplicationJson",
+        "async": false
+      }
+    ],
+    "sourceFile": "src/main/kotlin/app/sell/sellapp/subscriptionsactions/SubscriptionsActions.kt"
   },
   {
     "operationId": "listAppointments",
@@ -4447,7 +4703,7 @@
     "operationId": "createPromotion",
     "resource": "promotions",
     "method": "create",
-    "nativeSignature": "fun create(\n        name: String,\n        status: SdkCreatePromotionRequestApplicationJsonStatus,\n        priority: Long,\n        isStackable: Boolean,\n        phases: List<CreatePromotionRequestApplicationJsonPropertyPhasesItem>,\n        startsAt: OffsetDateTime? = null,\n        endsAt: OffsetDateTime? = null,\n        maxRedemptions: Long? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkCreatePromotionResponseValue201ApplicationJson",
+    "nativeSignature": "fun create(\n        name: String,\n        status: SdkCreatePromotionRequestApplicationJsonStatus,\n        priority: Long,\n        isStackable: Boolean,\n        phases: List<CreatePromotionRequestApplicationJsonPropertyPhasesItem>,\n        startsAt: OffsetDateTime? = null,\n        endsAt: OffsetDateTime? = null,\n        maxRedemptions: Long? = null,\n        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,\n        subscriptionPayments: Long? = null,\n        storeWide: Boolean? = null,\n        products: List<Long>? = null,\n        productVariants: List<Long>? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkCreatePromotionResponseValue201ApplicationJson",
     "signatures": [
       {
         "name": "create",
@@ -4497,6 +4753,36 @@
           {
             "name": "maxRedemptions",
             "type": "Long?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "appliesTo",
+            "type": "SdkCreateCouponRequestApplicationJsonAppliesTo?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "subscriptionPayments",
+            "type": "Long?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "storeWide",
+            "type": "Boolean?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "products",
+            "type": "List<Long>?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "productVariants",
+            "type": "List<Long>?",
             "optional": true,
             "passingStyle": "named"
           },
@@ -4609,7 +4895,7 @@
     "operationId": "replacePromotion",
     "resource": "promotions",
     "method": "replace",
-    "nativeSignature": "fun replace(\n        promotion: String,\n        name: String? = null,\n        status: SdkCreatePromotionRequestApplicationJsonStatus? = null,\n        startsAt: OffsetDateTime? = null,\n        endsAt: OffsetDateTime? = null,\n        priority: Long? = null,\n        isStackable: Boolean? = null,\n        maxRedemptions: Long? = null,\n        phases: List<ReplacePromotionRequestApplicationJsonPropertyPhasesItem>? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkReplacePromotionResponseValue200ApplicationJson",
+    "nativeSignature": "fun replace(\n        promotion: String,\n        name: String? = null,\n        status: SdkCreatePromotionRequestApplicationJsonStatus? = null,\n        startsAt: OffsetDateTime? = null,\n        endsAt: OffsetDateTime? = null,\n        priority: Long? = null,\n        isStackable: Boolean? = null,\n        maxRedemptions: Long? = null,\n        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,\n        subscriptionPayments: Long? = null,\n        storeWide: Boolean? = null,\n        products: List<Long>? = null,\n        productVariants: List<Long>? = null,\n        phases: List<ReplacePromotionRequestApplicationJsonPropertyPhasesItem>? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkReplacePromotionResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "replace",
@@ -4663,6 +4949,36 @@
             "passingStyle": "named"
           },
           {
+            "name": "appliesTo",
+            "type": "SdkCreateCouponRequestApplicationJsonAppliesTo?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "subscriptionPayments",
+            "type": "Long?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "storeWide",
+            "type": "Boolean?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "products",
+            "type": "List<Long>?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "productVariants",
+            "type": "List<Long>?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
             "name": "phases",
             "type": "List<ReplacePromotionRequestApplicationJsonPropertyPhasesItem>?",
             "optional": true,
@@ -4685,7 +5001,7 @@
     "operationId": "updatePromotion",
     "resource": "promotions",
     "method": "update",
-    "nativeSignature": "fun update(\n        promotion: String,\n        name: PatchField<String> = PatchField.Absent,\n        status: PatchField<SdkCreatePromotionRequestApplicationJsonStatus> = PatchField.Absent,\n        startsAt: PatchField<OffsetDateTime?> = PatchField.Absent,\n        endsAt: PatchField<OffsetDateTime?> = PatchField.Absent,\n        priority: PatchField<Long> = PatchField.Absent,\n        isStackable: PatchField<Boolean> = PatchField.Absent,\n        maxRedemptions: PatchField<Long?> = PatchField.Absent,\n        phases: PatchField<List<UpdatePromotionRequestApplicationJsonPropertyPhasesItem>> =\n            PatchField.Absent,\n        requestOptions: RequestOptions? = null,\n    ): SdkUpdatePromotionResponseValue200ApplicationJson",
+    "nativeSignature": "fun update(\n        promotion: String,\n        name: PatchField<String> = PatchField.Absent,\n        status: PatchField<SdkCreatePromotionRequestApplicationJsonStatus> = PatchField.Absent,\n        startsAt: PatchField<OffsetDateTime?> = PatchField.Absent,\n        endsAt: PatchField<OffsetDateTime?> = PatchField.Absent,\n        priority: PatchField<Long> = PatchField.Absent,\n        isStackable: PatchField<Boolean> = PatchField.Absent,\n        maxRedemptions: PatchField<Long?> = PatchField.Absent,\n        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,\n        subscriptionPayments: PatchField<Long?> = PatchField.Absent,\n        storeWide: PatchField<Boolean> = PatchField.Absent,\n        products: PatchField<List<Long>> = PatchField.Absent,\n        productVariants: PatchField<List<Long>> = PatchField.Absent,\n        phases: PatchField<List<UpdatePromotionRequestApplicationJsonPropertyPhasesItem>> =\n            PatchField.Absent,\n        requestOptions: RequestOptions? = null,\n    ): SdkUpdatePromotionResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "update",
@@ -4735,6 +5051,36 @@
           {
             "name": "maxRedemptions",
             "type": "PatchField<Long?>",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "appliesTo",
+            "type": "PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo>",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "subscriptionPayments",
+            "type": "PatchField<Long?>",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "storeWide",
+            "type": "PatchField<Boolean>",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "products",
+            "type": "PatchField<List<Long>>",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "productVariants",
+            "type": "PatchField<List<Long>>",
             "optional": true,
             "passingStyle": "named"
           },
@@ -4789,7 +5135,7 @@
     "operationId": "restorePromotion",
     "resource": "promotions",
     "method": "restore",
-    "nativeSignature": "fun restore(\n        promotion: String,\n        name: String,\n        status: SdkCreatePromotionRequestApplicationJsonStatus,\n        priority: Long,\n        isStackable: Boolean,\n        phases: List<RestorePromotionRequestApplicationJsonPropertyPhasesItem>,\n        startsAt: OffsetDateTime? = null,\n        endsAt: OffsetDateTime? = null,\n        maxRedemptions: Long? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkRestorePromotionResponseValue200ApplicationJson",
+    "nativeSignature": "fun restore(\n        promotion: String,\n        name: String,\n        status: SdkCreatePromotionRequestApplicationJsonStatus,\n        priority: Long,\n        isStackable: Boolean,\n        phases: List<RestorePromotionRequestApplicationJsonPropertyPhasesItem>,\n        startsAt: OffsetDateTime? = null,\n        endsAt: OffsetDateTime? = null,\n        maxRedemptions: Long? = null,\n        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,\n        subscriptionPayments: Long? = null,\n        storeWide: Boolean? = null,\n        products: List<Long>? = null,\n        productVariants: List<Long>? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkRestorePromotionResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "restore",
@@ -4845,6 +5191,36 @@
           {
             "name": "maxRedemptions",
             "type": "Long?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "appliesTo",
+            "type": "SdkCreateCouponRequestApplicationJsonAppliesTo?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "subscriptionPayments",
+            "type": "Long?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "storeWide",
+            "type": "Boolean?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "products",
+            "type": "List<Long>?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "productVariants",
+            "type": "List<Long>?",
             "optional": true,
             "passingStyle": "named"
           },
@@ -14685,7 +15061,7 @@
     "operationId": "listCustomerPortalSubscriptions",
     "resource": "customerPortal",
     "method": "listSubscriptions",
-    "nativeSignature": "fun listSubscriptions(\n        requestOptions: RequestOptions? = null\n    ): SdkListCustomerPortalSubscriptionsResponseValue200ApplicationJson",
+    "nativeSignature": "fun listSubscriptions(\n        requestOptions: RequestOptions? = null\n    ): Page<CustomerPortalSubscription>",
     "signatures": [
       {
         "name": "listSubscriptions",
@@ -14697,7 +15073,7 @@
             "passingStyle": "named"
           }
         ],
-        "returnType": "SdkListCustomerPortalSubscriptionsResponseValue200ApplicationJson",
+        "returnType": "Page<CustomerPortalSubscription>",
         "async": false
       }
     ],
@@ -14785,7 +15161,7 @@
     "operationId": "cancelCustomerSubscriptionAtPeriodEnd",
     "resource": "customerPortal",
     "method": "cancelSubscriptionAtPeriodEnd",
-    "nativeSignature": "fun cancelSubscriptionAtPeriodEnd(\n        productSubscription: String,\n        previewId: String? = null,\n        productVariantId: Long? = null,\n        renewalDate: String? = null,\n        returnUrl: String? = null,\n        reason: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkCancelCustomerSubscriptionAtPeriodEndResponseValue200ApplicationJson",
+    "nativeSignature": "fun cancelSubscriptionAtPeriodEnd(\n        productSubscription: String,\n        reason: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkCancelCustomerSubscriptionAtPeriodEndResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "cancelSubscriptionAtPeriodEnd",
@@ -14794,30 +15170,6 @@
             "name": "productSubscription",
             "type": "String",
             "optional": false,
-            "passingStyle": "named"
-          },
-          {
-            "name": "previewId",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "productVariantId",
-            "type": "Long?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "renewalDate",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "returnUrl",
-            "type": "String?",
-            "optional": true,
             "passingStyle": "named"
           },
           {
@@ -14843,7 +15195,7 @@
     "operationId": "cancelCustomerSubscriptionImmediately",
     "resource": "customerPortal",
     "method": "cancelSubscriptionImmediately",
-    "nativeSignature": "fun cancelSubscriptionImmediately(\n        productSubscription: String,\n        previewId: String? = null,\n        productVariantId: Long? = null,\n        renewalDate: String? = null,\n        returnUrl: String? = null,\n        reason: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkCancelCustomerSubscriptionImmediatelyResponseValue200ApplicationJson",
+    "nativeSignature": "fun cancelSubscriptionImmediately(\n        productSubscription: String,\n        reason: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkCancelCustomerSubscriptionImmediatelyResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "cancelSubscriptionImmediately",
@@ -14852,30 +15204,6 @@
             "name": "productSubscription",
             "type": "String",
             "optional": false,
-            "passingStyle": "named"
-          },
-          {
-            "name": "previewId",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "productVariantId",
-            "type": "Long?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "renewalDate",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "returnUrl",
-            "type": "String?",
-            "optional": true,
             "passingStyle": "named"
           },
           {
@@ -14901,7 +15229,7 @@
     "operationId": "pauseCustomerSubscription",
     "resource": "customerPortal",
     "method": "pauseSubscription",
-    "nativeSignature": "fun pauseSubscription(\n        productSubscription: String,\n        previewId: String? = null,\n        productVariantId: Long? = null,\n        renewalDate: String? = null,\n        returnUrl: String? = null,\n        reason: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkPauseCustomerSubscriptionResponseValue200ApplicationJson",
+    "nativeSignature": "fun pauseSubscription(\n        productSubscription: String,\n        resumeAt: OffsetDateTime? = null,\n        reason: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkPauseCustomerSubscriptionResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "pauseSubscription",
@@ -14913,26 +15241,8 @@
             "passingStyle": "named"
           },
           {
-            "name": "previewId",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "productVariantId",
-            "type": "Long?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "renewalDate",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "returnUrl",
-            "type": "String?",
+            "name": "resumeAt",
+            "type": "OffsetDateTime?",
             "optional": true,
             "passingStyle": "named"
           },
@@ -14959,7 +15269,7 @@
     "operationId": "resumeCustomerSubscription",
     "resource": "customerPortal",
     "method": "resumeSubscription",
-    "nativeSignature": "fun resumeSubscription(\n        productSubscription: String,\n        previewId: String? = null,\n        productVariantId: Long? = null,\n        renewalDate: String? = null,\n        returnUrl: String? = null,\n        reason: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkResumeCustomerSubscriptionResponseValue200ApplicationJson",
+    "nativeSignature": "fun resumeSubscription(\n        productSubscription: String,\n        requestOptions: RequestOptions? = null,\n    ): SdkResumeCustomerSubscriptionResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "resumeSubscription",
@@ -14968,36 +15278,6 @@
             "name": "productSubscription",
             "type": "String",
             "optional": false,
-            "passingStyle": "named"
-          },
-          {
-            "name": "previewId",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "productVariantId",
-            "type": "Long?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "renewalDate",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "returnUrl",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "reason",
-            "type": "String?",
-            "optional": true,
             "passingStyle": "named"
           },
           {
@@ -15017,7 +15297,7 @@
     "operationId": "updateCustomerSubscriptionPaymentMethod",
     "resource": "customerPortal",
     "method": "updateSubscriptionPaymentMethod",
-    "nativeSignature": "fun updateSubscriptionPaymentMethod(\n        productSubscription: String,\n        previewId: String? = null,\n        productVariantId: Long? = null,\n        renewalDate: String? = null,\n        returnUrl: String? = null,\n        reason: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkUpdateCustomerSubscriptionPaymentMethodResponseValue200ApplicationJson",
+    "nativeSignature": "fun updateSubscriptionPaymentMethod(\n        productSubscription: String,\n        returnUrl: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkUpdateCustomerSubscriptionPaymentMethodResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "updateSubscriptionPaymentMethod",
@@ -15029,31 +15309,7 @@
             "passingStyle": "named"
           },
           {
-            "name": "previewId",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "productVariantId",
-            "type": "Long?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "renewalDate",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
             "name": "returnUrl",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "reason",
             "type": "String?",
             "optional": true,
             "passingStyle": "named"
@@ -15075,7 +15331,7 @@
     "operationId": "previewCustomerSubscriptionPlanChange",
     "resource": "customerPortal",
     "method": "previewSubscriptionPlanChange",
-    "nativeSignature": "fun previewSubscriptionPlanChange(\n        productSubscription: String,\n        previewId: String? = null,\n        productVariantId: Long? = null,\n        renewalDate: String? = null,\n        returnUrl: String? = null,\n        reason: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkPreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJson",
+    "nativeSignature": "fun previewSubscriptionPlanChange(\n        productSubscription: String,\n        targetVariantId: Long,\n        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =\n            null,\n        prorationBehavior:\n            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =\n            null,\n        metadata: PreviewCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? =\n            null,\n        requestOptions: RequestOptions? = null,\n    ): SdkPreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "previewSubscriptionPlanChange",
@@ -15087,32 +15343,26 @@
             "passingStyle": "named"
           },
           {
-            "name": "previewId",
-            "type": "String?",
+            "name": "targetVariantId",
+            "type": "Long",
+            "optional": false,
+            "passingStyle": "named"
+          },
+          {
+            "name": "effectiveTiming",
+            "type": "SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming?",
             "optional": true,
             "passingStyle": "named"
           },
           {
-            "name": "productVariantId",
-            "type": "Long?",
+            "name": "prorationBehavior",
+            "type": "SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior?",
             "optional": true,
             "passingStyle": "named"
           },
           {
-            "name": "renewalDate",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "returnUrl",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "reason",
-            "type": "String?",
+            "name": "metadata",
+            "type": "PreviewCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata?",
             "optional": true,
             "passingStyle": "named"
           },
@@ -15133,7 +15383,7 @@
     "operationId": "confirmCustomerSubscriptionPlanChange",
     "resource": "customerPortal",
     "method": "confirmSubscriptionPlanChange",
-    "nativeSignature": "fun confirmSubscriptionPlanChange(\n        productSubscription: String,\n        previewId: String? = null,\n        productVariantId: Long? = null,\n        renewalDate: String? = null,\n        returnUrl: String? = null,\n        reason: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkConfirmCustomerSubscriptionPlanChangeResponseValue200ApplicationJson",
+    "nativeSignature": "fun confirmSubscriptionPlanChange(\n        productSubscription: String,\n        targetVariantId: Long,\n        previewToken: String,\n        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =\n            null,\n        prorationBehavior:\n            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =\n            null,\n        metadata: ConfirmCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? =\n            null,\n        requestOptions: RequestOptions? = null,\n    ): SdkConfirmCustomerSubscriptionPlanChangeResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "confirmSubscriptionPlanChange",
@@ -15145,32 +15395,32 @@
             "passingStyle": "named"
           },
           {
-            "name": "previewId",
-            "type": "String?",
+            "name": "targetVariantId",
+            "type": "Long",
+            "optional": false,
+            "passingStyle": "named"
+          },
+          {
+            "name": "previewToken",
+            "type": "String",
+            "optional": false,
+            "passingStyle": "named"
+          },
+          {
+            "name": "effectiveTiming",
+            "type": "SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming?",
             "optional": true,
             "passingStyle": "named"
           },
           {
-            "name": "productVariantId",
-            "type": "Long?",
+            "name": "prorationBehavior",
+            "type": "SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior?",
             "optional": true,
             "passingStyle": "named"
           },
           {
-            "name": "renewalDate",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "returnUrl",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "reason",
-            "type": "String?",
+            "name": "metadata",
+            "type": "ConfirmCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata?",
             "optional": true,
             "passingStyle": "named"
           },
@@ -15191,7 +15441,7 @@
     "operationId": "previewCustomerSubscriptionRenewalDateChange",
     "resource": "customerPortal",
     "method": "previewSubscriptionRenewalDateChange",
-    "nativeSignature": "fun previewSubscriptionRenewalDateChange(\n        productSubscription: String,\n        previewId: String? = null,\n        productVariantId: Long? = null,\n        renewalDate: String? = null,\n        returnUrl: String? = null,\n        reason: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkPreviewCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson",
+    "nativeSignature": "fun previewSubscriptionRenewalDateChange(\n        productSubscription: String,\n        renewalDate: OffsetDateTime,\n        reason: String? = null,\n        metadata:\n            PreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata? =\n            null,\n        requestOptions: RequestOptions? = null,\n    ): SdkPreviewCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "previewSubscriptionRenewalDateChange",
@@ -15203,32 +15453,20 @@
             "passingStyle": "named"
           },
           {
-            "name": "previewId",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "productVariantId",
-            "type": "Long?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
             "name": "renewalDate",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "returnUrl",
-            "type": "String?",
-            "optional": true,
+            "type": "OffsetDateTime",
+            "optional": false,
             "passingStyle": "named"
           },
           {
             "name": "reason",
             "type": "String?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "metadata",
+            "type": "PreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata?",
             "optional": true,
             "passingStyle": "named"
           },
@@ -15249,7 +15487,7 @@
     "operationId": "confirmCustomerSubscriptionRenewalDateChange",
     "resource": "customerPortal",
     "method": "confirmSubscriptionRenewalDateChange",
-    "nativeSignature": "fun confirmSubscriptionRenewalDateChange(\n        productSubscription: String,\n        previewId: String? = null,\n        productVariantId: Long? = null,\n        renewalDate: String? = null,\n        returnUrl: String? = null,\n        reason: String? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkConfirmCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson",
+    "nativeSignature": "fun confirmSubscriptionRenewalDateChange(\n        productSubscription: String,\n        renewalDate: OffsetDateTime,\n        previewToken: String? = null,\n        reason: String? = null,\n        metadata:\n            ConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata? =\n            null,\n        requestOptions: RequestOptions? = null,\n    ): SdkConfirmCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "confirmSubscriptionRenewalDateChange",
@@ -15261,25 +15499,13 @@
             "passingStyle": "named"
           },
           {
-            "name": "previewId",
-            "type": "String?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
-            "name": "productVariantId",
-            "type": "Long?",
-            "optional": true,
-            "passingStyle": "named"
-          },
-          {
             "name": "renewalDate",
-            "type": "String?",
-            "optional": true,
+            "type": "OffsetDateTime",
+            "optional": false,
             "passingStyle": "named"
           },
           {
-            "name": "returnUrl",
+            "name": "previewToken",
             "type": "String?",
             "optional": true,
             "passingStyle": "named"
@@ -15287,6 +15513,12 @@
           {
             "name": "reason",
             "type": "String?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "metadata",
+            "type": "ConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata?",
             "optional": true,
             "passingStyle": "named"
           },
@@ -15899,7 +16131,7 @@
     "operationId": "createCoupon",
     "resource": "coupons",
     "method": "create",
-    "nativeSignature": "fun create(\n        code: String,\n        type: SdkCreateCouponRequestApplicationJsonType,\n        discount: Any,\n        storeWide: Boolean,\n        products: List<Long>? = null,\n        productVariants: List<Long>? = null,\n        limit: Long? = null,\n        expiresAt: OffsetDateTime? = null,\n        minimumAmount: Any? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkCreateCouponResponseValue201ApplicationJson",
+    "nativeSignature": "fun create(\n        code: String,\n        type: SdkCreateCouponRequestApplicationJsonType,\n        discount: Any,\n        storeWide: Boolean,\n        products: List<Long>? = null,\n        productVariants: List<Long>? = null,\n        limit: Long? = null,\n        expiresAt: OffsetDateTime? = null,\n        minimumAmount: Any? = null,\n        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,\n        subscriptionPayments: Long? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkCreateCouponResponseValue201ApplicationJson",
     "signatures": [
       {
         "name": "create",
@@ -15955,6 +16187,18 @@
           {
             "name": "minimumAmount",
             "type": "Any?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "appliesTo",
+            "type": "SdkCreateCouponRequestApplicationJsonAppliesTo?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "subscriptionPayments",
+            "type": "Long?",
             "optional": true,
             "passingStyle": "named"
           },
@@ -16015,7 +16259,7 @@
     "operationId": "replaceCoupon",
     "resource": "coupons",
     "method": "replace",
-    "nativeSignature": "fun replace(\n        coupon: String,\n        withTrashed: Boolean? = null,\n        onlyTrashed: Boolean? = null,\n        code: String? = null,\n        type: SdkCreateCouponRequestApplicationJsonType? = null,\n        discount: Any? = null,\n        storeWide: Boolean? = null,\n        products: List<Long>? = null,\n        productVariants: List<Long>? = null,\n        limit: Long? = null,\n        expiresAt: OffsetDateTime? = null,\n        minimumAmount: Any? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkReplaceCouponResponseValue200ApplicationJson",
+    "nativeSignature": "fun replace(\n        coupon: String,\n        withTrashed: Boolean? = null,\n        onlyTrashed: Boolean? = null,\n        code: String? = null,\n        type: SdkCreateCouponRequestApplicationJsonType? = null,\n        discount: Any? = null,\n        storeWide: Boolean? = null,\n        products: List<Long>? = null,\n        productVariants: List<Long>? = null,\n        limit: Long? = null,\n        expiresAt: OffsetDateTime? = null,\n        minimumAmount: Any? = null,\n        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,\n        subscriptionPayments: Long? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkReplaceCouponResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "replace",
@@ -16093,6 +16337,18 @@
             "passingStyle": "named"
           },
           {
+            "name": "appliesTo",
+            "type": "SdkCreateCouponRequestApplicationJsonAppliesTo?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "subscriptionPayments",
+            "type": "Long?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
             "name": "requestOptions",
             "type": "RequestOptions?",
             "optional": true,
@@ -16109,7 +16365,7 @@
     "operationId": "updateCoupon",
     "resource": "coupons",
     "method": "update",
-    "nativeSignature": "fun update(\n        coupon: String,\n        withTrashed: Boolean? = null,\n        onlyTrashed: Boolean? = null,\n        code: PatchField<String> = PatchField.Absent,\n        type: PatchField<SdkCreateCouponRequestApplicationJsonType> = PatchField.Absent,\n        discount: PatchField<Any> = PatchField.Absent,\n        storeWide: PatchField<Boolean> = PatchField.Absent,\n        products: PatchField<List<Long>> = PatchField.Absent,\n        productVariants: PatchField<List<Long>> = PatchField.Absent,\n        limit: PatchField<Long?> = PatchField.Absent,\n        expiresAt: PatchField<OffsetDateTime?> = PatchField.Absent,\n        minimumAmount: PatchField<Any?> = PatchField.Absent,\n        requestOptions: RequestOptions? = null,\n    ): SdkUpdateCouponResponseValue200ApplicationJson",
+    "nativeSignature": "fun update(\n        coupon: String,\n        withTrashed: Boolean? = null,\n        onlyTrashed: Boolean? = null,\n        code: PatchField<String> = PatchField.Absent,\n        type: PatchField<SdkCreateCouponRequestApplicationJsonType> = PatchField.Absent,\n        discount: PatchField<Any> = PatchField.Absent,\n        storeWide: PatchField<Boolean> = PatchField.Absent,\n        products: PatchField<List<Long>> = PatchField.Absent,\n        productVariants: PatchField<List<Long>> = PatchField.Absent,\n        limit: PatchField<Long?> = PatchField.Absent,\n        expiresAt: PatchField<OffsetDateTime?> = PatchField.Absent,\n        minimumAmount: PatchField<Any?> = PatchField.Absent,\n        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,\n        subscriptionPayments: PatchField<Long?> = PatchField.Absent,\n        requestOptions: RequestOptions? = null,\n    ): SdkUpdateCouponResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "update",
@@ -16183,6 +16439,18 @@
           {
             "name": "minimumAmount",
             "type": "PatchField<Any?>",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "appliesTo",
+            "type": "PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo>",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "subscriptionPayments",
+            "type": "PatchField<Long?>",
             "optional": true,
             "passingStyle": "named"
           },
@@ -17505,7 +17773,7 @@
     "operationId": "v2CreateCoupon",
     "resource": "coupons",
     "method": "v2CreateCoupon",
-    "nativeSignature": "fun v2CreateCoupon(\n        code: String,\n        type: SdkCreateCouponRequestApplicationJsonType,\n        discount: Any,\n        storeWide: Boolean,\n        products: List<Long>? = null,\n        productVariants: List<Long>? = null,\n        limit: Long? = null,\n        expiresAt: OffsetDateTime? = null,\n        minimumAmount: Any? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkV2CreateCouponResponseValue201ApplicationJson",
+    "nativeSignature": "fun v2CreateCoupon(\n        code: String,\n        type: SdkCreateCouponRequestApplicationJsonType,\n        discount: Any,\n        storeWide: Boolean,\n        products: List<Long>? = null,\n        productVariants: List<Long>? = null,\n        limit: Long? = null,\n        expiresAt: OffsetDateTime? = null,\n        minimumAmount: Any? = null,\n        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,\n        subscriptionPayments: Long? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkV2CreateCouponResponseValue201ApplicationJson",
     "signatures": [
       {
         "name": "v2CreateCoupon",
@@ -17561,6 +17829,18 @@
           {
             "name": "minimumAmount",
             "type": "Any?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "appliesTo",
+            "type": "SdkCreateCouponRequestApplicationJsonAppliesTo?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "subscriptionPayments",
+            "type": "Long?",
             "optional": true,
             "passingStyle": "named"
           },
@@ -17679,7 +17959,7 @@
     "operationId": "v2ReplaceCoupon",
     "resource": "coupons",
     "method": "v2ReplaceCoupon",
-    "nativeSignature": "fun v2ReplaceCoupon(\n        coupon: String,\n        withTrashed: Boolean? = null,\n        onlyTrashed: Boolean? = null,\n        code: String? = null,\n        type: SdkCreateCouponRequestApplicationJsonType? = null,\n        discount: Any? = null,\n        storeWide: Boolean? = null,\n        products: List<Long>? = null,\n        productVariants: List<Long>? = null,\n        limit: Long? = null,\n        expiresAt: OffsetDateTime? = null,\n        minimumAmount: Any? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkV2ReplaceCouponResponseValue200ApplicationJson",
+    "nativeSignature": "fun v2ReplaceCoupon(\n        coupon: String,\n        withTrashed: Boolean? = null,\n        onlyTrashed: Boolean? = null,\n        code: String? = null,\n        type: SdkCreateCouponRequestApplicationJsonType? = null,\n        discount: Any? = null,\n        storeWide: Boolean? = null,\n        products: List<Long>? = null,\n        productVariants: List<Long>? = null,\n        limit: Long? = null,\n        expiresAt: OffsetDateTime? = null,\n        minimumAmount: Any? = null,\n        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,\n        subscriptionPayments: Long? = null,\n        requestOptions: RequestOptions? = null,\n    ): SdkV2ReplaceCouponResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "v2ReplaceCoupon",
@@ -17757,6 +18037,18 @@
             "passingStyle": "named"
           },
           {
+            "name": "appliesTo",
+            "type": "SdkCreateCouponRequestApplicationJsonAppliesTo?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "subscriptionPayments",
+            "type": "Long?",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
             "name": "requestOptions",
             "type": "RequestOptions?",
             "optional": true,
@@ -17773,7 +18065,7 @@
     "operationId": "v2UpdateCoupon",
     "resource": "coupons",
     "method": "v2UpdateCoupon",
-    "nativeSignature": "fun v2UpdateCoupon(\n        coupon: String,\n        withTrashed: Boolean? = null,\n        onlyTrashed: Boolean? = null,\n        code: PatchField<String> = PatchField.Absent,\n        type: PatchField<SdkCreateCouponRequestApplicationJsonType> = PatchField.Absent,\n        discount: PatchField<Any> = PatchField.Absent,\n        storeWide: PatchField<Boolean> = PatchField.Absent,\n        products: PatchField<List<Long>> = PatchField.Absent,\n        productVariants: PatchField<List<Long>> = PatchField.Absent,\n        limit: PatchField<Long?> = PatchField.Absent,\n        expiresAt: PatchField<OffsetDateTime?> = PatchField.Absent,\n        minimumAmount: PatchField<Any?> = PatchField.Absent,\n        requestOptions: RequestOptions? = null,\n    ): SdkV2UpdateCouponResponseValue200ApplicationJson",
+    "nativeSignature": "fun v2UpdateCoupon(\n        coupon: String,\n        withTrashed: Boolean? = null,\n        onlyTrashed: Boolean? = null,\n        code: PatchField<String> = PatchField.Absent,\n        type: PatchField<SdkCreateCouponRequestApplicationJsonType> = PatchField.Absent,\n        discount: PatchField<Any> = PatchField.Absent,\n        storeWide: PatchField<Boolean> = PatchField.Absent,\n        products: PatchField<List<Long>> = PatchField.Absent,\n        productVariants: PatchField<List<Long>> = PatchField.Absent,\n        limit: PatchField<Long?> = PatchField.Absent,\n        expiresAt: PatchField<OffsetDateTime?> = PatchField.Absent,\n        minimumAmount: PatchField<Any?> = PatchField.Absent,\n        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,\n        subscriptionPayments: PatchField<Long?> = PatchField.Absent,\n        requestOptions: RequestOptions? = null,\n    ): SdkV2UpdateCouponResponseValue200ApplicationJson",
     "signatures": [
       {
         "name": "v2UpdateCoupon",
@@ -17847,6 +18139,18 @@
           {
             "name": "minimumAmount",
             "type": "PatchField<Any?>",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "appliesTo",
+            "type": "PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo>",
+            "optional": true,
+            "passingStyle": "named"
+          },
+          {
+            "name": "subscriptionPayments",
+            "type": "PatchField<Long?>",
             "optional": true,
             "passingStyle": "named"
           },

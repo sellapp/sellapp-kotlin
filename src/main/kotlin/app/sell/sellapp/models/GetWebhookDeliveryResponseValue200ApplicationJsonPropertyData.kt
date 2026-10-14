@@ -20,7 +20,11 @@ data class GetWebhookDeliveryResponseValue200ApplicationJsonPropertyData(
     /** The event type. */
     @JsonProperty("event_type") val eventType: String,
 
-    /** The status. */
+    /**
+     * A disabled channel retains new deliveries with zero attempts. Fix the endpoint and save the
+     * channel to re-enable automatic delivery. Retained deliveries require an explicit replay;
+     * saving does not send the backlog.
+     */
     @JsonProperty("status")
     val status: GetWebhookDeliveryResponseValue200ApplicationJsonPropertyDataStatus,
 
@@ -47,7 +51,7 @@ data class GetWebhookDeliveryResponseValue200ApplicationJsonPropertyData(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"GetWebhookDeliveryResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"uuid\"},\"event_id\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"pattern\":\"^evt_\"}},\"event_type\":{\"kind\":\"primitive\",\"type\":\"string\"},\"status\":{\"kind\":\"enum\",\"values\":[\"pending\",\"delivering\",\"succeeded\",\"failed\"]},\"destination_origin\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"uri\"},\"attempts\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"response_status\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"response_body\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":2048}}}},\"required\":[\"id\",\"event_id\",\"event_type\",\"status\",\"destination_origin\",\"attempts\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"GetWebhookDeliveryResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"uuid\"},\"event_id\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"pattern\":\"^evt_\"}},\"event_type\":{\"kind\":\"primitive\",\"type\":\"string\"},\"status\":{\"kind\":\"enum\",\"values\":[\"pending\",\"delivering\",\"retrying\",\"succeeded\",\"failed\",\"disabled\"]},\"destination_origin\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"uri\"},\"attempts\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"response_status\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"response_body\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":2048}}}},\"required\":[\"id\",\"event_id\",\"event_type\",\"status\",\"destination_origin\",\"attempts\"],\"additionalProperties\":true}"
             )
     }
 }

@@ -63,6 +63,183 @@ Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API r
 
 [Response access, transport controls, pagination, and typed errors](../usage.md)
 
+## list
+
+List subscriptions
+
+[API reference](https://sell.app/docs/api/subscriptions/read-subscriptions) · Effect: **read**
+
+```kotlin
+fun list(
+        limit: Int? = null,
+        page: Long? = null,
+        pagination: Boolean? = null,
+        status: List<SubscriptionsStatus>? = null,
+        requestOptions: RequestOptions? = null,
+    ): Page<SdkListSubscriptionsResponseValue200ApplicationJson>
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| limit | `Int?` | No |
+| page | `Long?` | No |
+| pagination | `Boolean?` | No |
+| status | `List<SubscriptionsStatus>?` | No |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `Page<SdkListSubscriptionsResponseValue200ApplicationJson>`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.subscriptions.list()
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## search
+
+Search subscriptions
+
+[API reference](https://sell.app/docs/api/subscriptions/read-subscriptions) · Effect: **read**
+
+```kotlin
+fun search(
+        limit: Long? = null,
+        page: Long? = null,
+        pagination: Boolean? = null,
+        filters: List<SearchSubscriptionsRequestApplicationJsonPropertyFiltersItem>? = null,
+        sort: List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>? = null,
+        search: SearchSubscriptionsRequestApplicationJsonPropertySearch? = null,
+        includes: List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>? = null,
+        requestOptions: RequestOptions? = null,
+    ): Page<SdkSearchSubscriptionsResponseValue200ApplicationJson>
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| limit | `Long?` | No |
+| page | `Long?` | No |
+| pagination | `Boolean?` | No |
+| filters | `List<SearchSubscriptionsRequestApplicationJsonPropertyFiltersItem>?` | No |
+| sort | `List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>?` | No |
+| search | `SearchSubscriptionsRequestApplicationJsonPropertySearch?` | No |
+| includes | `List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>?` | No |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `Page<SdkSearchSubscriptionsResponseValue200ApplicationJson>`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.subscriptions.search(filters = listOf(ObjectMapperFactory.read("{\"field\":\"status\",\"operator\":\"=\",\"value\":\"ACTIVE\"}", app.sell.sellapp.models.SearchSubscriptionsRequestApplicationJsonPropertyFiltersItem::class.java)), search = ObjectMapperFactory.read("{\"value\":\"maya.chen@example.com\"}", app.sell.sellapp.models.SearchSubscriptionsRequestApplicationJsonPropertySearch::class.java))
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## get
+
+Retrieve a subscription
+
+[API reference](https://sell.app/docs/api/subscriptions/read-subscriptions) · Effect: **read**
+
+```kotlin
+fun get(
+        productSubscription: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkGetSubscriptionResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| productSubscription | `String` | Yes |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkGetSubscriptionResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.subscriptions.get(productSubscription = "123")
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
 ## getCapabilities
 
 View subscription capabilities
@@ -234,6 +411,61 @@ Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API r
 
 [Response access, transport controls, pagination, and typed errors](../usage.md)
 
+## keep
+
+Keep a subscription
+
+[API reference](https://sell.app/docs/api/subscriptions/keep-a-subscription) · Effect: **consequential**
+
+```kotlin
+fun keep(
+        productSubscription: String,
+        idempotencyKey: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkKeepSubscriptionResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| productSubscription | `String` | Yes |
+| idempotencyKey | `String?` | No |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkKeepSubscriptionResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.subscriptions.keep(productSubscription = "55")
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
 ## pause
 
 Pause a subscription
@@ -358,17 +590,19 @@ Update a subscription payment method
 fun updatePaymentMethod(
         productSubscription: String,
         idempotencyKey: String? = null,
+        returnUrl: String? = null,
         requestOptions: RequestOptions? = null,
-    ): String
+    ): SdkUpdateSubscriptionPaymentMethodResponseValue200ApplicationJson
 ```
 
 | Argument | Native type | Required |
 | --- | --- | --- |
 | productSubscription | `String` | Yes |
 | idempotencyKey | `String?` | No |
+| returnUrl | `String?` | No |
 | requestOptions | `RequestOptions?` | No |
 
-Returns: `String`.
+Returns: `SdkUpdateSubscriptionPaymentMethodResponseValue200ApplicationJson`.
 
 ```kt
 import app.sell.sellapp.SellApp
@@ -376,7 +610,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
-    val result = client.subscriptions.updatePaymentMethod(productSubscription = "1")
+    val result = client.subscriptions.updatePaymentMethod(productSubscription = "55", returnUrl = "https://store.example.com/billing/updated")
     println(result)
 }
 ```
@@ -399,7 +633,7 @@ Supported credential alternatives (each object is one alternative):
 ]
 ```
 
-Documented HTTP responses: 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
 
 [Response access, transport controls, pagination, and typed errors](../usage.md)
 
@@ -421,7 +655,7 @@ fun previewPlanChange(
             null,
         metadata: PreviewSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? = null,
         requestOptions: RequestOptions? = null,
-    ): String
+    ): SdkPreviewSubscriptionPlanChangeResponseValue200ApplicationJson
 ```
 
 | Argument | Native type | Required |
@@ -434,7 +668,7 @@ fun previewPlanChange(
 | metadata | `PreviewSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata?` | No |
 | requestOptions | `RequestOptions?` | No |
 
-Returns: `String`.
+Returns: `SdkPreviewSubscriptionPlanChangeResponseValue200ApplicationJson`.
 
 ```kt
 import app.sell.sellapp.SellApp
@@ -465,7 +699,7 @@ Supported credential alternatives (each object is one alternative):
 ]
 ```
 
-Documented HTTP responses: 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
 
 [Response access, transport controls, pagination, and typed errors](../usage.md)
 
@@ -488,7 +722,7 @@ fun confirmPlanChange(
             null,
         metadata: ConfirmSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? = null,
         requestOptions: RequestOptions? = null,
-    ): String
+    ): SdkConfirmSubscriptionPlanChangeResponseValue200ApplicationJson
 ```
 
 | Argument | Native type | Required |
@@ -502,7 +736,7 @@ fun confirmPlanChange(
 | metadata | `ConfirmSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata?` | No |
 | requestOptions | `RequestOptions?` | No |
 
-Returns: `String`.
+Returns: `SdkConfirmSubscriptionPlanChangeResponseValue200ApplicationJson`.
 
 ```kt
 import app.sell.sellapp.SellApp
@@ -510,7 +744,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
-    val result = client.subscriptions.confirmPlanChange(productSubscription = "1", targetVariantId = 4321L, previewToken = "subprev_9c4b2f")
+    val result = client.subscriptions.confirmPlanChange(productSubscription = "55", targetVariantId = 4321L, previewToken = "subprev_9c4b2f")
     println(result)
 }
 ```
@@ -533,7 +767,7 @@ Supported credential alternatives (each object is one alternative):
 ]
 ```
 
-Documented HTTP responses: 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
 
 [Response access, transport controls, pagination, and typed errors](../usage.md)
 
@@ -660,165 +894,6 @@ Supported credential alternatives (each object is one alternative):
 ```
 
 Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
-
-[Response access, transport controls, pagination, and typed errors](../usage.md)
-
-## list
-
-List subscriptions
-
-[API reference](https://sell.app/docs/api/subscriptions/read-subscriptions) · Effect: **read**
-
-```kotlin
-fun list(
-        requestOptions: RequestOptions? = null
-    ): Page<ListSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>
-```
-
-| Argument | Native type | Required |
-| --- | --- | --- |
-| requestOptions | `RequestOptions?` | No |
-
-Returns: `Page<ListSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>`.
-
-```kt
-import app.sell.sellapp.SellApp
-import app.sell.sellapp.common.json.ObjectMapperFactory
-
-fun main() {
-    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
-    val result = client.subscriptions.list()
-    println(result)
-}
-```
-
-### Authentication and errors
-
-Supported credential alternatives (each object is one alternative):
-
-```json
-[
-  {
-    "bearerAuth": []
-  },
-  {
-    "oauthAccessToken": [
-      "admin"
-    ],
-    "storeAuth": []
-  }
-]
-```
-
-Documented HTTP responses: 200, 400, 401, 403, 404, 409, 410, 422, 429, 500. See the API reference for field-level validation and consequences.
-
-[Response access, transport controls, pagination, and typed errors](../usage.md)
-
-## search
-
-Search subscriptions
-
-[API reference](https://sell.app/docs/api/subscriptions/read-subscriptions) · Effect: **read**
-
-```kotlin
-fun search(
-        search: String? = null,
-        status: String? = null,
-        requestOptions: RequestOptions? = null,
-    ): Page<SearchSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>
-```
-
-| Argument | Native type | Required |
-| --- | --- | --- |
-| search | `String?` | No |
-| status | `String?` | No |
-| requestOptions | `RequestOptions?` | No |
-
-Returns: `Page<SearchSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>`.
-
-```kt
-import app.sell.sellapp.SellApp
-import app.sell.sellapp.common.json.ObjectMapperFactory
-
-fun main() {
-    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
-    val result = client.subscriptions.search(search = "maya.chen@example.com", status = "active")
-    println(result)
-}
-```
-
-### Authentication and errors
-
-Supported credential alternatives (each object is one alternative):
-
-```json
-[
-  {
-    "bearerAuth": []
-  },
-  {
-    "oauthAccessToken": [
-      "admin"
-    ],
-    "storeAuth": []
-  }
-]
-```
-
-Documented HTTP responses: 200, 400, 401, 403, 404, 409, 410, 422, 429, 500. See the API reference for field-level validation and consequences.
-
-[Response access, transport controls, pagination, and typed errors](../usage.md)
-
-## get
-
-Retrieve a subscription
-
-[API reference](https://sell.app/docs/api/subscriptions/read-subscriptions) · Effect: **read**
-
-```kotlin
-fun get(
-        productSubscription: String,
-        requestOptions: RequestOptions? = null,
-    ): SdkGetSubscriptionResponseValue200ApplicationJson
-```
-
-| Argument | Native type | Required |
-| --- | --- | --- |
-| productSubscription | `String` | Yes |
-| requestOptions | `RequestOptions?` | No |
-
-Returns: `SdkGetSubscriptionResponseValue200ApplicationJson`.
-
-```kt
-import app.sell.sellapp.SellApp
-import app.sell.sellapp.common.json.ObjectMapperFactory
-
-fun main() {
-    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
-    val result = client.subscriptions.get(productSubscription = "991")
-    println(result)
-}
-```
-
-### Authentication and errors
-
-Supported credential alternatives (each object is one alternative):
-
-```json
-[
-  {
-    "bearerAuth": []
-  },
-  {
-    "oauthAccessToken": [
-      "admin"
-    ],
-    "storeAuth": []
-  }
-]
-```
-
-Documented HTTP responses: 200, 400, 401, 403, 404, 409, 410, 422, 429, 500. See the API reference for field-level validation and consequences.
 
 [Response access, transport controls, pagination, and typed errors](../usage.md)
 

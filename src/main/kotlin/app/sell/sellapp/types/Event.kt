@@ -33,9 +33,16 @@ constructor(
         @JvmField val ProductCreated = Event("product.created")
         @JvmField val ProductTrashed = Event("product.trashed")
         @JvmField val ProductUpdated = Event("product.updated")
+        @JvmField val SubscriptionAction = Event("subscription.action")
         @JvmField val SubscriptionCancelled = Event("subscription.cancelled")
         @JvmField val SubscriptionCreated = Event("subscription.created")
+        @JvmField
+        val SubscriptionPlanChangeNeedsAttention = Event("subscription.plan_change_needs_attention")
+        @JvmField
+        val SubscriptionRenewalNeedsAttention = Event("subscription.renewal_needs_attention")
         @JvmField val SubscriptionRenewed = Event("subscription.renewed")
+        @JvmField
+        val SubscriptionSignupNeedsAttention = Event("subscription.signup_needs_attention")
         @JvmField val TicketMessageCreated = Event("ticket_message.created")
         @JvmField val VariantCreated = Event("variant.created")
         @JvmField val VariantSoldOut = Event("variant.sold_out")
@@ -61,9 +68,13 @@ constructor(
                 ProductCreated,
                 ProductTrashed,
                 ProductUpdated,
+                SubscriptionAction,
                 SubscriptionCancelled,
                 SubscriptionCreated,
+                SubscriptionPlanChangeNeedsAttention,
+                SubscriptionRenewalNeedsAttention,
                 SubscriptionRenewed,
+                SubscriptionSignupNeedsAttention,
                 TicketMessageCreated,
                 VariantCreated,
                 VariantSoldOut,
@@ -93,9 +104,13 @@ constructor(
                 ProductCreated,
                 ProductTrashed,
                 ProductUpdated,
+                SubscriptionAction,
                 SubscriptionCancelled,
                 SubscriptionCreated,
+                SubscriptionPlanChangeNeedsAttention,
+                SubscriptionRenewalNeedsAttention,
                 SubscriptionRenewed,
+                SubscriptionSignupNeedsAttention,
                 TicketMessageCreated,
                 VariantCreated,
                 VariantSoldOut,

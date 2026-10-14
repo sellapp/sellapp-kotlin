@@ -2,6 +2,6 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SdkPauseCustomerSubscriptionRequestApplicationJson]. */
+/** Alias for [SdkCancelCustomerSubscriptionAtPeriodEndRequestApplicationJson]. */
 typealias SdkCancelCustomerSubscriptionImmediatelyRequestApplicationJson =
-    SdkPauseCustomerSubscriptionRequestApplicationJson
+    SdkCancelCustomerSubscriptionAtPeriodEndRequestApplicationJson

@@ -11,15 +11,25 @@ import com.fasterxml.jackson.databind.JsonNode
 
 /** SdkSearchSubscriptionsRequestApplicationJson model. */
 data class SdkSearchSubscriptionsRequestApplicationJson(
+    /** The filters. */
+    @JsonProperty("filters")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val filters: List<SearchSubscriptionsRequestApplicationJsonPropertyFiltersItem>? = null,
+
+    /** The sort. */
+    @JsonProperty("sort")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val sort: List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>? = null,
+
     /** The search. */
     @JsonProperty("search")
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
-    val search: String? = null,
+    val search: SearchSubscriptionsRequestApplicationJsonPropertySearch? = null,
 
-    /** The status. */
-    @JsonProperty("status")
+    /** The includes. */
+    @JsonProperty("includes")
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
-    val status: String? = null,
+    val includes: List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>? = null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -32,7 +42,7 @@ data class SdkSearchSubscriptionsRequestApplicationJson(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"SdkSearchSubscriptionsRequestApplicationJson\",\"properties\":{\"search\":{\"kind\":\"primitive\",\"type\":\"string\"},\"status\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"SdkSearchSubscriptionsRequestApplicationJson\",\"properties\":{\"filters\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"SearchSubscriptionsRequestApplicationJsonPropertyFiltersItem\",\"properties\":{\"field\":{\"kind\":\"primitive\",\"type\":\"string\"},\"operator\":{\"kind\":\"primitive\",\"type\":\"string\"},\"value\":{\"kind\":\"primitive\",\"type\":\"unknown\"},\"type\":{\"kind\":\"enum\",\"values\":[\"and\",\"or\"]},\"nested\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"SearchSubscriptionsRequestApplicationJsonPropertyFiltersItemPropertyNestedItem\",\"properties\":{},\"required\":[],\"additionalProperties\":true}}},\"required\":[],\"additionalProperties\":true}},\"sort\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"SearchSubscriptionsRequestApplicationJsonPropertySortItem\",\"properties\":{\"field\":{\"kind\":\"primitive\",\"type\":\"string\"},\"direction\":{\"kind\":\"enum\",\"values\":[\"asc\",\"desc\"]}},\"required\":[\"field\"],\"additionalProperties\":true}},\"search\":{\"kind\":\"object\",\"modelName\":\"SearchSubscriptionsRequestApplicationJsonPropertySearch\",\"properties\":{\"value\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"case_sensitive\":{\"kind\":\"primitive\",\"type\":\"boolean\"}},\"required\":[],\"additionalProperties\":true},\"includes\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem\",\"properties\":{\"relation\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"relation\"],\"additionalProperties\":true}}},\"required\":[],\"additionalProperties\":true}"
             )
     }
 }

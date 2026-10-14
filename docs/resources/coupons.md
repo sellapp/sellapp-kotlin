@@ -73,6 +73,8 @@ fun create(
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCreateCouponResponseValue201ApplicationJson
 ```
@@ -88,6 +90,8 @@ fun create(
 | limit | `Long?` | No |
 | expiresAt | `OffsetDateTime?` | No |
 | minimumAmount | `Any?` | No |
+| appliesTo | `SdkCreateCouponRequestApplicationJsonAppliesTo?` | No |
+| subscriptionPayments | `Long?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkCreateCouponResponseValue201ApplicationJson`.
@@ -192,6 +196,8 @@ fun replace(
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkReplaceCouponResponseValue200ApplicationJson
 ```
@@ -210,6 +216,8 @@ fun replace(
 | limit | `Long?` | No |
 | expiresAt | `OffsetDateTime?` | No |
 | minimumAmount | `Any?` | No |
+| appliesTo | `SdkCreateCouponRequestApplicationJsonAppliesTo?` | No |
+| subscriptionPayments | `Long?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkReplaceCouponResponseValue200ApplicationJson`.
@@ -262,6 +270,8 @@ fun update(
         limit: PatchField<Long?> = PatchField.Absent,
         expiresAt: PatchField<OffsetDateTime?> = PatchField.Absent,
         minimumAmount: PatchField<Any?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateCouponResponseValue200ApplicationJson
 ```
@@ -280,6 +290,8 @@ fun update(
 | limit | `PatchField<Long?>` | No |
 | expiresAt | `PatchField<OffsetDateTime?>` | No |
 | minimumAmount | `PatchField<Any?>` | No |
+| appliesTo | `PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo>` | No |
+| subscriptionPayments | `PatchField<Long?>` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkUpdateCouponResponseValue200ApplicationJson`.
@@ -650,6 +662,8 @@ fun v2CreateCoupon(
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkV2CreateCouponResponseValue201ApplicationJson
 ```
@@ -665,6 +679,8 @@ fun v2CreateCoupon(
 | limit | `Long?` | No |
 | expiresAt | `OffsetDateTime?` | No |
 | minimumAmount | `Any?` | No |
+| appliesTo | `SdkCreateCouponRequestApplicationJsonAppliesTo?` | No |
+| subscriptionPayments | `Long?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkV2CreateCouponResponseValue201ApplicationJson`.
@@ -842,6 +858,8 @@ fun v2ReplaceCoupon(
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkV2ReplaceCouponResponseValue200ApplicationJson
 ```
@@ -860,6 +878,8 @@ fun v2ReplaceCoupon(
 | limit | `Long?` | No |
 | expiresAt | `OffsetDateTime?` | No |
 | minimumAmount | `Any?` | No |
+| appliesTo | `SdkCreateCouponRequestApplicationJsonAppliesTo?` | No |
+| subscriptionPayments | `Long?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkV2ReplaceCouponResponseValue200ApplicationJson`.
@@ -917,6 +937,8 @@ fun v2UpdateCoupon(
         limit: PatchField<Long?> = PatchField.Absent,
         expiresAt: PatchField<OffsetDateTime?> = PatchField.Absent,
         minimumAmount: PatchField<Any?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkV2UpdateCouponResponseValue200ApplicationJson
 ```
@@ -935,6 +957,8 @@ fun v2UpdateCoupon(
 | limit | `PatchField<Long?>` | No |
 | expiresAt | `PatchField<OffsetDateTime?>` | No |
 | minimumAmount | `PatchField<Any?>` | No |
+| appliesTo | `PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo>` | No |
+| subscriptionPayments | `PatchField<Long?>` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkV2UpdateCouponResponseValue200ApplicationJson`.

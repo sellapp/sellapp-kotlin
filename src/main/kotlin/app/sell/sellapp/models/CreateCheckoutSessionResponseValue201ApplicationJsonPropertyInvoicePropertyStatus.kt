@@ -2,8 +2,6 @@
 
 package app.sell.sellapp.models
 
-/**
- * Alias for [CreateCheckoutSessionResponseValue200ApplicationJsonPropertyInvoicePropertyStatus].
- */
+/** Alias for [UpdateInvoiceStatusResponseValue200ApplicationJsonPropertyStatus]. */
 typealias CreateCheckoutSessionResponseValue201ApplicationJsonPropertyInvoicePropertyStatus =
-    CreateCheckoutSessionResponseValue200ApplicationJsonPropertyInvoicePropertyStatus
+    UpdateInvoiceStatusResponseValue200ApplicationJsonPropertyStatus

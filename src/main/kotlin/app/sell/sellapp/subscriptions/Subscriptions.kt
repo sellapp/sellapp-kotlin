@@ -8,27 +8,37 @@ import app.sell.sellapp.common.http.PatchField
 import app.sell.sellapp.common.http.RawResponse
 import app.sell.sellapp.common.http.RequestConfig
 import app.sell.sellapp.common.http.RequestOptions
+import app.sell.sellapp.common.http.addEach
 import app.sell.sellapp.common.http.bodyOf
 import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.http.patchBodyOf
 import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.models.ConfirmSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata
 import app.sell.sellapp.models.ConfirmSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata
-import app.sell.sellapp.models.ListSubscriptionsResponseValue200ApplicationJsonPropertyDataItem
 import app.sell.sellapp.models.PreviewSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata
 import app.sell.sellapp.models.PreviewSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata
 import app.sell.sellapp.models.SdkCancelSubscriptionAtPeriodEndResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkCancelSubscriptionImmediatelyResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkCancelSubscriptionResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkConfirmSubscriptionPlanChangeResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkConfirmSubscriptionRenewalDateChangeResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkGetSubscriptionCapabilitiesResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkGetSubscriptionResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkKeepSubscriptionResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkListSubscriptionsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkPauseSubscriptionResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkPreviewSubscriptionPlanChangeResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkPreviewSubscriptionRenewalDateChangeResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkResumeSubscriptionResponseValue200ApplicationJson
-import app.sell.sellapp.models.SearchSubscriptionsResponseValue200ApplicationJsonPropertyDataItem
+import app.sell.sellapp.models.SdkSearchSubscriptionsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkUpdateSubscriptionPaymentMethodResponseValue200ApplicationJson
+import app.sell.sellapp.models.SearchSubscriptionsRequestApplicationJsonPropertyFiltersItem
+import app.sell.sellapp.models.SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem
+import app.sell.sellapp.models.SearchSubscriptionsRequestApplicationJsonPropertySearch
+import app.sell.sellapp.models.SearchSubscriptionsRequestApplicationJsonPropertySortItem
 import app.sell.sellapp.types.SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming
 import app.sell.sellapp.types.SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior
+import app.sell.sellapp.types.SubscriptionsStatus
 import com.fasterxml.jackson.core.type.TypeReference
 import java.time.OffsetDateTime
 
@@ -44,16 +54,23 @@ class Subscriptions(internal val sellapp: SellApp) {
     /**
      * Cancel a subscription
      *
-     * Cancel an active subscription now or at period end. cancel_at_period_end is required. Refund
-     * flags are valid only when it is false; period-end cancellation does not refund the last
-     * payment. Refunds are off by default. refund_last_payment requests a real refund;
-     * pro_rated_refund requires refund_last_payment and defaults to false. Cancellation can succeed
-     * even if the requested refund fails. A 200 response or confirmed cancellation does not prove a
-     * refund, and the action response does not expose the provider refund result. Check the order
-     * and payment-provider refund records before retrying; do not replay cancellation as a
-     * refund-recovery step. Reuse an idempotency key only with identical action input and actor.
-     * OAuth callers use the admin grant and select a store with X-STORE. Current membership and
-     * role permissions apply to every request.
+     * Cancel an active subscription now or at period end, or one with a payment still owed now: a
+     * past due one the store bills in house, or a past due or unpaid Stripe, PayPal, or Razorpay
+     * subscription. cancel_at_period_end is required. Refund flags are valid only when it is false;
+     * period-end cancellation does not refund the last payment. New integrations should use the
+     * cancel-at-period-end and cancel-immediately lifecycle actions instead. A provider refusal, or
+     * a state check such as a change already in progress or a subscription that is no longer
+     * active, returns `422` with the refusal sentence under `errors.subscription`. Requires the
+     * `invoice` Sanctum ability. Refunds are off by default. refund_last_payment requests a real
+     * refund; pro_rated_refund requires refund_last_payment and defaults to false. While a Stripe,
+     * PayPal, or Razorpay subscription is past due or unpaid, its current period was never paid
+     * for, so a pro-rated refund returns `422`; a full refund or no refund still works.
+     * Cancellation can succeed even if the requested refund fails. A 200 response or confirmed
+     * cancellation does not prove a refund, and the action response does not expose the provider
+     * refund result. Check the order and payment-provider refund records before retrying; do not
+     * replay cancellation as a refund-recovery step. Reuse an idempotency key only with identical
+     * action input and actor. OAuth callers use the admin grant and select a store with X-STORE.
+     * Current membership and role permissions apply to every request.
      *
      * @param subscription The subscription path parameter.
      * @param cancelAtPeriodEnd the cancel at period end of the request.
@@ -61,12 +78,14 @@ class Subscriptions(internal val sellapp: SellApp) {
      *   cancellation. Cancellation success does not prove refund success; verify provider/order
      *   refund records.
      * @param proRatedRefund Request a prorated refund. Requires refund_last_payment=true. False
-     *   requests a full latest-payment refund when refund_last_payment is enabled.
+     *   requests a full latest-payment refund when refund_last_payment is enabled. Refused with
+     *   `422` while a Stripe, PayPal, or Razorpay subscription is past due or unpaid.
      * @param idempotencyKey Optional idempotency key. You may also send this as the Idempotency-Key
      *   header.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkCancelSubscriptionResponseValue200ApplicationJson
      */
+    @Deprecated("Deprecated operation")
     @JvmOverloads
     fun cancel(
         subscription: String,
@@ -137,6 +156,7 @@ class Subscriptions(internal val sellapp: SellApp) {
      * Delegates to the blocking [cancel] under `withContext(Dispatchers.IO)`, so this is safe to
      * call from any coroutine dispatcher (including `Dispatchers.Main`).
      */
+    @Deprecated("Deprecated operation")
     @JvmName("cancelSuspend")
     suspend fun cancelSuspend(
         subscription: String,
@@ -164,6 +184,7 @@ class Subscriptions(internal val sellapp: SellApp) {
      * Delegates to the blocking [cancelWithResponse] under `withContext(Dispatchers.IO)`, so this
      * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
      */
+    @Deprecated("Deprecated operation")
     @JvmName("cancelWithResponseSuspend")
     suspend fun cancelWithResponseSuspend(
         subscription: String,
@@ -185,12 +206,329 @@ class Subscriptions(internal val sellapp: SellApp) {
         }
 
     /**
+     * List subscriptions
+     *
+     * List the subscriptions belonging to the authenticated store, ordered by identifier ascending.
+     * Requires the `invoice` Sanctum ability. Use `status[]` to keep only the states you care
+     * about. OAuth callers use the admin grant and select a store with X-STORE. Current membership
+     * and role permissions apply to every request.
+     *
+     * @param limit Number of items to return per page.
+     * @param page Page number to return.
+     * @param pagination Set to false to return at most 100 matching items in one data array without
+     *   pagination links or metadata.
+     * @param status Filter by one or more subscription statuses. Repeat the parameter to select
+     *   several; a single `status=ACTIVE` works too. A status outside the list is rejected with a
+     *   validation error.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return a [app.sell.sellapp.common.http.Page] of results
+     */
+    @JvmOverloads
+    fun list(
+        limit: Int? = null,
+        page: Long? = null,
+        pagination: Boolean? = null,
+        status: List<SubscriptionsStatus>? = null,
+        requestOptions: RequestOptions? = null,
+    ): Page<SdkListSubscriptionsResponseValue200ApplicationJson> {
+        val itemType =
+            object : TypeReference<SdkListSubscriptionsResponseValue200ApplicationJson>() {}
+        return sellapp.baseClient.requestPage(
+            method = "GET",
+            path = "/v2/subscriptions",
+            itemType = itemType,
+            requestOptions = requestOptions,
+            operationId = "listSubscriptions",
+            supportsIdempotency = false,
+            itemSchema =
+                app.sell.sellapp.models.SdkListSubscriptionsResponseValue200ApplicationJson
+                    .runtimeSchema,
+            before = null,
+            after = null,
+        ) {
+            limit?.let { add("limit" to it.toString()) }
+            page?.let { add("page" to it.toString()) }
+            pagination?.let { add("pagination" to it.toString()) }
+            status?.let { addEach("status[]", it.map { it.value }) }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun listWithResponse(
+        limit: Int? = null,
+        page: Long? = null,
+        pagination: Boolean? = null,
+        status: List<SubscriptionsStatus>? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<Page<SdkListSubscriptionsResponseValue200ApplicationJson>> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        list(limit, page, pagination, status, capturingOptions)
+        return captured as? RawResponse<Page<SdkListSubscriptionsResponseValue200ApplicationJson>>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [list]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [list] under `withContext(Dispatchers.IO)`, so this is safe to call
+     * from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("listSuspend")
+    suspend fun listSuspend(
+        limit: Int? = null,
+        page: Long? = null,
+        pagination: Boolean? = null,
+        status: List<SubscriptionsStatus>? = null,
+        requestOptions: RequestOptions? = null,
+    ): Page<SdkListSubscriptionsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            list(limit, page, pagination, status, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [listWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [listWithResponse] under `withContext(Dispatchers.IO)`, so this is
+     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("listWithResponseSuspend")
+    suspend fun listWithResponseSuspend(
+        limit: Int? = null,
+        page: Long? = null,
+        pagination: Boolean? = null,
+        status: List<SubscriptionsStatus>? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<Page<SdkListSubscriptionsResponseValue200ApplicationJson>> =
+        sellapp.baseClient.runCancellable {
+            listWithResponse(limit, page, pagination, status, requestOptions)
+        }
+
+    /**
+     * Search subscriptions
+     *
+     * Search the store's subscriptions, ordered by identifier ascending unless `sort` says
+     * otherwise. `search.value` matches the provider subscription ID, the provider customer ID, and
+     * the customer email. Filter on `id`, `customer_id` (the SellApp customer ID, as in
+     * `customer.id`), `provider`, `status`, or `product_variant_id`, and sort on `id`, `status`,
+     * `current_period_start`, `current_period_end`, `created_at`, or `updated_at`. Requires the
+     * `invoice` Sanctum ability. OAuth callers use the admin grant and select a store with X-STORE.
+     * Current membership and role permissions apply to every request.
+     *
+     * @param limit Number of items to return per page.
+     * @param page Page number to return.
+     * @param pagination Set to false to return at most 100 matching items in one data array without
+     *   pagination links or metadata.
+     * @param filters the filters of the request.
+     * @param sort the sort of the request.
+     * @param search the search of the request.
+     * @param includes the includes of the request.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return a [app.sell.sellapp.common.http.Page] of results
+     */
+    @JvmOverloads
+    fun search(
+        limit: Long? = null,
+        page: Long? = null,
+        pagination: Boolean? = null,
+        filters: List<SearchSubscriptionsRequestApplicationJsonPropertyFiltersItem>? = null,
+        sort: List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>? = null,
+        search: SearchSubscriptionsRequestApplicationJsonPropertySearch? = null,
+        includes: List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>? = null,
+        requestOptions: RequestOptions? = null,
+    ): Page<SdkSearchSubscriptionsResponseValue200ApplicationJson> {
+        val itemType =
+            object : TypeReference<SdkSearchSubscriptionsResponseValue200ApplicationJson>() {}
+        return sellapp.baseClient.requestPage(
+            method = "POST",
+            path = "/v2/subscriptions/search",
+            itemType = itemType,
+            requestOptions = requestOptions,
+            operationId = "searchSubscriptions",
+            supportsIdempotency = false,
+            itemSchema =
+                app.sell.sellapp.models.SdkSearchSubscriptionsResponseValue200ApplicationJson
+                    .runtimeSchema,
+            before = null,
+            after = null,
+        ) {
+            limit?.let { add("limit" to it.toString()) }
+            page?.let { add("page" to it.toString()) }
+            pagination?.let { add("pagination" to it.toString()) }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun searchWithResponse(
+        limit: Long? = null,
+        page: Long? = null,
+        pagination: Boolean? = null,
+        filters: List<SearchSubscriptionsRequestApplicationJsonPropertyFiltersItem>? = null,
+        sort: List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>? = null,
+        search: SearchSubscriptionsRequestApplicationJsonPropertySearch? = null,
+        includes: List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<Page<SdkSearchSubscriptionsResponseValue200ApplicationJson>> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        search(limit, page, pagination, filters, sort, search, includes, capturingOptions)
+        return captured as? RawResponse<Page<SdkSearchSubscriptionsResponseValue200ApplicationJson>>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [search]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [search] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("searchSuspend")
+    suspend fun searchSuspend(
+        limit: Long? = null,
+        page: Long? = null,
+        pagination: Boolean? = null,
+        filters: List<SearchSubscriptionsRequestApplicationJsonPropertyFiltersItem>? = null,
+        sort: List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>? = null,
+        search: SearchSubscriptionsRequestApplicationJsonPropertySearch? = null,
+        includes: List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>? = null,
+        requestOptions: RequestOptions? = null,
+    ): Page<SdkSearchSubscriptionsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            search(limit, page, pagination, filters, sort, search, includes, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [searchWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [searchWithResponse] under `withContext(Dispatchers.IO)`, so this
+     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("searchWithResponseSuspend")
+    suspend fun searchWithResponseSuspend(
+        limit: Long? = null,
+        page: Long? = null,
+        pagination: Boolean? = null,
+        filters: List<SearchSubscriptionsRequestApplicationJsonPropertyFiltersItem>? = null,
+        sort: List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>? = null,
+        search: SearchSubscriptionsRequestApplicationJsonPropertySearch? = null,
+        includes: List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<Page<SdkSearchSubscriptionsResponseValue200ApplicationJson>> =
+        sellapp.baseClient.runCancellable {
+            searchWithResponse(
+                limit,
+                page,
+                pagination,
+                filters,
+                sort,
+                search,
+                includes,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Retrieve a subscription
+     *
+     * Retrieve one subscription by its SellApp subscription record identifier. Requires the
+     * `invoice` Sanctum ability. Foreign-store identifiers return not found. OAuth callers use the
+     * admin grant and select a store with X-STORE. Current membership and role permissions apply to
+     * every request.
+     *
+     * @param productSubscription The productSubscription path parameter.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkGetSubscriptionResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun get(
+        productSubscription: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkGetSubscriptionResponseValue200ApplicationJson {
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/subscriptions/${encodePathSegment(productSubscription)}",
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models.SdkGetSubscriptionResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "getSubscription",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkGetSubscriptionResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getWithResponse(
+        productSubscription: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkGetSubscriptionResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        get(productSubscription, capturingOptions)
+        return captured as? RawResponse<SdkGetSubscriptionResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [get]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [get] under `withContext(Dispatchers.IO)`, so this is safe to call
+     * from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getSuspend")
+    suspend fun getSuspend(
+        productSubscription: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkGetSubscriptionResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            get(productSubscription, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [getWithResponse]. Use this from a `suspend` function or coroutine
+     * scope.
+     *
+     * Delegates to the blocking [getWithResponse] under `withContext(Dispatchers.IO)`, so this is
+     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getWithResponseSuspend")
+    suspend fun getWithResponseSuspend(
+        productSubscription: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkGetSubscriptionResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            getWithResponse(productSubscription, requestOptions)
+        }
+
+    /**
      * View subscription capabilities
      *
-     * Return the lifecycle actions currently supported for a subscription. Capability status
-     * controls whether an actor can pause, resume, cancel, update the payment method, change plan,
-     * or shift the billing date. OAuth callers use the admin grant and select a store with X-STORE.
-     * Current membership and role permissions apply to every request.
+     * Return the lifecycle actions currently supported for a subscription, each with the reason the
+     * customer and the seller are shown. A `customer_only` status names who owns the action rather
+     * than who may call the API: a store token carries a plan change and a payment method update on
+     * the customer's behalf, while a `customer_only` auto-renewal switch stays with the customer
+     * portal. `set_auto_renew` has no API route at all. While a Stripe, PayPal, or Razorpay
+     * subscription is past due or unpaid, every action except `cancel_immediately` and, on
+     * Razorpay, `update_payment_method`, is `unsupported`, and a subscription the store bills in
+     * house that is on hold for an unpaid renewal reports `resume` as `customer_only`, because only
+     * the customer can pay to resume it. Requires the `invoice` Sanctum ability. OAuth callers use
+     * the admin grant and select a store with X-STORE. Current membership and role permissions
+     * apply to every request.
      *
      * @param productSubscription The productSubscription path parameter.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
@@ -271,10 +609,15 @@ class Subscriptions(internal val sellapp: SellApp) {
      * Cancel a subscription at period end
      *
      * Schedule cancellation at the end of the current billing period without requesting a refund.
-     * Inspect capabilities first. The response records the cancellation action; retrieve the
-     * subscription to observe its current state. Reuse an idempotency key only with identical
-     * action input and actor. OAuth callers use the admin grant and select a store with X-STORE.
-     * Current membership and role permissions apply to every request.
+     * Inspect capabilities first. PayPal has no cancellation at period end, so on a PayPal
+     * subscription this cancels it with PayPal straight away and keeps the customer's access until
+     * the period ends; it can't be kept afterwards. The response records the cancellation action;
+     * retrieve the subscription to observe its current state. Reuse an idempotency key only with
+     * identical action input and actor. A provider refusal, or a state check such as a change
+     * already in progress or a subscription that is no longer active, returns `422` with the
+     * refusal sentence under `errors.subscription`. Requires the `invoice` Sanctum ability. OAuth
+     * callers use the admin grant and select a store with X-STORE. Current membership and role
+     * permissions apply to every request.
      *
      * @param productSubscription The productSubscription path parameter.
      * @param idempotencyKey Optional idempotency key. You may also send this as the Idempotency-Key
@@ -382,14 +725,21 @@ class Subscriptions(internal val sellapp: SellApp) {
      * Cancel a subscription immediately
      *
      * Request immediate subscription cancellation. Inspect capabilities for provider support. This
-     * ends future billing and can change customer access. Refunds are off by default.
-     * refund_last_payment requests a real refund; pro_rated_refund requires refund_last_payment and
-     * defaults to false. Cancellation can succeed even if the requested refund fails. A 200
-     * response or confirmed cancellation does not prove a refund, and the action response does not
-     * expose the provider refund result. Check the order and payment-provider refund records before
-     * retrying; do not replay cancellation as a refund-recovery step. Reuse an idempotency key only
-     * with identical action input and actor. OAuth callers use the admin grant and select a store
-     * with X-STORE. Current membership and role permissions apply to every request.
+     * ends future billing and can change customer access. It is the one action left on a Stripe or
+     * PayPal subscription that is past due or unpaid, and one of two left on a Razorpay one
+     * alongside a payment method update. A provider refusal, or a state check such as a change
+     * already in progress or a subscription that is no longer active, returns `422` with the
+     * refusal sentence under `errors.subscription`. Requires the `invoice` Sanctum ability. Refunds
+     * are off by default. refund_last_payment requests a real refund; pro_rated_refund requires
+     * refund_last_payment and defaults to false. While a Stripe, PayPal, or Razorpay subscription
+     * is past due or unpaid, its current period was never paid for, so a pro-rated refund returns
+     * `422`; a full refund or no refund still works. Cancellation can succeed even if the requested
+     * refund fails. A 200 response or confirmed cancellation does not prove a refund, and the
+     * action response does not expose the provider refund result. Check the order and
+     * payment-provider refund records before retrying; do not replay cancellation as a
+     * refund-recovery step. Reuse an idempotency key only with identical action input and actor.
+     * OAuth callers use the admin grant and select a store with X-STORE. Current membership and
+     * role permissions apply to every request.
      *
      * @param productSubscription The productSubscription path parameter.
      * @param idempotencyKey Optional idempotency key. You may also send this as the Idempotency-Key
@@ -399,7 +749,8 @@ class Subscriptions(internal val sellapp: SellApp) {
      *   cancellation. Cancellation success does not prove refund success; verify provider/order
      *   refund records.
      * @param proRatedRefund Request a prorated refund. Requires refund_last_payment=true. False
-     *   requests a full latest-payment refund when refund_last_payment is enabled.
+     *   requests a full latest-payment refund when refund_last_payment is enabled. Refused with
+     *   `422` while a Stripe, PayPal, or Razorpay subscription is past due or unpaid.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkCancelSubscriptionImmediatelyResponseValue200ApplicationJson
      */
@@ -525,20 +876,118 @@ class Subscriptions(internal val sellapp: SellApp) {
         }
 
     /**
+     * Keep a subscription
+     *
+     * Stop a scheduled cancellation so the subscription keeps renewing, which is the undo for
+     * cancelling at period end. The subscription has to still be active, still be scheduled to
+     * cancel, and its period must not have ended yet. Any of those, a provider that cannot undo its
+     * own schedule (a PayPal subscription or a Razorpay trial, both already cancelled with the
+     * provider), or a change already in progress returns `422` with the refusal sentence under
+     * `errors.subscription`. Requires the `invoice` Sanctum ability. OAuth callers use the admin
+     * grant and select a store with X-STORE. Current membership and role permissions apply to every
+     * request.
+     *
+     * @param productSubscription The productSubscription path parameter.
+     * @param idempotencyKey Optional idempotency key. You may also send this as the Idempotency-Key
+     *   header.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkKeepSubscriptionResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun keep(
+        productSubscription: String,
+        idempotencyKey: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkKeepSubscriptionResponseValue200ApplicationJson {
+        val body = bodyOf("idempotency_key" to idempotencyKey)
+        val config =
+            RequestConfig(
+                method = "POST",
+                path = "/v2/subscriptions/${encodePathSegment(productSubscription)}/actions/keep",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkKeepSubscriptionRequestApplicationJson.runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models.SdkKeepSubscriptionResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "keepSubscription",
+                supportsIdempotency = true,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkKeepSubscriptionResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun keepWithResponse(
+        productSubscription: String,
+        idempotencyKey: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkKeepSubscriptionResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        keep(productSubscription, idempotencyKey, capturingOptions)
+        return captured as? RawResponse<SdkKeepSubscriptionResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [keep]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [keep] under `withContext(Dispatchers.IO)`, so this is safe to call
+     * from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("keepSuspend")
+    suspend fun keepSuspend(
+        productSubscription: String,
+        idempotencyKey: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkKeepSubscriptionResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            keep(productSubscription, idempotencyKey, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [keepWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [keepWithResponse] under `withContext(Dispatchers.IO)`, so this is
+     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("keepWithResponseSuspend")
+    suspend fun keepWithResponseSuspend(
+        productSubscription: String,
+        idempotencyKey: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkKeepSubscriptionResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            keepWithResponse(productSubscription, idempotencyKey, requestOptions)
+        }
+
+    /**
      * Pause a subscription
      *
-     * Pause a subscription after checking capabilities. Automatic resume dates are supported only
-     * by the current Stripe flow; use a future resume_at when supplied. Other provider pauses may
-     * need an explicit resume action. Customer-originated pauses are also subject to store pause
-     * policies. Reuse an idempotency key only with identical input and actor, and retrieve the
-     * subscription after the action. OAuth callers use the admin grant and select a store with
-     * X-STORE. Current membership and role permissions apply to every request.
+     * Pause a subscription after checking capabilities. Automatic resume dates are supported by
+     * Stripe and by subscriptions the store bills in house; use a future resume_at when supplied.
+     * Other provider pauses may need an explicit resume action. Customer-originated pauses are also
+     * subject to store pause policies. Reuse an idempotency key only with identical input and
+     * actor, and retrieve the subscription after the action. A provider refusal, or a state check
+     * such as a change already in progress or a subscription that is no longer active, returns
+     * `422` with the refusal sentence under `errors.subscription`. Requires the `invoice` Sanctum
+     * ability. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * membership and role permissions apply to every request.
      *
      * @param productSubscription The productSubscription path parameter.
      * @param idempotencyKey Optional idempotency key. You may also send this as the Idempotency-Key
      *   header.
      * @param resumeAt Use a future date-time at execution time. Automatic resume dates are
-     *   supported only for Stripe; the shown date is illustrative.
+     *   supported by Stripe and by subscriptions the store bills in house; the shown date is
+     *   illustrative.
      * @param reason the reason of the request.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkPauseSubscriptionResponseValue200ApplicationJson
@@ -636,9 +1085,13 @@ class Subscriptions(internal val sellapp: SellApp) {
     /**
      * Resume a subscription
      *
-     * Resume a paused subscription and restore related entitlements where possible. OAuth callers
-     * use the admin grant and select a store with X-STORE. Current membership and role permissions
-     * apply to every request.
+     * Resume a paused subscription and restore related entitlements where possible. A subscription
+     * that is not paused, a subscription the store bills in house that is on hold for an unpaid
+     * renewal (only the customer can resume it, by paying that renewal from the customer portal), a
+     * provider refusal, or a change already in progress returns `422` with the refusal sentence
+     * under `errors.subscription`. Requires the `invoice` Sanctum ability. OAuth callers use the
+     * admin grant and select a store with X-STORE. Current membership and role permissions apply to
+     * every request.
      *
      * @param productSubscription The productSubscription path parameter.
      * @param idempotencyKey Optional idempotency key. You may also send this as the Idempotency-Key
@@ -726,23 +1179,39 @@ class Subscriptions(internal val sellapp: SellApp) {
     /**
      * Update a subscription payment method
      *
-     * This action belongs to the customer. Seller API requests return a 422 validation error. Check
-     * subscription capabilities and use the customer flow; never expose a seller API key to work
-     * around this restriction. OAuth callers use the admin grant and select a store with X-STORE.
-     * Current membership and role permissions apply to every request.
+     * Request a subscription payment method update. A payment method belongs to the customer, and a
+     * store token requests the update on their behalf. The customer still enters the new card
+     * themselves, so the action stays `pending` and `redirect_url` is where they finish it:
+     * Stripe's hosted page for a Stripe subscription, or a SellApp page for a Razorpay one.
+     * `return_url` chooses where Stripe sends the customer afterwards; Razorpay ignores it. PayPal
+     * subscriptions and subscriptions the store bills in house don't support the update. Read
+     * `update_payment_method` in the capabilities response before calling: an unsupported payment
+     * method, or a state check such as a change already in progress, a subscription that is no
+     * longer active, or a Stripe subscription with a payment still owed, returns `422` with the
+     * refusal sentence under `errors.subscription`. Requires the `invoice` Sanctum ability. OAuth
+     * callers use the admin grant and select a store with X-STORE. Current membership and role
+     * permissions apply to every request.
      *
      * @param productSubscription The productSubscription path parameter.
      * @param idempotencyKey Optional idempotency key. You may also send this as the Idempotency-Key
      *   header.
+     * @param returnUrl Where Stripe returns the customer once its hosted page finishes. Defaults to
+     *   the store's customer portal page for this subscription. Razorpay subscriptions ignore it.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkUpdateSubscriptionPaymentMethodResponseValue200ApplicationJson
      */
     @JvmOverloads
     fun updatePaymentMethod(
         productSubscription: String,
         idempotencyKey: String? = null,
+        returnUrl: String? = null,
         requestOptions: RequestOptions? = null,
-    ): String {
-        val body = bodyOf("idempotency_key" to idempotencyKey)
+    ): SdkUpdateSubscriptionPaymentMethodResponseValue200ApplicationJson {
+        val body =
+            bodyOf(
+                "idempotency_key" to idempotencyKey,
+                "return_url" to returnUrl,
+            )
         val config =
             RequestConfig(
                 method = "POST",
@@ -753,26 +1222,35 @@ class Subscriptions(internal val sellapp: SellApp) {
                 requestSchema =
                     app.sell.sellapp.models.SdkUpdateSubscriptionPaymentMethodRequestApplicationJson
                         .runtimeSchema,
-                responseSchema = runtimeSchema("{\"kind\":\"primitive\",\"type\":\"string\"}"),
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkUpdateSubscriptionPaymentMethodResponseValue200ApplicationJson
+                        .runtimeSchema,
                 operationId = "updateSubscriptionPaymentMethod",
                 supportsIdempotency = true,
             )
-        return sellapp.baseClient.request(config, String::class.java)
+        return sellapp.baseClient.request(
+            config,
+            SdkUpdateSubscriptionPaymentMethodResponseValue200ApplicationJson::class.java,
+        )
     }
 
     @Suppress("UNCHECKED_CAST")
     fun updatePaymentMethodWithResponse(
         productSubscription: String,
         idempotencyKey: String? = null,
+        returnUrl: String? = null,
         requestOptions: RequestOptions? = null,
-    ): RawResponse<String> {
+    ): RawResponse<SdkUpdateSubscriptionPaymentMethodResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
         val capturingOptions =
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        updatePaymentMethod(productSubscription, idempotencyKey, capturingOptions)
-        return captured as? RawResponse<String> ?: error("Response metadata was not captured")
+        updatePaymentMethod(productSubscription, idempotencyKey, returnUrl, capturingOptions)
+        return captured
+            as? RawResponse<SdkUpdateSubscriptionPaymentMethodResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
     }
 
     /**
@@ -786,10 +1264,11 @@ class Subscriptions(internal val sellapp: SellApp) {
     suspend fun updatePaymentMethodSuspend(
         productSubscription: String,
         idempotencyKey: String? = null,
+        returnUrl: String? = null,
         requestOptions: RequestOptions? = null,
-    ): String =
+    ): SdkUpdateSubscriptionPaymentMethodResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
-            updatePaymentMethod(productSubscription, idempotencyKey, requestOptions)
+            updatePaymentMethod(productSubscription, idempotencyKey, returnUrl, requestOptions)
         }
 
     /**
@@ -804,19 +1283,32 @@ class Subscriptions(internal val sellapp: SellApp) {
     suspend fun updatePaymentMethodWithResponseSuspend(
         productSubscription: String,
         idempotencyKey: String? = null,
+        returnUrl: String? = null,
         requestOptions: RequestOptions? = null,
-    ): RawResponse<String> =
+    ): RawResponse<SdkUpdateSubscriptionPaymentMethodResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
-            updatePaymentMethodWithResponse(productSubscription, idempotencyKey, requestOptions)
+            updatePaymentMethodWithResponse(
+                productSubscription,
+                idempotencyKey,
+                returnUrl,
+                requestOptions,
+            )
         }
 
     /**
      * Preview a subscription plan change
      *
-     * This action belongs to the customer. Seller API requests return a 422 validation error. Check
-     * subscription capabilities and use the customer flow; never expose a seller API key to work
-     * around this restriction. OAuth callers use the admin grant and select a store with X-STORE.
-     * Current membership and role permissions apply to every request.
+     * Preview a subscription plan change before confirming it. The preview stores the change it was
+     * taken for and returns a `preview_token` the confirmation must send back, alongside the
+     * provider's own pricing preview. On Stripe and in-house subscriptions,
+     * `preview_payload.payment_required` says whether confirming charges `amount_due` today or
+     * leaves any amount to the next invoice, and `preview_payload.renewal_date` says when the
+     * subscription renews next. A plan change belongs to the customer, and a store token previews
+     * it on their behalf; a provider refusal, or a state check such as a change already in progress
+     * or a subscription that is no longer active, returns `422` with the refusal sentence under
+     * `errors.subscription`. Requires the `invoice` Sanctum ability. OAuth callers use the admin
+     * grant and select a store with X-STORE. Current membership and role permissions apply to every
+     * request.
      *
      * @param productSubscription The productSubscription path parameter.
      * @param targetVariantId the target variant id of the request.
@@ -826,6 +1318,7 @@ class Subscriptions(internal val sellapp: SellApp) {
      * @param prorationBehavior the proration behavior of the request.
      * @param metadata the metadata of the request.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkPreviewSubscriptionPlanChangeResponseValue200ApplicationJson
      */
     @JvmOverloads
     fun previewPlanChange(
@@ -839,7 +1332,7 @@ class Subscriptions(internal val sellapp: SellApp) {
             null,
         metadata: PreviewSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? = null,
         requestOptions: RequestOptions? = null,
-    ): String {
+    ): SdkPreviewSubscriptionPlanChangeResponseValue200ApplicationJson {
         val body =
             bodyOf(
                 "target_variant_id" to targetVariantId,
@@ -859,11 +1352,17 @@ class Subscriptions(internal val sellapp: SellApp) {
                 requestSchema =
                     app.sell.sellapp.models.SdkPreviewSubscriptionPlanChangeRequestApplicationJson
                         .runtimeSchema,
-                responseSchema = runtimeSchema("{\"kind\":\"primitive\",\"type\":\"string\"}"),
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkPreviewSubscriptionPlanChangeResponseValue200ApplicationJson
+                        .runtimeSchema,
                 operationId = "previewSubscriptionPlanChange",
                 supportsIdempotency = true,
             )
-        return sellapp.baseClient.request(config, String::class.java)
+        return sellapp.baseClient.request(
+            config,
+            SdkPreviewSubscriptionPlanChangeResponseValue200ApplicationJson::class.java,
+        )
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -878,7 +1377,7 @@ class Subscriptions(internal val sellapp: SellApp) {
             null,
         metadata: PreviewSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? = null,
         requestOptions: RequestOptions? = null,
-    ): RawResponse<String> {
+    ): RawResponse<SdkPreviewSubscriptionPlanChangeResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
         val capturingOptions =
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
@@ -893,7 +1392,9 @@ class Subscriptions(internal val sellapp: SellApp) {
             metadata,
             capturingOptions,
         )
-        return captured as? RawResponse<String> ?: error("Response metadata was not captured")
+        return captured
+            as? RawResponse<SdkPreviewSubscriptionPlanChangeResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
     }
 
     /**
@@ -915,7 +1416,7 @@ class Subscriptions(internal val sellapp: SellApp) {
             null,
         metadata: PreviewSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? = null,
         requestOptions: RequestOptions? = null,
-    ): String =
+    ): SdkPreviewSubscriptionPlanChangeResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
             previewPlanChange(
                 productSubscription,
@@ -948,7 +1449,7 @@ class Subscriptions(internal val sellapp: SellApp) {
             null,
         metadata: PreviewSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? = null,
         requestOptions: RequestOptions? = null,
-    ): RawResponse<String> =
+    ): RawResponse<SdkPreviewSubscriptionPlanChangeResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
             previewPlanChangeWithResponse(
                 productSubscription,
@@ -964,10 +1465,15 @@ class Subscriptions(internal val sellapp: SellApp) {
     /**
      * Confirm a subscription plan change
      *
-     * This action belongs to the customer. Seller API requests return a 422 validation error. Check
-     * subscription capabilities and use the customer flow; never expose a seller API key to work
-     * around this restriction. OAuth callers use the admin grant and select a store with X-STORE.
-     * Current membership and role permissions apply to every request.
+     * Confirm a previously previewed subscription plan change, sending back the `preview_token` for
+     * a preview of the same change. A plan change belongs to the customer, and a store token
+     * confirms it on their behalf; a provider refusal, or a state check such as a change already in
+     * progress or a subscription that is no longer active, returns `422` with the refusal sentence
+     * under `errors.subscription`. `approval_url` accompanies a `pending` action whenever the
+     * customer still has to approve the revision at the provider or pay the proration order
+     * `proration_order_id` names, and is left out entirely when the provider applied the change
+     * itself. Requires the `invoice` Sanctum ability. OAuth callers use the admin grant and select
+     * a store with X-STORE. Current membership and role permissions apply to every request.
      *
      * @param productSubscription The productSubscription path parameter.
      * @param targetVariantId the target variant id of the request.
@@ -978,6 +1484,7 @@ class Subscriptions(internal val sellapp: SellApp) {
      * @param prorationBehavior the proration behavior of the request.
      * @param metadata the metadata of the request.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkConfirmSubscriptionPlanChangeResponseValue200ApplicationJson
      */
     @JvmOverloads
     fun confirmPlanChange(
@@ -992,7 +1499,7 @@ class Subscriptions(internal val sellapp: SellApp) {
             null,
         metadata: ConfirmSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? = null,
         requestOptions: RequestOptions? = null,
-    ): String {
+    ): SdkConfirmSubscriptionPlanChangeResponseValue200ApplicationJson {
         val body =
             bodyOf(
                 "target_variant_id" to targetVariantId,
@@ -1014,11 +1521,17 @@ class Subscriptions(internal val sellapp: SellApp) {
                 requestSchema =
                     app.sell.sellapp.models.SdkConfirmSubscriptionPlanChangeRequestApplicationJson
                         .runtimeSchema,
-                responseSchema = runtimeSchema("{\"kind\":\"primitive\",\"type\":\"string\"}"),
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkConfirmSubscriptionPlanChangeResponseValue200ApplicationJson
+                        .runtimeSchema,
                 operationId = "confirmSubscriptionPlanChange",
                 supportsIdempotency = true,
             )
-        return sellapp.baseClient.request(config, String::class.java)
+        return sellapp.baseClient.request(
+            config,
+            SdkConfirmSubscriptionPlanChangeResponseValue200ApplicationJson::class.java,
+        )
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -1034,7 +1547,7 @@ class Subscriptions(internal val sellapp: SellApp) {
             null,
         metadata: ConfirmSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? = null,
         requestOptions: RequestOptions? = null,
-    ): RawResponse<String> {
+    ): RawResponse<SdkConfirmSubscriptionPlanChangeResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
         val capturingOptions =
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
@@ -1050,7 +1563,9 @@ class Subscriptions(internal val sellapp: SellApp) {
             metadata,
             capturingOptions,
         )
-        return captured as? RawResponse<String> ?: error("Response metadata was not captured")
+        return captured
+            as? RawResponse<SdkConfirmSubscriptionPlanChangeResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
     }
 
     /**
@@ -1073,7 +1588,7 @@ class Subscriptions(internal val sellapp: SellApp) {
             null,
         metadata: ConfirmSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? = null,
         requestOptions: RequestOptions? = null,
-    ): String =
+    ): SdkConfirmSubscriptionPlanChangeResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
             confirmPlanChange(
                 productSubscription,
@@ -1108,7 +1623,7 @@ class Subscriptions(internal val sellapp: SellApp) {
             null,
         metadata: ConfirmSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? = null,
         requestOptions: RequestOptions? = null,
-    ): RawResponse<String> =
+    ): RawResponse<SdkConfirmSubscriptionPlanChangeResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
             confirmPlanChangeWithResponse(
                 productSubscription,
@@ -1126,10 +1641,12 @@ class Subscriptions(internal val sellapp: SellApp) {
      * Preview a subscription renewal date change
      *
      * Preview a new renewal date before confirmation when the subscription's billing-date policy
-     * requires a preview. The current Stripe and PayPal provider flows do not support renewal-date
-     * changes and return 422. Check shift_billing_date capabilities before sending a request. OAuth
-     * callers use the admin grant and select a store with X-STORE. Current membership and role
-     * permissions apply to every request.
+     * requires one. No payment method supports renewal-date changes today: Stripe, PayPal,
+     * Razorpay, and subscriptions the store bills in house all report `shift_billing_date` as
+     * `unsupported`, so this returns `422` with the refusal sentence under `errors.subscription`.
+     * Read the capabilities response first. Requires the `invoice` Sanctum ability. OAuth callers
+     * use the admin grant and select a store with X-STORE. Current membership and role permissions
+     * apply to every request.
      *
      * @param productSubscription The productSubscription path parameter.
      * @param renewalDate the renewal date of the request.
@@ -1270,10 +1787,12 @@ class Subscriptions(internal val sellapp: SellApp) {
     /**
      * Confirm a subscription renewal date change
      *
-     * Confirm a subscription renewal date change. A preview token is required when the variant's
-     * billing-date policy requires previews. The current Stripe and PayPal provider flows do not
-     * support renewal-date changes and return 422. Check shift_billing_date capabilities before
-     * sending a request. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * Confirm a subscription renewal date change, sending a `preview_token` when the variant's
+     * billing-date policy requires previews. No payment method supports renewal-date changes today:
+     * Stripe, PayPal, Razorpay, and subscriptions the store bills in house all report
+     * `shift_billing_date` as `unsupported`, so this returns `422` with the refusal sentence under
+     * `errors.subscription`. Read the capabilities response first. Requires the `invoice` Sanctum
+     * ability. OAuth callers use the admin grant and select a store with X-STORE. Current
      * membership and role permissions apply to every request.
      *
      * @param productSubscription The productSubscription path parameter.
@@ -1419,249 +1938,5 @@ class Subscriptions(internal val sellapp: SellApp) {
                 metadata,
                 requestOptions,
             )
-        }
-
-    /**
-     * List subscriptions
-     *
-     * List page-based subscriptions with canonical customer and deprecated provider aliases. OAuth
-     * callers use the admin grant and select a store with X-STORE. Current membership and role
-     * permissions apply to every request.
-     *
-     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
-     * @return a [app.sell.sellapp.common.http.Page] of results
-     */
-    @JvmOverloads
-    fun list(
-        requestOptions: RequestOptions? = null
-    ): Page<ListSubscriptionsResponseValue200ApplicationJsonPropertyDataItem> {
-        val itemType =
-            object :
-                TypeReference<ListSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>() {}
-        return sellapp.baseClient.requestPage(
-            method = "GET",
-            path = "/v2/subscriptions",
-            itemType = itemType,
-            requestOptions = requestOptions,
-            operationId = "listSubscriptions",
-            supportsIdempotency = false,
-            itemSchema =
-                app.sell.sellapp.models
-                    .ListSubscriptionsResponseValue200ApplicationJsonPropertyDataItem
-                    .runtimeSchema,
-            before = null,
-            after = null,
-        ) {}
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun listWithResponse(
-        requestOptions: RequestOptions? = null
-    ): RawResponse<Page<ListSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>> {
-        var captured: RawResponse<Any?>? = null
-        val capturingOptions =
-            (requestOptions?.copy() ?: RequestOptions()).also { options ->
-                options.responseCapture = { response -> captured = response }
-            }
-        list(capturingOptions)
-        return captured
-            as? RawResponse<Page<ListSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>>
-            ?: error("Response metadata was not captured")
-    }
-
-    /**
-     * Coroutine-aware variant of [list]. Use this from a `suspend` function or coroutine scope.
-     *
-     * Delegates to the blocking [list] under `withContext(Dispatchers.IO)`, so this is safe to call
-     * from any coroutine dispatcher (including `Dispatchers.Main`).
-     */
-    @JvmName("listSuspend")
-    suspend fun listSuspend(
-        requestOptions: RequestOptions? = null
-    ): Page<ListSubscriptionsResponseValue200ApplicationJsonPropertyDataItem> =
-        sellapp.baseClient.runCancellable {
-            list(requestOptions)
-        }
-
-    /**
-     * Coroutine-aware variant of [listWithResponse]. Use this from a `suspend` function or
-     * coroutine scope.
-     *
-     * Delegates to the blocking [listWithResponse] under `withContext(Dispatchers.IO)`, so this is
-     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
-     */
-    @JvmName("listWithResponseSuspend")
-    suspend fun listWithResponseSuspend(
-        requestOptions: RequestOptions? = null
-    ): RawResponse<Page<ListSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>> =
-        sellapp.baseClient.runCancellable {
-            listWithResponse(requestOptions)
-        }
-
-    /**
-     * Search subscriptions
-     *
-     * Search while preserving page-based pagination. OAuth callers use the admin grant and select a
-     * store with X-STORE. Current membership and role permissions apply to every request.
-     *
-     * @param search the search of the request.
-     * @param status the status of the request.
-     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
-     * @return a [app.sell.sellapp.common.http.Page] of results
-     */
-    @JvmOverloads
-    fun search(
-        search: String? = null,
-        status: String? = null,
-        requestOptions: RequestOptions? = null,
-    ): Page<SearchSubscriptionsResponseValue200ApplicationJsonPropertyDataItem> {
-        val itemType =
-            object :
-                TypeReference<
-                    SearchSubscriptionsResponseValue200ApplicationJsonPropertyDataItem
-                >() {}
-        return sellapp.baseClient.requestPage(
-            method = "POST",
-            path = "/v2/subscriptions/search",
-            itemType = itemType,
-            requestOptions = requestOptions,
-            operationId = "searchSubscriptions",
-            supportsIdempotency = false,
-            itemSchema =
-                app.sell.sellapp.models
-                    .SearchSubscriptionsResponseValue200ApplicationJsonPropertyDataItem
-                    .runtimeSchema,
-            before = null,
-            after = null,
-        ) {}
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun searchWithResponse(
-        search: String? = null,
-        status: String? = null,
-        requestOptions: RequestOptions? = null,
-    ): RawResponse<Page<SearchSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>> {
-        var captured: RawResponse<Any?>? = null
-        val capturingOptions =
-            (requestOptions?.copy() ?: RequestOptions()).also { options ->
-                options.responseCapture = { response -> captured = response }
-            }
-        search(search, status, capturingOptions)
-        return captured
-            as?
-            RawResponse<Page<SearchSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>>
-            ?: error("Response metadata was not captured")
-    }
-
-    /**
-     * Coroutine-aware variant of [search]. Use this from a `suspend` function or coroutine scope.
-     *
-     * Delegates to the blocking [search] under `withContext(Dispatchers.IO)`, so this is safe to
-     * call from any coroutine dispatcher (including `Dispatchers.Main`).
-     */
-    @JvmName("searchSuspend")
-    suspend fun searchSuspend(
-        search: String? = null,
-        status: String? = null,
-        requestOptions: RequestOptions? = null,
-    ): Page<SearchSubscriptionsResponseValue200ApplicationJsonPropertyDataItem> =
-        sellapp.baseClient.runCancellable {
-            search(search, status, requestOptions)
-        }
-
-    /**
-     * Coroutine-aware variant of [searchWithResponse]. Use this from a `suspend` function or
-     * coroutine scope.
-     *
-     * Delegates to the blocking [searchWithResponse] under `withContext(Dispatchers.IO)`, so this
-     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
-     */
-    @JvmName("searchWithResponseSuspend")
-    suspend fun searchWithResponseSuspend(
-        search: String? = null,
-        status: String? = null,
-        requestOptions: RequestOptions? = null,
-    ): RawResponse<Page<SearchSubscriptionsResponseValue200ApplicationJsonPropertyDataItem>> =
-        sellapp.baseClient.runCancellable {
-            searchWithResponse(search, status, requestOptions)
-        }
-
-    /**
-     * Retrieve a subscription
-     *
-     * Retrieve by SellApp subscription record ID. OAuth callers use the admin grant and select a
-     * store with X-STORE. Current membership and role permissions apply to every request.
-     *
-     * @param productSubscription The productSubscription identifier.
-     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
-     * @return the SdkGetSubscriptionResponseValue200ApplicationJson
-     */
-    @JvmOverloads
-    fun get(
-        productSubscription: String,
-        requestOptions: RequestOptions? = null,
-    ): SdkGetSubscriptionResponseValue200ApplicationJson {
-        val config =
-            RequestConfig(
-                method = "GET",
-                path = "/v2/subscriptions/${encodePathSegment(productSubscription)}",
-                requestOptions = requestOptions,
-                responseSchema =
-                    app.sell.sellapp.models.SdkGetSubscriptionResponseValue200ApplicationJson
-                        .runtimeSchema,
-                operationId = "getSubscription",
-                supportsIdempotency = false,
-            )
-        return sellapp.baseClient.request(
-            config,
-            SdkGetSubscriptionResponseValue200ApplicationJson::class.java,
-        )
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun getWithResponse(
-        productSubscription: String,
-        requestOptions: RequestOptions? = null,
-    ): RawResponse<SdkGetSubscriptionResponseValue200ApplicationJson> {
-        var captured: RawResponse<Any?>? = null
-        val capturingOptions =
-            (requestOptions?.copy() ?: RequestOptions()).also { options ->
-                options.responseCapture = { response -> captured = response }
-            }
-        get(productSubscription, capturingOptions)
-        return captured as? RawResponse<SdkGetSubscriptionResponseValue200ApplicationJson>
-            ?: error("Response metadata was not captured")
-    }
-
-    /**
-     * Coroutine-aware variant of [get]. Use this from a `suspend` function or coroutine scope.
-     *
-     * Delegates to the blocking [get] under `withContext(Dispatchers.IO)`, so this is safe to call
-     * from any coroutine dispatcher (including `Dispatchers.Main`).
-     */
-    @JvmName("getSuspend")
-    suspend fun getSuspend(
-        productSubscription: String,
-        requestOptions: RequestOptions? = null,
-    ): SdkGetSubscriptionResponseValue200ApplicationJson =
-        sellapp.baseClient.runCancellable {
-            get(productSubscription, requestOptions)
-        }
-
-    /**
-     * Coroutine-aware variant of [getWithResponse]. Use this from a `suspend` function or coroutine
-     * scope.
-     *
-     * Delegates to the blocking [getWithResponse] under `withContext(Dispatchers.IO)`, so this is
-     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
-     */
-    @JvmName("getWithResponseSuspend")
-    suspend fun getWithResponseSuspend(
-        productSubscription: String,
-        requestOptions: RequestOptions? = null,
-    ): RawResponse<SdkGetSubscriptionResponseValue200ApplicationJson> =
-        sellapp.baseClient.runCancellable {
-            getWithResponse(productSubscription, requestOptions)
         }
 }

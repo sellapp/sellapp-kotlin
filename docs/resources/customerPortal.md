@@ -200,14 +200,14 @@ List customer subscriptions
 ```kotlin
 fun listSubscriptions(
         requestOptions: RequestOptions? = null
-    ): SdkListCustomerPortalSubscriptionsResponseValue200ApplicationJson
+    ): Page<CustomerPortalSubscription>
 ```
 
 | Argument | Native type | Required |
 | --- | --- | --- |
 | requestOptions | `RequestOptions?` | No |
 
-Returns: `SdkListCustomerPortalSubscriptionsResponseValue200ApplicationJson`.
+Returns: `Page<CustomerPortalSubscription>`.
 
 ```kt
 import app.sell.sellapp.SellApp
@@ -384,10 +384,6 @@ Cancel at period end
 ```kotlin
 fun cancelSubscriptionAtPeriodEnd(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCancelCustomerSubscriptionAtPeriodEndResponseValue200ApplicationJson
@@ -396,10 +392,6 @@ fun cancelSubscriptionAtPeriodEnd(
 | Argument | Native type | Required |
 | --- | --- | --- |
 | productSubscription | `String` | Yes |
-| previewId | `String?` | No |
-| productVariantId | `Long?` | No |
-| renewalDate | `String?` | No |
-| returnUrl | `String?` | No |
 | reason | `String?` | No |
 | requestOptions | `RequestOptions?` | No |
 
@@ -411,7 +403,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), customerSession = System.getenv("SELLAPP_CUSTOMER_SESSION"), store = "")
-    val result = client.customerPortal.cancelSubscriptionAtPeriodEnd(productSubscription = "42", reason = "Customer requested this change", requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
+    val result = client.customerPortal.cancelSubscriptionAtPeriodEnd(productSubscription = "42", reason = "Taking a break over the summer.")
     println(result)
 }
 ```
@@ -441,10 +433,6 @@ Cancel immediately
 ```kotlin
 fun cancelSubscriptionImmediately(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCancelCustomerSubscriptionImmediatelyResponseValue200ApplicationJson
@@ -453,10 +441,6 @@ fun cancelSubscriptionImmediately(
 | Argument | Native type | Required |
 | --- | --- | --- |
 | productSubscription | `String` | Yes |
-| previewId | `String?` | No |
-| productVariantId | `Long?` | No |
-| renewalDate | `String?` | No |
-| returnUrl | `String?` | No |
 | reason | `String?` | No |
 | requestOptions | `RequestOptions?` | No |
 
@@ -468,7 +452,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), customerSession = System.getenv("SELLAPP_CUSTOMER_SESSION"), store = "")
-    val result = client.customerPortal.cancelSubscriptionImmediately(productSubscription = "42", reason = "Customer requested this change", requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
+    val result = client.customerPortal.cancelSubscriptionImmediately(productSubscription = "42", reason = "No longer needed.")
     println(result)
 }
 ```
@@ -498,10 +482,7 @@ Pause a subscription
 ```kotlin
 fun pauseSubscription(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        resumeAt: OffsetDateTime? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkPauseCustomerSubscriptionResponseValue200ApplicationJson
@@ -510,10 +491,7 @@ fun pauseSubscription(
 | Argument | Native type | Required |
 | --- | --- | --- |
 | productSubscription | `String` | Yes |
-| previewId | `String?` | No |
-| productVariantId | `Long?` | No |
-| renewalDate | `String?` | No |
-| returnUrl | `String?` | No |
+| resumeAt | `OffsetDateTime?` | No |
 | reason | `String?` | No |
 | requestOptions | `RequestOptions?` | No |
 
@@ -525,7 +503,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), customerSession = System.getenv("SELLAPP_CUSTOMER_SESSION"), store = "")
-    val result = client.customerPortal.pauseSubscription(productSubscription = "42", reason = "Customer requested this change", requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
+    val result = client.customerPortal.pauseSubscription(productSubscription = "42", resumeAt = java.time.OffsetDateTime.parse("2026-11-01T00:00:00Z"))
     println(result)
 }
 ```
@@ -555,11 +533,6 @@ Resume a subscription
 ```kotlin
 fun resumeSubscription(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkResumeCustomerSubscriptionResponseValue200ApplicationJson
 ```
@@ -567,11 +540,6 @@ fun resumeSubscription(
 | Argument | Native type | Required |
 | --- | --- | --- |
 | productSubscription | `String` | Yes |
-| previewId | `String?` | No |
-| productVariantId | `Long?` | No |
-| renewalDate | `String?` | No |
-| returnUrl | `String?` | No |
-| reason | `String?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkResumeCustomerSubscriptionResponseValue200ApplicationJson`.
@@ -582,7 +550,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), customerSession = System.getenv("SELLAPP_CUSTOMER_SESSION"), store = "")
-    val result = client.customerPortal.resumeSubscription(productSubscription = "42", reason = "Customer requested this change", requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
+    val result = client.customerPortal.resumeSubscription(productSubscription = "42")
     println(result)
 }
 ```
@@ -612,11 +580,7 @@ Update payment method
 ```kotlin
 fun updateSubscriptionPaymentMethod(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
         returnUrl: String? = null,
-        reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateCustomerSubscriptionPaymentMethodResponseValue200ApplicationJson
 ```
@@ -624,11 +588,7 @@ fun updateSubscriptionPaymentMethod(
 | Argument | Native type | Required |
 | --- | --- | --- |
 | productSubscription | `String` | Yes |
-| previewId | `String?` | No |
-| productVariantId | `Long?` | No |
-| renewalDate | `String?` | No |
 | returnUrl | `String?` | No |
-| reason | `String?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkUpdateCustomerSubscriptionPaymentMethodResponseValue200ApplicationJson`.
@@ -639,7 +599,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), customerSession = System.getenv("SELLAPP_CUSTOMER_SESSION"), store = "")
-    val result = client.customerPortal.updateSubscriptionPaymentMethod(productSubscription = "42", reason = "Customer requested this change", requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
+    val result = client.customerPortal.updateSubscriptionPaymentMethod(productSubscription = "42", returnUrl = "https://acme.sell.app/customer-portal/subscriptions/991")
     println(result)
 }
 ```
@@ -669,11 +629,14 @@ Preview a plan change
 ```kotlin
 fun previewSubscriptionPlanChange(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
+        targetVariantId: Long,
+        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =
+            null,
+        prorationBehavior:
+            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =
+            null,
+        metadata: PreviewCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): SdkPreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJson
 ```
@@ -681,11 +644,10 @@ fun previewSubscriptionPlanChange(
 | Argument | Native type | Required |
 | --- | --- | --- |
 | productSubscription | `String` | Yes |
-| previewId | `String?` | No |
-| productVariantId | `Long?` | No |
-| renewalDate | `String?` | No |
-| returnUrl | `String?` | No |
-| reason | `String?` | No |
+| targetVariantId | `Long` | Yes |
+| effectiveTiming | `SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming?` | No |
+| prorationBehavior | `SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior?` | No |
+| metadata | `PreviewCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkPreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJson`.
@@ -696,7 +658,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), customerSession = System.getenv("SELLAPP_CUSTOMER_SESSION"), store = "")
-    val result = client.customerPortal.previewSubscriptionPlanChange(productSubscription = "42", productVariantId = 84L, requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
+    val result = client.customerPortal.previewSubscriptionPlanChange(productSubscription = "42", targetVariantId = 97L)
     println(result)
 }
 ```
@@ -726,11 +688,15 @@ Confirm a plan change
 ```kotlin
 fun confirmSubscriptionPlanChange(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
+        targetVariantId: Long,
+        previewToken: String,
+        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =
+            null,
+        prorationBehavior:
+            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =
+            null,
+        metadata: ConfirmCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): SdkConfirmCustomerSubscriptionPlanChangeResponseValue200ApplicationJson
 ```
@@ -738,11 +704,11 @@ fun confirmSubscriptionPlanChange(
 | Argument | Native type | Required |
 | --- | --- | --- |
 | productSubscription | `String` | Yes |
-| previewId | `String?` | No |
-| productVariantId | `Long?` | No |
-| renewalDate | `String?` | No |
-| returnUrl | `String?` | No |
-| reason | `String?` | No |
+| targetVariantId | `Long` | Yes |
+| previewToken | `String` | Yes |
+| effectiveTiming | `SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming?` | No |
+| prorationBehavior | `SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior?` | No |
+| metadata | `ConfirmCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkConfirmCustomerSubscriptionPlanChangeResponseValue200ApplicationJson`.
@@ -753,7 +719,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), customerSession = System.getenv("SELLAPP_CUSTOMER_SESSION"), store = "")
-    val result = client.customerPortal.confirmSubscriptionPlanChange(productSubscription = "42", previewId = "preview_01K4", requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
+    val result = client.customerPortal.confirmSubscriptionPlanChange(productSubscription = "42", targetVariantId = 97L, previewToken = "subprev_portal_991")
     println(result)
 }
 ```
@@ -783,11 +749,11 @@ Preview a renewal-date change
 ```kotlin
 fun previewSubscriptionRenewalDateChange(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        renewalDate: OffsetDateTime,
         reason: String? = null,
+        metadata:
+            PreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): SdkPreviewCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson
 ```
@@ -795,11 +761,9 @@ fun previewSubscriptionRenewalDateChange(
 | Argument | Native type | Required |
 | --- | --- | --- |
 | productSubscription | `String` | Yes |
-| previewId | `String?` | No |
-| productVariantId | `Long?` | No |
-| renewalDate | `String?` | No |
-| returnUrl | `String?` | No |
+| renewalDate | `OffsetDateTime` | Yes |
 | reason | `String?` | No |
+| metadata | `PreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkPreviewCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson`.
@@ -810,7 +774,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), customerSession = System.getenv("SELLAPP_CUSTOMER_SESSION"), store = "")
-    val result = client.customerPortal.previewSubscriptionRenewalDateChange(productSubscription = "42", renewalDate = "2026-10-15", requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
+    val result = client.customerPortal.previewSubscriptionRenewalDateChange(productSubscription = "42", renewalDate = java.time.OffsetDateTime.parse("2026-10-15T00:00:00Z"))
     println(result)
 }
 ```
@@ -840,11 +804,12 @@ Confirm a renewal-date change
 ```kotlin
 fun confirmSubscriptionRenewalDateChange(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        renewalDate: OffsetDateTime,
+        previewToken: String? = null,
         reason: String? = null,
+        metadata:
+            ConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): SdkConfirmCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson
 ```
@@ -852,11 +817,10 @@ fun confirmSubscriptionRenewalDateChange(
 | Argument | Native type | Required |
 | --- | --- | --- |
 | productSubscription | `String` | Yes |
-| previewId | `String?` | No |
-| productVariantId | `Long?` | No |
-| renewalDate | `String?` | No |
-| returnUrl | `String?` | No |
+| renewalDate | `OffsetDateTime` | Yes |
+| previewToken | `String?` | No |
 | reason | `String?` | No |
+| metadata | `ConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkConfirmCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson`.
@@ -867,7 +831,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), customerSession = System.getenv("SELLAPP_CUSTOMER_SESSION"), store = "")
-    val result = client.customerPortal.confirmSubscriptionRenewalDateChange(productSubscription = "42", previewId = "preview_01K4", requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
+    val result = client.customerPortal.confirmSubscriptionRenewalDateChange(productSubscription = "42", renewalDate = java.time.OffsetDateTime.parse("2026-10-15T00:00:00Z"), previewToken = "subprev_portal_renewal_991")
     println(result)
 }
 ```

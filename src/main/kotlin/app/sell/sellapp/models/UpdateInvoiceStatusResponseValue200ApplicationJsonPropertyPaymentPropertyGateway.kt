@@ -15,8 +15,12 @@ data class UpdateInvoiceStatusResponseValue200ApplicationJsonPropertyPaymentProp
     val data:
         UpdateInvoiceStatusResponseValue200ApplicationJsonPropertyPaymentPropertyGatewayPropertyData,
 
-    /** The type. */
-    @JsonProperty("type") val type: String,
+    /**
+     * The payment method, or `null` for an invoice that costs nothing. A free trial sold through
+     * Stripe, PayPal, or Razorpay keeps its payment method, because that provider bills the plan
+     * once the trial ends.
+     */
+    @JsonProperty("type") val type: String?,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -29,7 +33,7 @@ data class UpdateInvoiceStatusResponseValue200ApplicationJsonPropertyPaymentProp
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"UpdateInvoiceStatusResponseValue200ApplicationJsonPropertyPaymentPropertyGateway\",\"properties\":{\"data\":{\"kind\":\"object\",\"modelName\":\"UpdateInvoiceStatusResponseValue200ApplicationJsonPropertyPaymentPropertyGatewayPropertyData\",\"properties\":{},\"required\":[],\"additionalProperties\":true},\"type\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"data\",\"type\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"UpdateInvoiceStatusResponseValue200ApplicationJsonPropertyPaymentPropertyGateway\",\"properties\":{\"data\":{\"kind\":\"object\",\"modelName\":\"UpdateInvoiceStatusResponseValue200ApplicationJsonPropertyPaymentPropertyGatewayPropertyData\",\"properties\":{},\"required\":[],\"additionalProperties\":true},\"type\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}}},\"required\":[\"data\",\"type\"],\"additionalProperties\":true}"
             )
     }
 }

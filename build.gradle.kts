@@ -8,7 +8,7 @@ plugins {
 
 group = "app.sell"
 
-version = "0.1.1"
+version = "0.2.0"
 
 repositories { mavenCentral() }
 
@@ -78,7 +78,7 @@ publishing {
                     developerConnection.set(
                         "scm:git:ssh://git@github.com/sellapp/sellapp-kotlin.git"
                     )
-                    tag.set("v0.1.1")
+                    tag.set("v0.2.0")
                 }
                 developers {
                     developer {

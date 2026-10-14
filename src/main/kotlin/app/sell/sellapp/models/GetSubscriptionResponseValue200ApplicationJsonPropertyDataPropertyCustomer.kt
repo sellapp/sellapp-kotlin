@@ -26,9 +26,7 @@ data class GetSubscriptionResponseValue200ApplicationJsonPropertyDataPropertyCus
     @JsonProperty("locale") val locale: String?,
 
     /** The metadata. */
-    @JsonProperty("metadata")
-    val metadata:
-        GetSubscriptionResponseValue200ApplicationJsonPropertyDataPropertyCustomerPropertyMetadata,
+    @JsonProperty("metadata") val metadata: Map<String, ScalarMetadataValue>,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -41,7 +39,7 @@ data class GetSubscriptionResponseValue200ApplicationJsonPropertyDataPropertyCus
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"GetSubscriptionResponseValue200ApplicationJsonPropertyDataPropertyCustomer\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"email\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"email\"},\"external_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}},\"name\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}},\"locale\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"pattern\":\"^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*\$\"}}},\"metadata\":{\"kind\":\"object\",\"modelName\":\"GetSubscriptionResponseValue200ApplicationJsonPropertyDataPropertyCustomerPropertyMetadata\",\"properties\":{},\"required\":[],\"additionalProperties\":{\"kind\":\"object\",\"modelName\":\"ScalarMetadataValue\",\"properties\":{},\"required\":[],\"additionalProperties\":true},\"constraints\":{\"maxProperties\":50}}},\"required\":[\"id\",\"email\",\"external_id\",\"name\",\"locale\",\"metadata\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"GetSubscriptionResponseValue200ApplicationJsonPropertyDataPropertyCustomer\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"email\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"email\"},\"external_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}},\"name\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}},\"locale\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"pattern\":\"^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*\$\"}}},\"metadata\":{\"kind\":\"map\",\"items\":{\"kind\":\"object\",\"modelName\":\"ScalarMetadataValue\",\"properties\":{},\"required\":[],\"additionalProperties\":true},\"constraints\":{\"maxProperties\":50}}},\"required\":[\"id\",\"email\",\"external_id\",\"name\",\"locale\",\"metadata\"],\"additionalProperties\":true}"
             )
     }
 }

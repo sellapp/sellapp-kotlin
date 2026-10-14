@@ -27,6 +27,7 @@ import app.sell.sellapp.models.SearchPromotionsRequestApplicationJsonPropertyInc
 import app.sell.sellapp.models.SearchPromotionsRequestApplicationJsonPropertySearch
 import app.sell.sellapp.models.SearchPromotionsRequestApplicationJsonPropertySortItem
 import app.sell.sellapp.models.UpdatePromotionRequestApplicationJsonPropertyPhasesItem
+import app.sell.sellapp.types.SdkCreateCouponRequestApplicationJsonAppliesTo
 import app.sell.sellapp.types.SdkCreatePromotionRequestApplicationJsonStatus
 import com.fasterxml.jackson.core.type.TypeReference
 import java.time.OffsetDateTime
@@ -136,7 +137,10 @@ class Promotions(internal val sellapp: SellApp) {
     /**
      * Create a promotion
      *
-     * Create a promotion and its initial ordered phase set. OAuth callers use the admin grant and
+     * Create a promotion and its initial ordered phase set. `applies_to` chooses whether it
+     * discounts one-time purchases or the first `subscription_payments` payments of a subscription
+     * plan, and a subscription promotion can be limited to picked products and plans with
+     * `store_wide`, `products`, and `product_variants`. OAuth callers use the admin grant and
      * select a store with X-STORE. Current membership and role permissions apply to every request.
      *
      * @param name the name of the request.
@@ -148,6 +152,32 @@ class Promotions(internal val sellapp: SellApp) {
      * @param endsAt A date and time after starts_at and after the current time, or null for no end
      *   date.
      * @param maxRedemptions the max redemptions of the request.
+     * @param appliesTo What the promotion discounts: `one_time` for one-time purchases, or
+     *   `subscriptions` for the first payments of a subscription plan. A new promotion defaults to
+     *   `one_time`, and an update that leaves this out keeps the current kind. The promotion only
+     *   discounts order lines of its kind.
+     * @param subscriptionPayments How many payments a `subscriptions` promotion discounts, counting
+     *   the signup payment as the first, so `3` discounts the signup and the next two renewals. A
+     *   `subscriptions` promotion needs one, and an update that leaves it out keeps the stored
+     *   number. Missing on a `subscriptions` promotion, or outside 1 to 36, it returns `422` on
+     *   `subscription_payments` with `The number of discounted payments must be between 1 and 36.`
+     *   A `one_time` promotion always stores null here.
+     * @param storeWide Send `false` with `products` to limit a `subscriptions` promotion to picked
+     *   products and plans. Required whenever the request sends `products` or `product_variants`. A
+     *   new promotion defaults to `true`, an update that leaves it out keeps the current scope, and
+     *   switching a promotion to `one_time` makes it store-wide again. A `one_time` promotion with
+     *   `false` returns `422` on `store_wide` with `A promotion for one-time purchases applies to
+     *   the whole store.`
+     * @param products Product IDs a narrowed subscription promotion reaches. Each one must sell a
+     *   subscription, or the request returns `422` on `products` with `Pick only products that sell
+     *   a subscription.` A narrowed promotion left with no products returns `422` with `Pick at
+     *   least one subscription product for this promotion.` An update replaces the picks with this
+     *   list, or keeps them when it is left out.
+     * @param productVariants Subscription plan IDs to limit the picked products to. Each one must
+     *   be a subscription plan of a product in `products`, or the request returns `422` on
+     *   `product_variants` with `Pick only subscription plans of the picked products.` A picked
+     *   product with none of its plans listed takes every plan, including plans added later. An
+     *   update that leaves this out keeps the listed plans of products that stay picked.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkCreatePromotionResponseValue201ApplicationJson
      */
@@ -161,6 +191,11 @@ class Promotions(internal val sellapp: SellApp) {
         startsAt: OffsetDateTime? = null,
         endsAt: OffsetDateTime? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCreatePromotionResponseValue201ApplicationJson {
         val body =
@@ -173,6 +208,11 @@ class Promotions(internal val sellapp: SellApp) {
                 "starts_at" to startsAt,
                 "ends_at" to endsAt,
                 "max_redemptions" to maxRedemptions,
+                "applies_to" to appliesTo,
+                "subscription_payments" to subscriptionPayments,
+                "store_wide" to storeWide,
+                "products" to products,
+                "product_variants" to productVariants,
             )
         body["name"] = name
         body["status"] = status
@@ -209,6 +249,11 @@ class Promotions(internal val sellapp: SellApp) {
         startsAt: OffsetDateTime? = null,
         endsAt: OffsetDateTime? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkCreatePromotionResponseValue201ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -225,6 +270,11 @@ class Promotions(internal val sellapp: SellApp) {
             startsAt,
             endsAt,
             maxRedemptions,
+            appliesTo,
+            subscriptionPayments,
+            storeWide,
+            products,
+            productVariants,
             capturingOptions,
         )
         return captured as? RawResponse<SdkCreatePromotionResponseValue201ApplicationJson>
@@ -247,6 +297,11 @@ class Promotions(internal val sellapp: SellApp) {
         startsAt: OffsetDateTime? = null,
         endsAt: OffsetDateTime? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCreatePromotionResponseValue201ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -259,6 +314,11 @@ class Promotions(internal val sellapp: SellApp) {
                 startsAt,
                 endsAt,
                 maxRedemptions,
+                appliesTo,
+                subscriptionPayments,
+                storeWide,
+                products,
+                productVariants,
                 requestOptions,
             )
         }
@@ -280,6 +340,11 @@ class Promotions(internal val sellapp: SellApp) {
         startsAt: OffsetDateTime? = null,
         endsAt: OffsetDateTime? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkCreatePromotionResponseValue201ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -292,6 +357,11 @@ class Promotions(internal val sellapp: SellApp) {
                 startsAt,
                 endsAt,
                 maxRedemptions,
+                appliesTo,
+                subscriptionPayments,
+                storeWide,
+                products,
+                productVariants,
                 requestOptions,
             )
         }
@@ -513,6 +583,32 @@ class Promotions(internal val sellapp: SellApp) {
      * @param priority the priority of the request.
      * @param isStackable the is stackable of the request.
      * @param maxRedemptions the max redemptions of the request.
+     * @param appliesTo What the promotion discounts: `one_time` for one-time purchases, or
+     *   `subscriptions` for the first payments of a subscription plan. A new promotion defaults to
+     *   `one_time`, and an update that leaves this out keeps the current kind. The promotion only
+     *   discounts order lines of its kind.
+     * @param subscriptionPayments How many payments a `subscriptions` promotion discounts, counting
+     *   the signup payment as the first, so `3` discounts the signup and the next two renewals. A
+     *   `subscriptions` promotion needs one, and an update that leaves it out keeps the stored
+     *   number. Missing on a `subscriptions` promotion, or outside 1 to 36, it returns `422` on
+     *   `subscription_payments` with `The number of discounted payments must be between 1 and 36.`
+     *   A `one_time` promotion always stores null here.
+     * @param storeWide Send `false` with `products` to limit a `subscriptions` promotion to picked
+     *   products and plans. Required whenever the request sends `products` or `product_variants`. A
+     *   new promotion defaults to `true`, an update that leaves it out keeps the current scope, and
+     *   switching a promotion to `one_time` makes it store-wide again. A `one_time` promotion with
+     *   `false` returns `422` on `store_wide` with `A promotion for one-time purchases applies to
+     *   the whole store.`
+     * @param products Product IDs a narrowed subscription promotion reaches. Each one must sell a
+     *   subscription, or the request returns `422` on `products` with `Pick only products that sell
+     *   a subscription.` A narrowed promotion left with no products returns `422` with `Pick at
+     *   least one subscription product for this promotion.` An update replaces the picks with this
+     *   list, or keeps them when it is left out.
+     * @param productVariants Subscription plan IDs to limit the picked products to. Each one must
+     *   be a subscription plan of a product in `products`, or the request returns `422` on
+     *   `product_variants` with `Pick only subscription plans of the picked products.` A picked
+     *   product with none of its plans listed takes every plan, including plans added later. An
+     *   update that leaves this out keeps the listed plans of products that stay picked.
      * @param phases The complete ordered phase set. Array order becomes phase position.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkReplacePromotionResponseValue200ApplicationJson
@@ -527,6 +623,11 @@ class Promotions(internal val sellapp: SellApp) {
         priority: Long? = null,
         isStackable: Boolean? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         phases: List<ReplacePromotionRequestApplicationJsonPropertyPhasesItem>? = null,
         requestOptions: RequestOptions? = null,
     ): SdkReplacePromotionResponseValue200ApplicationJson {
@@ -539,6 +640,11 @@ class Promotions(internal val sellapp: SellApp) {
                 "priority" to priority,
                 "is_stackable" to isStackable,
                 "max_redemptions" to maxRedemptions,
+                "applies_to" to appliesTo,
+                "subscription_payments" to subscriptionPayments,
+                "store_wide" to storeWide,
+                "products" to products,
+                "product_variants" to productVariants,
                 "phases" to phases,
             )
         val config =
@@ -571,6 +677,11 @@ class Promotions(internal val sellapp: SellApp) {
         priority: Long? = null,
         isStackable: Boolean? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         phases: List<ReplacePromotionRequestApplicationJsonPropertyPhasesItem>? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkReplacePromotionResponseValue200ApplicationJson> {
@@ -588,6 +699,11 @@ class Promotions(internal val sellapp: SellApp) {
             priority,
             isStackable,
             maxRedemptions,
+            appliesTo,
+            subscriptionPayments,
+            storeWide,
+            products,
+            productVariants,
             phases,
             capturingOptions,
         )
@@ -611,6 +727,11 @@ class Promotions(internal val sellapp: SellApp) {
         priority: Long? = null,
         isStackable: Boolean? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         phases: List<ReplacePromotionRequestApplicationJsonPropertyPhasesItem>? = null,
         requestOptions: RequestOptions? = null,
     ): SdkReplacePromotionResponseValue200ApplicationJson =
@@ -624,6 +745,11 @@ class Promotions(internal val sellapp: SellApp) {
                 priority,
                 isStackable,
                 maxRedemptions,
+                appliesTo,
+                subscriptionPayments,
+                storeWide,
+                products,
+                productVariants,
                 phases,
                 requestOptions,
             )
@@ -646,6 +772,11 @@ class Promotions(internal val sellapp: SellApp) {
         priority: Long? = null,
         isStackable: Boolean? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         phases: List<ReplacePromotionRequestApplicationJsonPropertyPhasesItem>? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkReplacePromotionResponseValue200ApplicationJson> =
@@ -659,6 +790,11 @@ class Promotions(internal val sellapp: SellApp) {
                 priority,
                 isStackable,
                 maxRedemptions,
+                appliesTo,
+                subscriptionPayments,
+                storeWide,
+                products,
+                productVariants,
                 phases,
                 requestOptions,
             )
@@ -680,6 +816,32 @@ class Promotions(internal val sellapp: SellApp) {
      * @param priority the priority of the request.
      * @param isStackable the is stackable of the request.
      * @param maxRedemptions the max redemptions of the request.
+     * @param appliesTo What the promotion discounts: `one_time` for one-time purchases, or
+     *   `subscriptions` for the first payments of a subscription plan. A new promotion defaults to
+     *   `one_time`, and an update that leaves this out keeps the current kind. The promotion only
+     *   discounts order lines of its kind.
+     * @param subscriptionPayments How many payments a `subscriptions` promotion discounts, counting
+     *   the signup payment as the first, so `3` discounts the signup and the next two renewals. A
+     *   `subscriptions` promotion needs one, and an update that leaves it out keeps the stored
+     *   number. Missing on a `subscriptions` promotion, or outside 1 to 36, it returns `422` on
+     *   `subscription_payments` with `The number of discounted payments must be between 1 and 36.`
+     *   A `one_time` promotion always stores null here.
+     * @param storeWide Send `false` with `products` to limit a `subscriptions` promotion to picked
+     *   products and plans. Required whenever the request sends `products` or `product_variants`. A
+     *   new promotion defaults to `true`, an update that leaves it out keeps the current scope, and
+     *   switching a promotion to `one_time` makes it store-wide again. A `one_time` promotion with
+     *   `false` returns `422` on `store_wide` with `A promotion for one-time purchases applies to
+     *   the whole store.`
+     * @param products Product IDs a narrowed subscription promotion reaches. Each one must sell a
+     *   subscription, or the request returns `422` on `products` with `Pick only products that sell
+     *   a subscription.` A narrowed promotion left with no products returns `422` with `Pick at
+     *   least one subscription product for this promotion.` An update replaces the picks with this
+     *   list, or keeps them when it is left out.
+     * @param productVariants Subscription plan IDs to limit the picked products to. Each one must
+     *   be a subscription plan of a product in `products`, or the request returns `422` on
+     *   `product_variants` with `Pick only subscription plans of the picked products.` A picked
+     *   product with none of its plans listed takes every plan, including plans added later. An
+     *   update that leaves this out keeps the listed plans of products that stay picked.
      * @param phases The complete ordered phase set. Array order becomes phase position.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkUpdatePromotionResponseValue200ApplicationJson
@@ -694,6 +856,11 @@ class Promotions(internal val sellapp: SellApp) {
         priority: PatchField<Long> = PatchField.Absent,
         isStackable: PatchField<Boolean> = PatchField.Absent,
         maxRedemptions: PatchField<Long?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
+        storeWide: PatchField<Boolean> = PatchField.Absent,
+        products: PatchField<List<Long>> = PatchField.Absent,
+        productVariants: PatchField<List<Long>> = PatchField.Absent,
         phases: PatchField<List<UpdatePromotionRequestApplicationJsonPropertyPhasesItem>> =
             PatchField.Absent,
         requestOptions: RequestOptions? = null,
@@ -707,6 +874,11 @@ class Promotions(internal val sellapp: SellApp) {
                 "priority" to priority,
                 "is_stackable" to isStackable,
                 "max_redemptions" to maxRedemptions,
+                "applies_to" to appliesTo,
+                "subscription_payments" to subscriptionPayments,
+                "store_wide" to storeWide,
+                "products" to products,
+                "product_variants" to productVariants,
                 "phases" to phases,
             )
         val config =
@@ -739,6 +911,11 @@ class Promotions(internal val sellapp: SellApp) {
         priority: PatchField<Long> = PatchField.Absent,
         isStackable: PatchField<Boolean> = PatchField.Absent,
         maxRedemptions: PatchField<Long?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
+        storeWide: PatchField<Boolean> = PatchField.Absent,
+        products: PatchField<List<Long>> = PatchField.Absent,
+        productVariants: PatchField<List<Long>> = PatchField.Absent,
         phases: PatchField<List<UpdatePromotionRequestApplicationJsonPropertyPhasesItem>> =
             PatchField.Absent,
         requestOptions: RequestOptions? = null,
@@ -757,6 +934,11 @@ class Promotions(internal val sellapp: SellApp) {
             priority,
             isStackable,
             maxRedemptions,
+            appliesTo,
+            subscriptionPayments,
+            storeWide,
+            products,
+            productVariants,
             phases,
             capturingOptions,
         )
@@ -780,6 +962,11 @@ class Promotions(internal val sellapp: SellApp) {
         priority: PatchField<Long> = PatchField.Absent,
         isStackable: PatchField<Boolean> = PatchField.Absent,
         maxRedemptions: PatchField<Long?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
+        storeWide: PatchField<Boolean> = PatchField.Absent,
+        products: PatchField<List<Long>> = PatchField.Absent,
+        productVariants: PatchField<List<Long>> = PatchField.Absent,
         phases: PatchField<List<UpdatePromotionRequestApplicationJsonPropertyPhasesItem>> =
             PatchField.Absent,
         requestOptions: RequestOptions? = null,
@@ -794,6 +981,11 @@ class Promotions(internal val sellapp: SellApp) {
                 priority,
                 isStackable,
                 maxRedemptions,
+                appliesTo,
+                subscriptionPayments,
+                storeWide,
+                products,
+                productVariants,
                 phases,
                 requestOptions,
             )
@@ -816,6 +1008,11 @@ class Promotions(internal val sellapp: SellApp) {
         priority: PatchField<Long> = PatchField.Absent,
         isStackable: PatchField<Boolean> = PatchField.Absent,
         maxRedemptions: PatchField<Long?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
+        storeWide: PatchField<Boolean> = PatchField.Absent,
+        products: PatchField<List<Long>> = PatchField.Absent,
+        productVariants: PatchField<List<Long>> = PatchField.Absent,
         phases: PatchField<List<UpdatePromotionRequestApplicationJsonPropertyPhasesItem>> =
             PatchField.Absent,
         requestOptions: RequestOptions? = null,
@@ -830,6 +1027,11 @@ class Promotions(internal val sellapp: SellApp) {
                 priority,
                 isStackable,
                 maxRedemptions,
+                appliesTo,
+                subscriptionPayments,
+                storeWide,
+                products,
+                productVariants,
                 phases,
                 requestOptions,
             )
@@ -927,6 +1129,32 @@ class Promotions(internal val sellapp: SellApp) {
      * @param endsAt A date and time after starts_at and after the current time, or null for no end
      *   date.
      * @param maxRedemptions the max redemptions of the request.
+     * @param appliesTo What the promotion discounts: `one_time` for one-time purchases, or
+     *   `subscriptions` for the first payments of a subscription plan. A new promotion defaults to
+     *   `one_time`, and an update that leaves this out keeps the current kind. The promotion only
+     *   discounts order lines of its kind.
+     * @param subscriptionPayments How many payments a `subscriptions` promotion discounts, counting
+     *   the signup payment as the first, so `3` discounts the signup and the next two renewals. A
+     *   `subscriptions` promotion needs one, and an update that leaves it out keeps the stored
+     *   number. Missing on a `subscriptions` promotion, or outside 1 to 36, it returns `422` on
+     *   `subscription_payments` with `The number of discounted payments must be between 1 and 36.`
+     *   A `one_time` promotion always stores null here.
+     * @param storeWide Send `false` with `products` to limit a `subscriptions` promotion to picked
+     *   products and plans. Required whenever the request sends `products` or `product_variants`. A
+     *   new promotion defaults to `true`, an update that leaves it out keeps the current scope, and
+     *   switching a promotion to `one_time` makes it store-wide again. A `one_time` promotion with
+     *   `false` returns `422` on `store_wide` with `A promotion for one-time purchases applies to
+     *   the whole store.`
+     * @param products Product IDs a narrowed subscription promotion reaches. Each one must sell a
+     *   subscription, or the request returns `422` on `products` with `Pick only products that sell
+     *   a subscription.` A narrowed promotion left with no products returns `422` with `Pick at
+     *   least one subscription product for this promotion.` An update replaces the picks with this
+     *   list, or keeps them when it is left out.
+     * @param productVariants Subscription plan IDs to limit the picked products to. Each one must
+     *   be a subscription plan of a product in `products`, or the request returns `422` on
+     *   `product_variants` with `Pick only subscription plans of the picked products.` A picked
+     *   product with none of its plans listed takes every plan, including plans added later. An
+     *   update that leaves this out keeps the listed plans of products that stay picked.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkRestorePromotionResponseValue200ApplicationJson
      */
@@ -941,6 +1169,11 @@ class Promotions(internal val sellapp: SellApp) {
         startsAt: OffsetDateTime? = null,
         endsAt: OffsetDateTime? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         requestOptions: RequestOptions? = null,
     ): SdkRestorePromotionResponseValue200ApplicationJson {
         val body =
@@ -953,6 +1186,11 @@ class Promotions(internal val sellapp: SellApp) {
                 "starts_at" to startsAt,
                 "ends_at" to endsAt,
                 "max_redemptions" to maxRedemptions,
+                "applies_to" to appliesTo,
+                "subscription_payments" to subscriptionPayments,
+                "store_wide" to storeWide,
+                "products" to products,
+                "product_variants" to productVariants,
             )
         body["name"] = name
         body["status"] = status
@@ -990,6 +1228,11 @@ class Promotions(internal val sellapp: SellApp) {
         startsAt: OffsetDateTime? = null,
         endsAt: OffsetDateTime? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkRestorePromotionResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -1007,6 +1250,11 @@ class Promotions(internal val sellapp: SellApp) {
             startsAt,
             endsAt,
             maxRedemptions,
+            appliesTo,
+            subscriptionPayments,
+            storeWide,
+            products,
+            productVariants,
             capturingOptions,
         )
         return captured as? RawResponse<SdkRestorePromotionResponseValue200ApplicationJson>
@@ -1030,6 +1278,11 @@ class Promotions(internal val sellapp: SellApp) {
         startsAt: OffsetDateTime? = null,
         endsAt: OffsetDateTime? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         requestOptions: RequestOptions? = null,
     ): SdkRestorePromotionResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -1043,6 +1296,11 @@ class Promotions(internal val sellapp: SellApp) {
                 startsAt,
                 endsAt,
                 maxRedemptions,
+                appliesTo,
+                subscriptionPayments,
+                storeWide,
+                products,
+                productVariants,
                 requestOptions,
             )
         }
@@ -1065,6 +1323,11 @@ class Promotions(internal val sellapp: SellApp) {
         startsAt: OffsetDateTime? = null,
         endsAt: OffsetDateTime? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkRestorePromotionResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -1078,6 +1341,11 @@ class Promotions(internal val sellapp: SellApp) {
                 startsAt,
                 endsAt,
                 maxRedemptions,
+                appliesTo,
+                subscriptionPayments,
+                storeWide,
+                products,
+                productVariants,
                 requestOptions,
             )
         }

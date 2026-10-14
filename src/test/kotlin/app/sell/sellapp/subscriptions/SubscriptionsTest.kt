@@ -26,11 +26,11 @@ class SubscriptionsTest : TestBase() {
             "PATCH",
             "/v2/subscriptions/sample-arg/cancel",
             200,
-            "{\"data\": {\"id\": 0, \"invoice_id\": null, \"provider\": \"sample\", \"subscription_id\": \"sample\", \"customer_id\": " +
-                "\"sample\", \"customer_email\": \"sample\", \"status\": \"sample\", \"current_period_start\": \"2024-01-01T00:00:00Z\", " +
-                "\"current_period_end\": \"2024-01-01T00:00:00Z\", \"cancel_at_period_end\": false, \"cancellation_in_progress\": false, " +
-                "\"store_id\": 0, \"product_variant_id\": 0, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\"}," +
-                " \"message\": \"sample\"}",
+            "{\"data\": {\"id\": 0, \"invoice_id\": null, \"provider\": null, \"subscription_id\": null, \"customer_id\": null, " +
+                "\"provider_subscription_id\": null, \"provider_customer_id\": null, \"customer\": null, \"customer_email\": null, \"status\": " +
+                "\"ACTIVE\", \"current_period_start\": null, \"current_period_end\": null, \"cancel_at_period_end\": false, " +
+                "\"cancellation_in_progress\": false, \"store_id\": null, \"product_variant_id\": null, \"created_at\": \"2024-01-01T00:00:00Z\"," +
+                " \"updated_at\": \"2024-01-01T00:00:00Z\"}, \"message\": \"sample\"}",
         )
         val result = api().cancel("sample-arg", cancelAtPeriodEnd = false)
         assertNotNull(result)
@@ -39,6 +39,46 @@ class SubscriptionsTest : TestBase() {
             patchRequestedFor(urlPathMatching("/v2/subscriptions/sample-arg/cancel"))
                 .withRequestBody(matchingJsonPath("\$.cancel_at_period_end"))
         )
+    }
+
+    @Test
+    fun `list returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/subscriptions",
+            200,
+            "{\"data\": [], \"list_metadata\": {\"before\": null, \"after\": null}}",
+        )
+        val result = api().list()
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `search returns a typed response`() {
+        stubResponse(
+            "POST",
+            "/v2/subscriptions/search",
+            200,
+            "{\"data\": [], \"list_metadata\": {\"before\": null, \"after\": null}}",
+        )
+        val result = api().search()
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `get returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/subscriptions/sample-arg",
+            200,
+            "{\"data\": {\"id\": 0, \"invoice_id\": null, \"provider\": null, \"subscription_id\": null, \"customer_id\": null, " +
+                "\"provider_subscription_id\": null, \"provider_customer_id\": null, \"customer\": null, \"customer_email\": null, \"status\": " +
+                "\"ACTIVE\", \"current_period_start\": null, \"current_period_end\": null, \"cancel_at_period_end\": false, " +
+                "\"cancellation_in_progress\": false, \"store_id\": null, \"product_variant_id\": null, \"created_at\": \"2024-01-01T00:00:00Z\"," +
+                " \"updated_at\": \"2024-01-01T00:00:00Z\"}}",
+        )
+        val result = api().get("sample-arg")
+        assertNotNull(result)
     }
 
     @Test
@@ -80,6 +120,19 @@ class SubscriptionsTest : TestBase() {
     }
 
     @Test
+    fun `keep returns a typed response`() {
+        stubResponse(
+            "POST",
+            "/v2/subscriptions/sample-arg/actions/keep",
+            200,
+            "{\"data\": {}, \"message\": \"sample\"}",
+        )
+        val result = api().keep("sample-arg")
+        assertNotNull(result)
+        assertEquals("sample", result.message)
+    }
+
+    @Test
     fun `pause returns a typed response`() {
         stubResponse(
             "POST",
@@ -106,25 +159,29 @@ class SubscriptionsTest : TestBase() {
     }
 
     @Test
-    fun `updatePaymentMethod completes without throwing`() {
+    fun `updatePaymentMethod returns a typed response`() {
         stubResponse(
             "POST",
             "/v2/subscriptions/sample-arg/actions/update-payment-method",
             200,
-            "\"sample\"",
+            "{\"data\": {}, \"message\": \"sample\", \"redirect_url\": null}",
         )
-        api().updatePaymentMethod("sample-arg")
+        val result = api().updatePaymentMethod("sample-arg")
+        assertNotNull(result)
+        assertEquals("sample", result.message)
     }
 
     @Test
-    fun `previewPlanChange completes without throwing`() {
+    fun `previewPlanChange returns a typed response`() {
         stubResponse(
             "POST",
             "/v2/subscriptions/sample-arg/actions/change-plan/preview",
             200,
-            "\"sample\"",
+            "{\"data\": {}, \"message\": \"sample\"}",
         )
-        api().previewPlanChange("sample-arg", targetVariantId = 0)
+        val result = api().previewPlanChange("sample-arg", targetVariantId = 0)
+        assertNotNull(result)
+        assertEquals("sample", result.message)
         wireMockRule.verify(
             postRequestedFor(
                     urlPathMatching("/v2/subscriptions/sample-arg/actions/change-plan/preview")
@@ -134,14 +191,17 @@ class SubscriptionsTest : TestBase() {
     }
 
     @Test
-    fun `confirmPlanChange completes without throwing`() {
+    fun `confirmPlanChange returns a typed response`() {
         stubResponse(
             "POST",
             "/v2/subscriptions/sample-arg/actions/change-plan/confirm",
             200,
-            "\"sample\"",
+            "{\"data\": {}, \"message\": \"sample\"}",
         )
-        api().confirmPlanChange("sample-arg", targetVariantId = 0, previewToken = "sample-arg")
+        val result =
+            api().confirmPlanChange("sample-arg", targetVariantId = 0, previewToken = "sample-arg")
+        assertNotNull(result)
+        assertEquals("sample", result.message)
         wireMockRule.verify(
             postRequestedFor(
                     urlPathMatching("/v2/subscriptions/sample-arg/actions/change-plan/confirm")
@@ -191,43 +251,6 @@ class SubscriptionsTest : TestBase() {
                 )
                 .withRequestBody(matchingJsonPath("\$.renewal_date"))
         )
-    }
-
-    @Test
-    fun `list returns a typed response`() {
-        stubResponse(
-            "GET",
-            "/v2/subscriptions",
-            200,
-            "{\"data\": [], \"list_metadata\": {\"before\": null, \"after\": null}}",
-        )
-        val result = api().list()
-        assertNotNull(result)
-    }
-
-    @Test
-    fun `search returns a typed response`() {
-        stubResponse(
-            "POST",
-            "/v2/subscriptions/search",
-            200,
-            "{\"data\": [], \"list_metadata\": {\"before\": null, \"after\": null}}",
-        )
-        val result = api().search()
-        assertNotNull(result)
-    }
-
-    @Test
-    fun `get returns a typed response`() {
-        stubResponse(
-            "GET",
-            "/v2/subscriptions/sample-arg",
-            200,
-            "{\"data\": {\"id\": 0, \"status\": \"sample\", \"provider_subscription_id\": null, \"provider_customer_id\": null, " +
-                "\"customer\": {\"id\": 0, \"email\": \"sample\", \"external_id\": null, \"name\": null, \"locale\": null, \"metadata\": {}}}}",
-        )
-        val result = api().get("sample-arg")
-        assertNotNull(result)
     }
 
     @Test

@@ -44,7 +44,9 @@ class PromotionsTest : TestBase() {
             "GET",
             "/v2/promotions/sample-arg",
             200,
-            "{\"data\": {\"id\": 0, \"name\": \"sample\", \"status\": \"active\", \"priority\": 0, \"is_stackable\": false, \"phases\": []}}",
+            "{\"data\": {\"id\": 0, \"name\": \"sample\", \"status\": \"active\", \"priority\": 0, \"is_stackable\": false, \"applies_to\": " +
+                "\"one_time\", \"subscription_payments\": null, \"store_wide\": false, \"products\": [], \"product_variants\": [], \"phases\": " +
+                "[]}}",
         )
         val result = api().get("sample-arg")
         assertNotNull(result)
@@ -56,7 +58,9 @@ class PromotionsTest : TestBase() {
             "PUT",
             "/v2/promotions/sample-arg",
             200,
-            "{\"data\": {\"id\": 0, \"name\": \"sample\", \"status\": \"active\", \"priority\": 0, \"is_stackable\": false, \"phases\": []}}",
+            "{\"data\": {\"id\": 0, \"name\": \"sample\", \"status\": \"active\", \"priority\": 0, \"is_stackable\": false, \"applies_to\": " +
+                "\"one_time\", \"subscription_payments\": null, \"store_wide\": false, \"products\": [], \"product_variants\": [], \"phases\": " +
+                "[]}}",
         )
         val result = api().replace("sample-arg")
         assertNotNull(result)
@@ -68,7 +72,9 @@ class PromotionsTest : TestBase() {
             "PATCH",
             "/v2/promotions/sample-arg",
             200,
-            "{\"data\": {\"id\": 0, \"name\": \"sample\", \"status\": \"active\", \"priority\": 0, \"is_stackable\": false, \"phases\": []}}",
+            "{\"data\": {\"id\": 0, \"name\": \"sample\", \"status\": \"active\", \"priority\": 0, \"is_stackable\": false, \"applies_to\": " +
+                "\"one_time\", \"subscription_payments\": null, \"store_wide\": false, \"products\": [], \"product_variants\": [], \"phases\": " +
+                "[]}}",
         )
         val result = api().update("sample-arg")
         assertNotNull(result)
@@ -80,7 +86,7 @@ class PromotionsTest : TestBase() {
             "DELETE",
             "/v2/promotions/sample-arg",
             204,
-            "{\"data\": {\"id\": 0, \"name\": \"sample\", \"status\": \"active\", \"priority\": 0, \"is_stackable\": false, \"phases\": []}}",
+            "{\"data\": {\"id\": 0, \"name\": \"sample\", \"status\": \"active\", \"priority\": 0, \"is_stackable\": false, \"applies_to\": \"one_time\", \"subscription_payments\": null, \"store_wide\": false, \"products\": [], \"product_variants\": [], \"phases\": []}}",
         )
         api().delete("sample-arg")
     }

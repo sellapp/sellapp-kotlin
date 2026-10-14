@@ -15,8 +15,8 @@ data class SdkPauseSubscriptionRequestApplicationJson(
     @JsonProperty("idempotency_key") val idempotencyKey: String? = null,
 
     /**
-     * Use a future date-time at execution time. Automatic resume dates are supported only for
-     * Stripe; the shown date is illustrative.
+     * Use a future date-time at execution time. Automatic resume dates are supported by Stripe and
+     * by subscriptions the store bills in house; the shown date is illustrative.
      */
     @JsonProperty("resume_at") val resumeAt: OffsetDateTime? = null,
 

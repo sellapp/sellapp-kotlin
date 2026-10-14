@@ -2,6 +2,29 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SdkPauseCustomerSubscriptionRequestApplicationJson]. */
-typealias SdkUpdateCustomerSubscriptionPaymentMethodRequestApplicationJson =
-    SdkPauseCustomerSubscriptionRequestApplicationJson
+import app.sell.sellapp.common.json.runtimeSchema
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
+
+/** SdkUpdateCustomerSubscriptionPaymentMethodRequestApplicationJson model. */
+data class SdkUpdateCustomerSubscriptionPaymentMethodRequestApplicationJson(
+    /** The return url. */
+    @JsonProperty("return_url") val returnUrl: String? = null
+) {
+    /** Additive response fields retained verbatim for forward compatibility. */
+    @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
+
+    @JsonAnySetter
+    fun setAdditionalProperty(name: String, value: JsonNode) {
+        additionalProperties[name] = value
+    }
+
+    companion object {
+        internal val runtimeSchema =
+            runtimeSchema(
+                "{\"kind\":\"object\",\"modelName\":\"SdkUpdateCustomerSubscriptionPaymentMethodRequestApplicationJson\",\"properties\":{\"return_url\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"uri\",\"constraints\":{\"maxLength\":2000}}}},\"required\":[],\"additionalProperties\":true}"
+            )
+    }
+}

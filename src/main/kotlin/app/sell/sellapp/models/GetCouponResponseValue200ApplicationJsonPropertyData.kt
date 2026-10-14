@@ -3,6 +3,7 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.types.SdkCreateCouponRequestApplicationJsonAppliesTo
 import app.sell.sellapp.types.SdkCreateCouponRequestApplicationJsonType
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -31,8 +32,8 @@ data class GetCouponResponseValue200ApplicationJsonPropertyData(
     @JsonProperty("store_wide") val storeWide: Boolean,
 
     /**
-     * The decimal minimum order amount in the store currency's major unit, or null when no minimum
-     * applies.
+     * The decimal minimum amount in the store currency's major unit that the order lines of the
+     * coupon's kind must reach, or null when no minimum applies.
      */
     @JsonProperty("minimum_amount") val minimumAmount: String?,
 
@@ -61,6 +62,18 @@ data class GetCouponResponseValue200ApplicationJsonPropertyData(
      */
     @JsonProperty("maximum_discount_amount") val maximumDiscountAmount: String?,
 
+    /**
+     * `one_time` when the coupon discounts one-time purchases, or `subscriptions` when it discounts
+     * the first payments of a subscription plan.
+     */
+    @JsonProperty("applies_to") val appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo,
+
+    /**
+     * How many payments a `subscriptions` coupon discounts, counting the signup payment as the
+     * first. Null on a `one_time` coupon.
+     */
+    @JsonProperty("subscription_payments") val subscriptionPayments: Long?,
+
     /** Product IDs this coupon applies to. Store-wide coupons return an empty array. */
     @JsonProperty("products") val products: List<Long>,
 
@@ -81,7 +94,7 @@ data class GetCouponResponseValue200ApplicationJsonPropertyData(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"GetCouponResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"code\":{\"kind\":\"primitive\",\"type\":\"string\"},\"type\":{\"kind\":\"enum\",\"values\":[\"PERCENTAGE\",\"AMOUNT\"]},\"discount\":{\"kind\":\"primitive\",\"type\":\"string\"},\"limit\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"store_wide\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"minimum_amount\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"expires_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"created_at\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"},\"updated_at\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"},\"store_id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"deleted_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"maximum_discount_amount\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"products\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"product_variants\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"integer\"}}},\"required\":[\"id\",\"code\",\"type\",\"discount\",\"limit\",\"store_wide\",\"minimum_amount\",\"expires_at\",\"created_at\",\"updated_at\",\"store_id\",\"deleted_at\",\"maximum_discount_amount\",\"products\",\"product_variants\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"GetCouponResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"code\":{\"kind\":\"primitive\",\"type\":\"string\"},\"type\":{\"kind\":\"enum\",\"values\":[\"PERCENTAGE\",\"AMOUNT\"]},\"discount\":{\"kind\":\"primitive\",\"type\":\"string\"},\"limit\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"store_wide\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"minimum_amount\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"expires_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"created_at\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"},\"updated_at\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"},\"store_id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"deleted_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"maximum_discount_amount\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"applies_to\":{\"kind\":\"enum\",\"values\":[\"one_time\",\"subscriptions\"]},\"subscription_payments\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"products\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"product_variants\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"integer\"}}},\"required\":[\"id\",\"code\",\"type\",\"discount\",\"limit\",\"store_wide\",\"minimum_amount\",\"expires_at\",\"created_at\",\"updated_at\",\"store_id\",\"deleted_at\",\"maximum_discount_amount\",\"applies_to\",\"subscription_payments\",\"products\",\"product_variants\"],\"additionalProperties\":true}"
             )
     }
 }

@@ -65,6 +65,7 @@ import app.sell.sellapp.storecustomdomains.StoreCustomDomains
 import app.sell.sellapp.storenotificationchannels.StoreNotificationChannels
 import app.sell.sellapp.storesettings.StoreSettings
 import app.sell.sellapp.subscriptions.Subscriptions
+import app.sell.sellapp.subscriptionsactions.SubscriptionsActions
 import app.sell.sellapp.tickets.Tickets
 import app.sell.sellapp.ticketsmessages.TicketsMessages
 import app.sell.sellapp.upselloffers.UpsellOffers
@@ -205,6 +206,13 @@ constructor(
         get() =
             service(Subscriptions::class) {
                 Subscriptions(this)
+            }
+
+    /** Lazily-constructed [SubscriptionsActions] accessor for this [SellApp] client. */
+    val subscriptionsActions: SubscriptionsActions
+        get() =
+            service(SubscriptionsActions::class) {
+                SubscriptionsActions(this)
             }
 
     /** Lazily-constructed [Bookings] accessor for this [SellApp] client. */

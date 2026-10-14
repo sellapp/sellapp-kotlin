@@ -25,17 +25,23 @@ constructor(
         val Delivering =
             GetWebhookDeliveryResponseValue200ApplicationJsonPropertyDataStatus("delivering")
         @JvmField
+        val Retrying =
+            GetWebhookDeliveryResponseValue200ApplicationJsonPropertyDataStatus("retrying")
+        @JvmField
         val Succeeded =
             GetWebhookDeliveryResponseValue200ApplicationJsonPropertyDataStatus("succeeded")
         @JvmField
         val Failed = GetWebhookDeliveryResponseValue200ApplicationJsonPropertyDataStatus("failed")
+        @JvmField
+        val Disabled =
+            GetWebhookDeliveryResponseValue200ApplicationJsonPropertyDataStatus("disabled")
 
-        private val knownValues = setOf(Pending, Delivering, Succeeded, Failed)
+        private val knownValues = setOf(Pending, Delivering, Retrying, Succeeded, Failed, Disabled)
 
         /** Enum-compatible enumeration of generated constants. */
         @JvmStatic
         fun values(): Array<GetWebhookDeliveryResponseValue200ApplicationJsonPropertyDataStatus> =
-            arrayOf(Unknown, Pending, Delivering, Succeeded, Failed)
+            arrayOf(Unknown, Pending, Delivering, Retrying, Succeeded, Failed, Disabled)
     }
 
     /** Whether this value was known when this SDK version was generated. */

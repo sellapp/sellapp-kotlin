@@ -51,8 +51,8 @@ class InvoicesTest : TestBase() {
             "/v2/invoices/sample-arg",
             200,
             "{\"data\": {\"id\": 0, \"payment\": {\"fee\": {\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, " +
-                "\"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"gateway\": {\"data\": {}, \"type\": \"sample\"}, " +
-                "\"subtotal\": {\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", " +
+                "\"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"gateway\": {\"data\": {}, \"type\": null}, \"subtotal\": " +
+                "{\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", " +
                 "\"inclusive\": \"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": \"sample\", \"currency\": " +
                 "\"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"original_amount\": " +
                 "{\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", " +
@@ -75,7 +75,7 @@ class InvoicesTest : TestBase() {
             200,
             "{\"message\": \"sample\", \"invoice\": {\"id\": 0, \"payment\": {\"fee\": {\"base\": \"sample\", \"currency\": \"sample\", " +
                 "\"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"gateway\": {\"data\": {}, " +
-                "\"type\": \"sample\"}, \"subtotal\": {\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": " +
+                "\"type\": null}, \"subtotal\": {\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": " +
                 "{\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": " +
                 "\"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": " +
                 "\"sample\"}}, \"original_amount\": {\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": " +
@@ -105,16 +105,16 @@ class InvoicesTest : TestBase() {
             "/v2/invoices/sample-arg/mark-completed",
             200,
             "{\"id\": 0, \"payment\": {\"fee\": {\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": " +
-                "{\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"gateway\": {\"data\": {}, \"type\": \"sample\"}, \"subtotal\": " +
-                "{\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", " +
-                "\"inclusive\": \"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": \"sample\", \"currency\": " +
-                "\"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"original_amount\": " +
-                "{\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", " +
-                "\"inclusive\": \"sample\"}}}, \"status\": {\"history\": [], \"status\": {\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": " +
-                "\"sample\", \"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": null, \"created_at\": " +
-                "\"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, \"subscription_id\": " +
-                "null, \"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": \"sample\", \"ip\": " +
-                "\"sample\", \"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, \"billing_details\": {}}, " +
+                "{\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"gateway\": {\"data\": {}, \"type\": null}, \"subtotal\": {\"base\": " +
+                "\"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": " +
+                "\"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": \"sample\", \"currency\": \"sample\", " +
+                "\"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"original_amount\": {\"base\": " +
+                "\"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": " +
+                "\"sample\"}}}, \"status\": {\"history\": [], \"status\": {\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": \"sample\", " +
+                "\"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": null, \"created_at\": \"2024-01-01T00:00:00Z\", " +
+                "\"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, \"subscription_id\": null, " +
+                "\"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": \"sample\", \"ip\": \"sample\", " +
+                "\"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, \"billing_details\": {}}, " +
                 "\"product_variants\": []}",
         )
         val result = api().markCompleted("sample-arg")
@@ -130,16 +130,16 @@ class InvoicesTest : TestBase() {
             "/v2/invoices/sample-arg/mark-voided",
             200,
             "{\"id\": 0, \"payment\": {\"fee\": {\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": " +
-                "{\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"gateway\": {\"data\": {}, \"type\": \"sample\"}, \"subtotal\": " +
-                "{\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", " +
-                "\"inclusive\": \"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": \"sample\", \"currency\": " +
-                "\"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"original_amount\": " +
-                "{\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", " +
-                "\"inclusive\": \"sample\"}}}, \"status\": {\"history\": [], \"status\": {\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": " +
-                "\"sample\", \"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": null, \"created_at\": " +
-                "\"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, \"subscription_id\": " +
-                "null, \"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": \"sample\", \"ip\": " +
-                "\"sample\", \"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, \"billing_details\": {}}, " +
+                "{\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"gateway\": {\"data\": {}, \"type\": null}, \"subtotal\": {\"base\": " +
+                "\"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": " +
+                "\"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": \"sample\", \"currency\": \"sample\", " +
+                "\"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"original_amount\": {\"base\": " +
+                "\"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": " +
+                "\"sample\"}}}, \"status\": {\"history\": [], \"status\": {\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": \"sample\", " +
+                "\"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": null, \"created_at\": \"2024-01-01T00:00:00Z\", " +
+                "\"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, \"subscription_id\": null, " +
+                "\"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": \"sample\", \"ip\": \"sample\", " +
+                "\"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, \"billing_details\": {}}, " +
                 "\"product_variants\": []}",
         )
         val result = api().markVoided("sample-arg")
@@ -155,16 +155,16 @@ class InvoicesTest : TestBase() {
             "/v2/invoices/sample-arg/status",
             200,
             "{\"id\": 0, \"payment\": {\"fee\": {\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": " +
-                "{\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"gateway\": {\"data\": {}, \"type\": \"sample\"}, \"subtotal\": " +
-                "{\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", " +
-                "\"inclusive\": \"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": \"sample\", \"currency\": " +
-                "\"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"original_amount\": " +
-                "{\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", " +
-                "\"inclusive\": \"sample\"}}}, \"status\": {\"history\": [], \"status\": {\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": " +
-                "\"sample\", \"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": null, \"created_at\": " +
-                "\"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, \"subscription_id\": " +
-                "null, \"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": \"sample\", \"ip\": " +
-                "\"sample\", \"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, \"billing_details\": {}}, " +
+                "{\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"gateway\": {\"data\": {}, \"type\": null}, \"subtotal\": {\"base\": " +
+                "\"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": " +
+                "\"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": \"sample\", \"currency\": \"sample\", " +
+                "\"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"original_amount\": {\"base\": " +
+                "\"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": " +
+                "\"sample\"}}}, \"status\": {\"history\": [], \"status\": {\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": \"sample\", " +
+                "\"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": null, \"created_at\": \"2024-01-01T00:00:00Z\", " +
+                "\"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, \"subscription_id\": null, " +
+                "\"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": \"sample\", \"ip\": \"sample\", " +
+                "\"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, \"billing_details\": {}}, " +
                 "\"product_variants\": []}",
         )
         val result =
@@ -192,18 +192,18 @@ class InvoicesTest : TestBase() {
             "/v2/invoices/sample-arg/refunds",
             200,
             "{\"data\": {\"invoice\": {\"id\": 0, \"payment\": {\"fee\": {\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, " +
-                "\"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"gateway\": {\"data\": {}, \"type\": " +
-                "\"sample\"}, \"subtotal\": {\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": " +
-                "{\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": " +
-                "\"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": " +
-                "\"sample\"}}, \"original_amount\": {\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": " +
-                "{\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}}, \"status\": {\"history\": [], \"status\": {\"setAt\": " +
-                "\"2024-01-01T00:00:00Z\", \"status\": \"sample\", \"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": " +
-                "null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, " +
-                "\"subscription_id\": null, \"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": " +
-                "\"sample\", \"ip\": \"sample\", \"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, " +
-                "\"billing_details\": {}}, \"product_variants\": []}, \"refund\": {\"status\": \"pending\", \"provider\": null, " +
-                "\"provider_refund_id\": null, \"amount_cents\": null, \"currency\": null}}}",
+                "\"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"gateway\": {\"data\": {}, \"type\": null}, " +
+                "\"subtotal\": {\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", " +
+                "\"inclusive\": \"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": \"sample\", \"currency\": " +
+                "\"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"original_amount\": " +
+                "{\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", " +
+                "\"inclusive\": \"sample\"}}}, \"status\": {\"history\": [], \"status\": {\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": " +
+                "\"sample\", \"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": null, \"created_at\": " +
+                "\"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, \"subscription_id\": " +
+                "null, \"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": \"sample\", \"ip\": " +
+                "\"sample\", \"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, \"billing_details\": {}}, " +
+                "\"product_variants\": []}, \"refund\": {\"status\": \"pending\", \"provider\": null, \"provider_refund_id\": null, " +
+                "\"amount_cents\": null, \"currency\": null}}}",
         )
         val result = api().createRefund("sample-arg")
         assertNotNull(result)

@@ -5,6 +5,7 @@ package app.sell.sellapp.models
 import app.sell.sellapp.common.json.runtimeSchema
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
 
@@ -24,6 +25,13 @@ data class GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPrici
     /** The price. */
     @JsonProperty("price")
     val price: GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyPrice,
+
+    /** The trial. */
+    @JsonProperty("trial")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val trial:
+        GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyTrial? =
+        null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -36,7 +44,7 @@ data class GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPrici
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPricing\",\"properties\":{\"humble\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"frequency\":{\"kind\":\"object\",\"modelName\":\"GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyFrequency\",\"properties\":{\"value\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"interval\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"value\",\"interval\"],\"additionalProperties\":true},\"type\":{\"kind\":\"primitive\",\"type\":\"string\"},\"price\":{\"kind\":\"object\",\"modelName\":\"GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyPrice\",\"properties\":{\"price\":{\"kind\":\"primitive\",\"type\":\"string\"},\"currency\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"price\",\"currency\"],\"additionalProperties\":true}},\"required\":[\"humble\",\"frequency\",\"type\",\"price\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPricing\",\"properties\":{\"humble\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"frequency\":{\"kind\":\"object\",\"modelName\":\"GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyFrequency\",\"properties\":{\"value\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"interval\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"value\",\"interval\"],\"additionalProperties\":true},\"type\":{\"kind\":\"primitive\",\"type\":\"string\"},\"price\":{\"kind\":\"object\",\"modelName\":\"GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyPrice\",\"properties\":{\"price\":{\"kind\":\"primitive\",\"type\":\"string\"},\"currency\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"price\",\"currency\"],\"additionalProperties\":true},\"trial\":{\"kind\":\"object\",\"modelName\":\"GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyTrial\",\"properties\":{\"kind\":{\"kind\":\"enum\",\"values\":[\"free\",\"paid\"]},\"length\":{\"kind\":\"object\",\"modelName\":\"GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyTrialPropertyLength\",\"properties\":{\"value\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"interval\":{\"kind\":\"enum\",\"values\":[\"DAY\",\"WEEK\",\"MONTH\",\"YEAR\"]}},\"required\":[\"value\",\"interval\"],\"additionalProperties\":true},\"price\":{\"kind\":\"object\",\"modelName\":\"GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyTrialPropertyPrice\",\"properties\":{\"price\":{\"kind\":\"primitive\",\"type\":\"string\"},\"currency\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"price\",\"currency\"],\"additionalProperties\":true}},\"required\":[\"kind\",\"length\"],\"additionalProperties\":true}},\"required\":[\"humble\",\"frequency\",\"type\",\"price\"],\"additionalProperties\":true}"
             )
     }
 }

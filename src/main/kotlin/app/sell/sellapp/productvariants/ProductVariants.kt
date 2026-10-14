@@ -174,10 +174,16 @@ class ProductVariants(internal val sellapp: SellApp) {
      * @param description the description of the request.
      * @param deliverable the deliverable of the request.
      * @param pricing the pricing of the request.
-     * @param paymentMethods the payment methods of the request.
+     * @param paymentMethods Complete gateway selection for this variant. Selecting
+     *   CUSTOM_PAYMENT_METHOD also requires at least one custom_payment_method_ids entry.
      * @param minimumPurchaseQuantity the minimum purchase quantity of the request.
      * @param maximumPurchaseQuantity the maximum purchase quantity of the request.
      * @param bulkDiscount the bulk discount of the request.
+     * @param customPaymentMethodIds Enabled, usable custom payment method ULIDs belonging to the
+     *   selected store. Supply at least one when payment_methods includes CUSTOM_PAYMENT_METHOD.
+     *   Include CUSTOM_PAYMENT_METHOD in payment_methods whenever sending nonempty IDs. On updates,
+     *   omitting both selections preserves the current methods. Nonempty IDs are rejected when
+     *   custom payments are not selected.
      * @param otherSettings the other settings of the request.
      * @param expectedUpdatedAt Optional optimistic-concurrency snapshot for updates. Use the
      *   variant's latest updated_at value; stale snapshots receive a 422 validation response.
@@ -196,6 +202,7 @@ class ProductVariants(internal val sellapp: SellApp) {
         maximumPurchaseQuantity: Long? = null,
         bulkDiscount: List<CreateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>? =
             null,
+        customPaymentMethodIds: List<String>? = null,
         otherSettings: CreateProductVariantRequestApplicationJsonPropertyOtherSettings? = null,
         expectedUpdatedAt: OffsetDateTime? = null,
         requestOptions: RequestOptions? = null,
@@ -210,6 +217,7 @@ class ProductVariants(internal val sellapp: SellApp) {
                 "minimum_purchase_quantity" to minimumPurchaseQuantity,
                 "maximum_purchase_quantity" to maximumPurchaseQuantity,
                 "bulk_discount" to bulkDiscount,
+                "custom_payment_method_ids" to customPaymentMethodIds,
                 "other_settings" to otherSettings,
                 "expected_updated_at" to expectedUpdatedAt,
             )
@@ -251,6 +259,7 @@ class ProductVariants(internal val sellapp: SellApp) {
         maximumPurchaseQuantity: Long? = null,
         bulkDiscount: List<CreateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>? =
             null,
+        customPaymentMethodIds: List<String>? = null,
         otherSettings: CreateProductVariantRequestApplicationJsonPropertyOtherSettings? = null,
         expectedUpdatedAt: OffsetDateTime? = null,
         requestOptions: RequestOptions? = null,
@@ -270,6 +279,7 @@ class ProductVariants(internal val sellapp: SellApp) {
             minimumPurchaseQuantity,
             maximumPurchaseQuantity,
             bulkDiscount,
+            customPaymentMethodIds,
             otherSettings,
             expectedUpdatedAt,
             capturingOptions,
@@ -296,6 +306,7 @@ class ProductVariants(internal val sellapp: SellApp) {
         maximumPurchaseQuantity: Long? = null,
         bulkDiscount: List<CreateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>? =
             null,
+        customPaymentMethodIds: List<String>? = null,
         otherSettings: CreateProductVariantRequestApplicationJsonPropertyOtherSettings? = null,
         expectedUpdatedAt: OffsetDateTime? = null,
         requestOptions: RequestOptions? = null,
@@ -311,6 +322,7 @@ class ProductVariants(internal val sellapp: SellApp) {
                 minimumPurchaseQuantity,
                 maximumPurchaseQuantity,
                 bulkDiscount,
+                customPaymentMethodIds,
                 otherSettings,
                 expectedUpdatedAt,
                 requestOptions,
@@ -336,6 +348,7 @@ class ProductVariants(internal val sellapp: SellApp) {
         maximumPurchaseQuantity: Long? = null,
         bulkDiscount: List<CreateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>? =
             null,
+        customPaymentMethodIds: List<String>? = null,
         otherSettings: CreateProductVariantRequestApplicationJsonPropertyOtherSettings? = null,
         expectedUpdatedAt: OffsetDateTime? = null,
         requestOptions: RequestOptions? = null,
@@ -351,6 +364,7 @@ class ProductVariants(internal val sellapp: SellApp) {
                 minimumPurchaseQuantity,
                 maximumPurchaseQuantity,
                 bulkDiscount,
+                customPaymentMethodIds,
                 otherSettings,
                 expectedUpdatedAt,
                 requestOptions,
@@ -460,9 +474,11 @@ class ProductVariants(internal val sellapp: SellApp) {
      * Update a product variant with PUT
      *
      * Update a product variant using the PUT compatibility method. Fields remain partial for
-     * backward compatibility. Requires a token with the listing ability. OAuth callers use the
-     * admin grant and select a store with X-STORE. Current membership and role permissions apply to
-     * every request.
+     * backward compatibility. Bundle products only support one-time pricing. Adding the bundle
+     * deliverable type to a subscription variant is refused with a `422` carrying that sentence on
+     * `deliverable.types`. Requires a token with the listing ability. OAuth callers use the admin
+     * grant and select a store with X-STORE. Current membership and role permissions apply to every
+     * request.
      *
      * @param product The product path parameter.
      * @param variant The variant path parameter.
@@ -473,10 +489,20 @@ class ProductVariants(internal val sellapp: SellApp) {
      * @param minimumPurchaseQuantity the minimum purchase quantity of the request.
      * @param maximumPurchaseQuantity the maximum purchase quantity of the request.
      * @param bulkDiscount the bulk discount of the request.
-     * @param paymentMethods the payment methods of the request.
+     * @param paymentMethods Complete gateway selection for this variant. Selecting
+     *   CUSTOM_PAYMENT_METHOD also requires at least one custom_payment_method_ids entry.
+     * @param customPaymentMethodIds Enabled, usable custom payment method ULIDs belonging to the
+     *   selected store. Supply at least one when payment_methods includes CUSTOM_PAYMENT_METHOD.
+     *   Include CUSTOM_PAYMENT_METHOD in payment_methods whenever sending nonempty IDs. On updates,
+     *   omitting both selections preserves the current methods. Nonempty IDs are rejected when
+     *   custom payments are not selected.
      * @param otherSettings the other settings of the request.
      * @param expectedUpdatedAt Optional optimistic-concurrency snapshot for updates. Use the
      *   variant's latest updated_at value; stale snapshots receive a 422 validation response.
+     * @param stock Set an existing variant's stock count while preserving delivery instructions and
+     *   uploaded files. Send 0 for out of stock or null for unlimited stock. Omit deliverable for a
+     *   stock-only change. TEXT variants manage stock through their serial inventory and reject
+     *   this field.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkReplaceProductVariantWithPutResponseValue200ApplicationJson
      */
@@ -494,9 +520,11 @@ class ProductVariants(internal val sellapp: SellApp) {
             List<ReplaceProductVariantWithPutRequestApplicationJsonPropertyBulkDiscountItem>? =
             null,
         paymentMethods: List<PaymentMethod>? = null,
+        customPaymentMethodIds: List<String>? = null,
         otherSettings: ReplaceProductVariantWithPutRequestApplicationJsonPropertyOtherSettings? =
             null,
         expectedUpdatedAt: OffsetDateTime? = null,
+        stock: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkReplaceProductVariantWithPutResponseValue200ApplicationJson {
         val body =
@@ -509,8 +537,10 @@ class ProductVariants(internal val sellapp: SellApp) {
                 "maximum_purchase_quantity" to maximumPurchaseQuantity,
                 "bulk_discount" to bulkDiscount,
                 "payment_methods" to paymentMethods,
+                "custom_payment_method_ids" to customPaymentMethodIds,
                 "other_settings" to otherSettings,
                 "expected_updated_at" to expectedUpdatedAt,
+                "stock" to stock,
             )
         val config =
             RequestConfig(
@@ -549,9 +579,11 @@ class ProductVariants(internal val sellapp: SellApp) {
             List<ReplaceProductVariantWithPutRequestApplicationJsonPropertyBulkDiscountItem>? =
             null,
         paymentMethods: List<PaymentMethod>? = null,
+        customPaymentMethodIds: List<String>? = null,
         otherSettings: ReplaceProductVariantWithPutRequestApplicationJsonPropertyOtherSettings? =
             null,
         expectedUpdatedAt: OffsetDateTime? = null,
+        stock: Long? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkReplaceProductVariantWithPutResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -570,8 +602,10 @@ class ProductVariants(internal val sellapp: SellApp) {
             maximumPurchaseQuantity,
             bulkDiscount,
             paymentMethods,
+            customPaymentMethodIds,
             otherSettings,
             expectedUpdatedAt,
+            stock,
             capturingOptions,
         )
         return captured
@@ -599,9 +633,11 @@ class ProductVariants(internal val sellapp: SellApp) {
             List<ReplaceProductVariantWithPutRequestApplicationJsonPropertyBulkDiscountItem>? =
             null,
         paymentMethods: List<PaymentMethod>? = null,
+        customPaymentMethodIds: List<String>? = null,
         otherSettings: ReplaceProductVariantWithPutRequestApplicationJsonPropertyOtherSettings? =
             null,
         expectedUpdatedAt: OffsetDateTime? = null,
+        stock: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkReplaceProductVariantWithPutResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -616,8 +652,10 @@ class ProductVariants(internal val sellapp: SellApp) {
                 maximumPurchaseQuantity,
                 bulkDiscount,
                 paymentMethods,
+                customPaymentMethodIds,
                 otherSettings,
                 expectedUpdatedAt,
+                stock,
                 requestOptions,
             )
         }
@@ -643,9 +681,11 @@ class ProductVariants(internal val sellapp: SellApp) {
             List<ReplaceProductVariantWithPutRequestApplicationJsonPropertyBulkDiscountItem>? =
             null,
         paymentMethods: List<PaymentMethod>? = null,
+        customPaymentMethodIds: List<String>? = null,
         otherSettings: ReplaceProductVariantWithPutRequestApplicationJsonPropertyOtherSettings? =
             null,
         expectedUpdatedAt: OffsetDateTime? = null,
+        stock: Long? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkReplaceProductVariantWithPutResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -660,8 +700,10 @@ class ProductVariants(internal val sellapp: SellApp) {
                 maximumPurchaseQuantity,
                 bulkDiscount,
                 paymentMethods,
+                customPaymentMethodIds,
                 otherSettings,
                 expectedUpdatedAt,
+                stock,
                 requestOptions,
             )
         }
@@ -669,8 +711,10 @@ class ProductVariants(internal val sellapp: SellApp) {
     /**
      * Update a product variant
      *
-     * Updates a product variant's details. Requires a token with the listing ability. OAuth callers
-     * use the admin grant and select a store with X-STORE. Current membership and role permissions
+     * Updates a product variant's details. Bundle products only support one-time pricing. Adding
+     * the bundle deliverable type to a subscription variant is refused with a `422` carrying that
+     * sentence on `deliverable.types`. Requires a token with the listing ability. OAuth callers use
+     * the admin grant and select a store with X-STORE. Current membership and role permissions
      * apply to every request.
      *
      * @param product The product path parameter.
@@ -682,10 +726,20 @@ class ProductVariants(internal val sellapp: SellApp) {
      * @param minimumPurchaseQuantity the minimum purchase quantity of the request.
      * @param maximumPurchaseQuantity the maximum purchase quantity of the request.
      * @param bulkDiscount the bulk discount of the request.
-     * @param paymentMethods the payment methods of the request.
+     * @param paymentMethods Complete gateway selection for this variant. Selecting
+     *   CUSTOM_PAYMENT_METHOD also requires at least one custom_payment_method_ids entry.
+     * @param customPaymentMethodIds Enabled, usable custom payment method ULIDs belonging to the
+     *   selected store. Supply at least one when payment_methods includes CUSTOM_PAYMENT_METHOD.
+     *   Include CUSTOM_PAYMENT_METHOD in payment_methods whenever sending nonempty IDs. On updates,
+     *   omitting both selections preserves the current methods. Nonempty IDs are rejected when
+     *   custom payments are not selected.
      * @param otherSettings the other settings of the request.
      * @param expectedUpdatedAt Optional optimistic-concurrency snapshot for updates. Use the
      *   variant's latest updated_at value; stale snapshots receive a 422 validation response.
+     * @param stock Set an existing variant's stock count while preserving delivery instructions and
+     *   uploaded files. Send 0 for out of stock or null for unlimited stock. Omit deliverable for a
+     *   stock-only change. TEXT variants manage stock through their serial inventory and reject
+     *   this field.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkUpdateProductVariantResponseValue200ApplicationJson
      */
@@ -705,9 +759,11 @@ class ProductVariants(internal val sellapp: SellApp) {
             PatchField<List<UpdateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>> =
             PatchField.Absent,
         paymentMethods: PatchField<List<PaymentMethod>> = PatchField.Absent,
+        customPaymentMethodIds: PatchField<List<String>> = PatchField.Absent,
         otherSettings: PatchField<UpdateProductVariantRequestApplicationJsonPropertyOtherSettings> =
             PatchField.Absent,
         expectedUpdatedAt: PatchField<OffsetDateTime> = PatchField.Absent,
+        stock: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateProductVariantResponseValue200ApplicationJson {
         val body =
@@ -720,8 +776,10 @@ class ProductVariants(internal val sellapp: SellApp) {
                 "maximum_purchase_quantity" to maximumPurchaseQuantity,
                 "bulk_discount" to bulkDiscount,
                 "payment_methods" to paymentMethods,
+                "custom_payment_method_ids" to customPaymentMethodIds,
                 "other_settings" to otherSettings,
                 "expected_updated_at" to expectedUpdatedAt,
+                "stock" to stock,
             )
         val config =
             RequestConfig(
@@ -761,9 +819,11 @@ class ProductVariants(internal val sellapp: SellApp) {
             PatchField<List<UpdateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>> =
             PatchField.Absent,
         paymentMethods: PatchField<List<PaymentMethod>> = PatchField.Absent,
+        customPaymentMethodIds: PatchField<List<String>> = PatchField.Absent,
         otherSettings: PatchField<UpdateProductVariantRequestApplicationJsonPropertyOtherSettings> =
             PatchField.Absent,
         expectedUpdatedAt: PatchField<OffsetDateTime> = PatchField.Absent,
+        stock: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkUpdateProductVariantResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -782,8 +842,10 @@ class ProductVariants(internal val sellapp: SellApp) {
             maximumPurchaseQuantity,
             bulkDiscount,
             paymentMethods,
+            customPaymentMethodIds,
             otherSettings,
             expectedUpdatedAt,
+            stock,
             capturingOptions,
         )
         return captured as? RawResponse<SdkUpdateProductVariantResponseValue200ApplicationJson>
@@ -812,9 +874,11 @@ class ProductVariants(internal val sellapp: SellApp) {
             PatchField<List<UpdateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>> =
             PatchField.Absent,
         paymentMethods: PatchField<List<PaymentMethod>> = PatchField.Absent,
+        customPaymentMethodIds: PatchField<List<String>> = PatchField.Absent,
         otherSettings: PatchField<UpdateProductVariantRequestApplicationJsonPropertyOtherSettings> =
             PatchField.Absent,
         expectedUpdatedAt: PatchField<OffsetDateTime> = PatchField.Absent,
+        stock: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateProductVariantResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -829,8 +893,10 @@ class ProductVariants(internal val sellapp: SellApp) {
                 maximumPurchaseQuantity,
                 bulkDiscount,
                 paymentMethods,
+                customPaymentMethodIds,
                 otherSettings,
                 expectedUpdatedAt,
+                stock,
                 requestOptions,
             )
         }
@@ -858,9 +924,11 @@ class ProductVariants(internal val sellapp: SellApp) {
             PatchField<List<UpdateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>> =
             PatchField.Absent,
         paymentMethods: PatchField<List<PaymentMethod>> = PatchField.Absent,
+        customPaymentMethodIds: PatchField<List<String>> = PatchField.Absent,
         otherSettings: PatchField<UpdateProductVariantRequestApplicationJsonPropertyOtherSettings> =
             PatchField.Absent,
         expectedUpdatedAt: PatchField<OffsetDateTime> = PatchField.Absent,
+        stock: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkUpdateProductVariantResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -875,8 +943,10 @@ class ProductVariants(internal val sellapp: SellApp) {
                 maximumPurchaseQuantity,
                 bulkDiscount,
                 paymentMethods,
+                customPaymentMethodIds,
                 otherSettings,
                 expectedUpdatedAt,
+                stock,
                 requestOptions,
             )
         }
@@ -884,27 +954,37 @@ class ProductVariants(internal val sellapp: SellApp) {
     /**
      * Delete a product variant
      *
-     * Deletes a product variant. This will permanently delete the product variant and all of its
-     * details, including the sensitive deliverables, will no longer be retrievable. Requires a
-     * token with the listing ability. OAuth callers use the admin grant and select a store with
-     * X-STORE. Current membership and role permissions apply to every request.
+     * Soft-delete a variant in the authenticated store. Variants referenced by non-terminal
+     * subscriptions cannot be deleted. Send expected_updated_at from the latest variant response to
+     * reject a stale deletion with 422. Requires a token with the listing ability. OAuth callers
+     * use the admin grant and select a store with X-STORE. Current membership and role permissions
+     * apply to every request.
      *
      * @param product The product path parameter.
      * @param variant The variant path parameter.
+     * @param expectedUpdatedAt Optional optimistic-concurrency snapshot. Send the exact
+     *   `updated_at` value from the product you last retrieved; the mutation is rejected if the
+     *   product has changed.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      */
     @JvmOverloads
     fun delete(
         product: String,
         variant: String,
+        expectedUpdatedAt: OffsetDateTime? = null,
         requestOptions: RequestOptions? = null,
     ) {
+        val body = bodyOf("expected_updated_at" to expectedUpdatedAt)
         val config =
             RequestConfig(
                 method = "DELETE",
                 path =
                     "/v2/products/${encodePathSegment(product)}/variants/${encodePathSegment(variant)}",
+                body = body,
                 requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkDeleteProductVariantRequestApplicationJson
+                        .runtimeSchema,
                 responseSchema =
                     app.sell.sellapp.models.SdkDeleteProductVariantResponseValue200ApplicationJson
                         .runtimeSchema,
@@ -918,6 +998,7 @@ class ProductVariants(internal val sellapp: SellApp) {
     fun deleteWithResponse(
         product: String,
         variant: String,
+        expectedUpdatedAt: OffsetDateTime? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Unit> {
         var captured: RawResponse<Any?>? = null
@@ -925,7 +1006,7 @@ class ProductVariants(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        delete(product, variant, capturingOptions)
+        delete(product, variant, expectedUpdatedAt, capturingOptions)
         return captured as? RawResponse<Unit> ?: error("Response metadata was not captured")
     }
 
@@ -939,10 +1020,11 @@ class ProductVariants(internal val sellapp: SellApp) {
     suspend fun deleteSuspend(
         product: String,
         variant: String,
+        expectedUpdatedAt: OffsetDateTime? = null,
         requestOptions: RequestOptions? = null,
     ) =
         sellapp.baseClient.runCancellable {
-            delete(product, variant, requestOptions)
+            delete(product, variant, expectedUpdatedAt, requestOptions)
         }
 
     /**
@@ -956,10 +1038,11 @@ class ProductVariants(internal val sellapp: SellApp) {
     suspend fun deleteWithResponseSuspend(
         product: String,
         variant: String,
+        expectedUpdatedAt: OffsetDateTime? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Unit> =
         sellapp.baseClient.runCancellable {
-            deleteWithResponse(product, variant, requestOptions)
+            deleteWithResponse(product, variant, expectedUpdatedAt, requestOptions)
         }
 
     /**

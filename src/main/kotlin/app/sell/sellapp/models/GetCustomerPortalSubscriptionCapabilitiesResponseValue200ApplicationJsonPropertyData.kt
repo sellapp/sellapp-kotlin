@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.JsonNode
 
 /** GetCustomerPortalSubscriptionCapabilitiesResponseValue200ApplicationJsonPropertyData model. */
 data class GetCustomerPortalSubscriptionCapabilitiesResponseValue200ApplicationJsonPropertyData(
-    /** The subscription id. */
-    @JsonProperty("subscription_id") val subscriptionId: Long,
+    /** The SellApp subscription ID. */
+    @JsonProperty("id") val id: Long,
 
     /** The capabilities. */
     @JsonProperty("capabilities")
@@ -29,7 +29,7 @@ data class GetCustomerPortalSubscriptionCapabilitiesResponseValue200ApplicationJ
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"GetCustomerPortalSubscriptionCapabilitiesResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"subscription_id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"capabilities\":{\"kind\":\"object\",\"modelName\":\"GetCustomerPortalSubscriptionCapabilitiesResponseValue200ApplicationJsonPropertyDataPropertyCapabilities\",\"properties\":{},\"required\":[],\"additionalProperties\":{\"kind\":\"object\",\"modelName\":\"GetCustomerPortalSubscriptionCapabilitiesResponseValue200ApplicationJsonPropertyDataPropertyCapabilitiesMapValue\",\"properties\":{\"available\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"reason\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"available\"],\"additionalProperties\":true}}},\"required\":[\"subscription_id\",\"capabilities\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"GetCustomerPortalSubscriptionCapabilitiesResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"capabilities\":{\"kind\":\"object\",\"modelName\":\"GetCustomerPortalSubscriptionCapabilitiesResponseValue200ApplicationJsonPropertyDataPropertyCapabilities\",\"properties\":{},\"required\":[],\"additionalProperties\":{\"kind\":\"object\",\"modelName\":\"GetCustomerPortalSubscriptionCapabilitiesResponseValue200ApplicationJsonPropertyDataPropertyCapabilitiesMapValue\",\"properties\":{\"status\":{\"kind\":\"enum\",\"values\":[\"available\",\"requires_redirect\",\"seller_only\",\"customer_only\",\"manual_proration\",\"unsupported\"]},\"customer_reason\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"seller_reason\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}}},\"required\":[\"status\",\"customer_reason\",\"seller_reason\"],\"additionalProperties\":true}}},\"required\":[\"id\",\"capabilities\"],\"additionalProperties\":true}"
             )
     }
 }

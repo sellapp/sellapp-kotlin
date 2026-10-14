@@ -2,6 +2,50 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPricing]. */
-typealias ReplaceProductVariantWithPutResponseValue200ApplicationJsonPropertyDataPropertyPricing =
-    GetBundleItemResponseValue200ApplicationJsonPropertyDataPropertyPricing
+import app.sell.sellapp.common.json.runtimeSchema
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
+
+/** ReplaceProductVariantWithPutResponseValue200ApplicationJsonPropertyDataPropertyPricing model. */
+data class ReplaceProductVariantWithPutResponseValue200ApplicationJsonPropertyDataPropertyPricing(
+    /** The humble. */
+    @JsonProperty("humble") val humble: Boolean,
+
+    /** The frequency. */
+    @JsonProperty("frequency")
+    val frequency:
+        ReplaceProductVariantWithPutResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyFrequency,
+
+    /** The type. */
+    @JsonProperty("type") val type: String,
+
+    /** The price. */
+    @JsonProperty("price")
+    val price:
+        ReplaceProductVariantWithPutResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyPrice,
+
+    /** The trial. */
+    @JsonProperty("trial")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val trial:
+        ReplaceProductVariantWithPutResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyTrial? =
+        null,
+) {
+    /** Additive response fields retained verbatim for forward compatibility. */
+    @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
+
+    @JsonAnySetter
+    fun setAdditionalProperty(name: String, value: JsonNode) {
+        additionalProperties[name] = value
+    }
+
+    companion object {
+        internal val runtimeSchema =
+            runtimeSchema(
+                "{\"kind\":\"object\",\"modelName\":\"ReplaceProductVariantWithPutResponseValue200ApplicationJsonPropertyDataPropertyPricing\",\"properties\":{\"humble\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"frequency\":{\"kind\":\"object\",\"modelName\":\"ReplaceProductVariantWithPutResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyFrequency\",\"properties\":{\"value\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"interval\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"value\",\"interval\"],\"additionalProperties\":true},\"type\":{\"kind\":\"primitive\",\"type\":\"string\"},\"price\":{\"kind\":\"object\",\"modelName\":\"ReplaceProductVariantWithPutResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyPrice\",\"properties\":{\"price\":{\"kind\":\"primitive\",\"type\":\"string\"},\"currency\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"price\",\"currency\"],\"additionalProperties\":true},\"trial\":{\"kind\":\"object\",\"modelName\":\"ReplaceProductVariantWithPutResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyTrial\",\"properties\":{\"kind\":{\"kind\":\"enum\",\"values\":[\"free\",\"paid\"]},\"length\":{\"kind\":\"object\",\"modelName\":\"ReplaceProductVariantWithPutResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyTrialPropertyLength\",\"properties\":{\"value\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"interval\":{\"kind\":\"enum\",\"values\":[\"DAY\",\"WEEK\",\"MONTH\",\"YEAR\"]}},\"required\":[\"value\",\"interval\"],\"additionalProperties\":true},\"price\":{\"kind\":\"object\",\"modelName\":\"ReplaceProductVariantWithPutResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyTrialPropertyPrice\",\"properties\":{\"price\":{\"kind\":\"primitive\",\"type\":\"string\"},\"currency\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"price\",\"currency\"],\"additionalProperties\":true}},\"required\":[\"kind\",\"length\"],\"additionalProperties\":true}},\"required\":[\"humble\",\"frequency\",\"type\",\"price\"],\"additionalProperties\":true}"
+            )
+    }
+}

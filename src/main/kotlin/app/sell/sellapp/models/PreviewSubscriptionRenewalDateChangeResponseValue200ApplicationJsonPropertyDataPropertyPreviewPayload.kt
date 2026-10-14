@@ -7,10 +7,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.databind.JsonNode
 
-/**
- * PreviewSubscriptionRenewalDateChangeResponseValue200ApplicationJsonPropertyDataPropertyPreviewPayload
- * model.
- */
+/** The provider's own preview of the change, so its keys differ per provider. */
 class PreviewSubscriptionRenewalDateChangeResponseValue200ApplicationJsonPropertyDataPropertyPreviewPayload {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()

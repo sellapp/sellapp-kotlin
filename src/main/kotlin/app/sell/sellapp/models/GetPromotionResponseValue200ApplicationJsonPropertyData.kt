@@ -3,6 +3,7 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.types.SdkCreateCouponRequestApplicationJsonAppliesTo
 import app.sell.sellapp.types.SdkCreatePromotionRequestApplicationJsonStatus
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -26,6 +27,38 @@ data class GetPromotionResponseValue200ApplicationJsonPropertyData(
 
     /** The is stackable. */
     @JsonProperty("is_stackable") val isStackable: Boolean,
+
+    /**
+     * `one_time` when the promotion discounts one-time purchases, or `subscriptions` when it
+     * discounts the first payments of a subscription plan.
+     */
+    @JsonProperty("applies_to") val appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo,
+
+    /**
+     * How many payments a `subscriptions` promotion discounts, counting the signup payment as the
+     * first. Null on a `one_time` promotion.
+     */
+    @JsonProperty("subscription_payments") val subscriptionPayments: Long?,
+
+    /**
+     * Whether the promotion reaches every product of its kind. A `one_time` promotion is always
+     * store-wide. A `subscriptions` promotion with `false` reaches only the products in `products`,
+     * limited to the plans in `product_variants`.
+     */
+    @JsonProperty("store_wide") val storeWide: Boolean,
+
+    /**
+     * Product IDs a narrowed subscription promotion reaches. Empty when the promotion is
+     * store-wide.
+     */
+    @JsonProperty("products") val products: List<Long>,
+
+    /**
+     * Subscription plan IDs the picked products are limited to. A picked product with none of its
+     * plans listed here takes every plan of that product, including plans added later. Empty when
+     * the promotion is store-wide.
+     */
+    @JsonProperty("product_variants") val productVariants: List<Long>,
 
     /** The phases. */
     @JsonProperty("phases")
@@ -60,7 +93,7 @@ data class GetPromotionResponseValue200ApplicationJsonPropertyData(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"GetPromotionResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"name\":{\"kind\":\"primitive\",\"type\":\"string\"},\"status\":{\"kind\":\"enum\",\"values\":[\"active\",\"disabled\"]},\"starts_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"ends_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"priority\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}},\"is_stackable\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"max_redemptions\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":1}}},\"phases\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"GetPromotionResponseValue200ApplicationJsonPropertyDataPropertyPhasesItem\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"promotion_id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"sort_order\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":1}},\"discount_type\":{\"kind\":\"enum\",\"values\":[\"percentage\",\"fixed\"]},\"discount_value\":{\"kind\":\"primitive\",\"type\":\"string\"},\"ends_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"max_redemptions\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":1}}},\"minimum_amount\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"created_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"updated_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"deleted_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}}},\"required\":[\"id\",\"promotion_id\",\"sort_order\",\"discount_type\",\"discount_value\"],\"additionalProperties\":true}},\"created_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"updated_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"deleted_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}}},\"required\":[\"id\",\"name\",\"status\",\"priority\",\"is_stackable\",\"phases\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"GetPromotionResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"name\":{\"kind\":\"primitive\",\"type\":\"string\"},\"status\":{\"kind\":\"enum\",\"values\":[\"active\",\"disabled\"]},\"starts_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"ends_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"priority\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}},\"is_stackable\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"max_redemptions\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":1}}},\"applies_to\":{\"kind\":\"enum\",\"values\":[\"one_time\",\"subscriptions\"]},\"subscription_payments\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"store_wide\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"products\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"product_variants\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"phases\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"GetPromotionResponseValue200ApplicationJsonPropertyDataPropertyPhasesItem\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"promotion_id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"sort_order\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":1}},\"discount_type\":{\"kind\":\"enum\",\"values\":[\"percentage\",\"fixed\"]},\"discount_value\":{\"kind\":\"primitive\",\"type\":\"string\"},\"ends_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"max_redemptions\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":1}}},\"minimum_amount\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"created_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"updated_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"deleted_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}}},\"required\":[\"id\",\"promotion_id\",\"sort_order\",\"discount_type\",\"discount_value\"],\"additionalProperties\":true}},\"created_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"updated_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"deleted_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}}},\"required\":[\"id\",\"name\",\"status\",\"priority\",\"is_stackable\",\"applies_to\",\"subscription_payments\",\"store_wide\",\"products\",\"product_variants\",\"phases\"],\"additionalProperties\":true}"
             )
     }
 }

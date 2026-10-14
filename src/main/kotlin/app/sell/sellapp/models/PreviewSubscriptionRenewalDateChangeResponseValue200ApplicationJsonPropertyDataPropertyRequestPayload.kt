@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.databind.JsonNode
 
 /**
- * PreviewSubscriptionRenewalDateChangeResponseValue200ApplicationJsonPropertyDataPropertyRequestPayload
- * model.
+ * The request the preview was taken for. The confirmation has to describe the same change, or it is
+ * rejected.
  */
 class PreviewSubscriptionRenewalDateChangeResponseValue200ApplicationJsonPropertyDataPropertyRequestPayload {
     /** Additive response fields retained verbatim for forward compatibility. */

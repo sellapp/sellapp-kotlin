@@ -7,6 +7,10 @@ import app.sell.sellapp.common.exceptions.NotFoundException
 import app.sell.sellapp.common.exceptions.RateLimitException
 import app.sell.sellapp.common.exceptions.UnauthorizedException
 import app.sell.sellapp.test.TestBase
+import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
+import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -65,7 +69,12 @@ class CustomerPortalTest : TestBase() {
 
     @Test
     fun `listSubscriptions returns a typed response`() {
-        stubResponse("GET", "/v2/customer-portal/subscriptions", 200, "{\"data\": []}")
+        stubResponse(
+            "GET",
+            "/v2/customer-portal/subscriptions",
+            200,
+            "{\"data\": [], \"list_metadata\": {\"before\": null, \"after\": null}}",
+        )
         val result = api().listSubscriptions()
         assertNotNull(result)
     }
@@ -76,8 +85,9 @@ class CustomerPortalTest : TestBase() {
             "GET",
             "/v2/customer-portal/subscriptions/sample-arg",
             200,
-            "{\"data\": {\"id\": 0, \"status\": \"sample\", \"provider_subscription_id\": null, \"provider_customer_id\": null, " +
-                "\"customer\": {\"id\": 0, \"email\": \"sample\", \"external_id\": null, \"name\": null, \"locale\": null, \"metadata\": {}}}}",
+            "{\"data\": {\"id\": 0, \"status\": \"ACTIVE\", \"cancel_at_period_end\": false, \"current_period_start\": null, " +
+                "\"current_period_end\": null, \"trial_ends_at\": null, \"paused_at\": null, \"pause_resumes_at\": null, \"plan\": null, " +
+                "\"created_at\": null, \"updated_at\": null}}",
         )
         val result = api().getSubscription("sample-arg")
         assertNotNull(result)
@@ -89,7 +99,7 @@ class CustomerPortalTest : TestBase() {
             "GET",
             "/v2/customer-portal/subscriptions/sample-arg/capabilities",
             200,
-            "{\"data\": {\"subscription_id\": 0, \"capabilities\": {}}}",
+            "{\"data\": {\"id\": 0, \"capabilities\": {}}}",
         )
         val result = api().getSubscriptionCapabilities("sample-arg")
         assertNotNull(result)
@@ -108,8 +118,8 @@ class CustomerPortalTest : TestBase() {
             "POST",
             "/v2/customer-portal/subscriptions/sample-arg/actions/cancel-period-end",
             200,
-            "{\"data\": {\"id\": 0, \"status\": \"sample\", \"provider_subscription_id\": null, \"provider_customer_id\": null, " +
-                "\"customer\": {\"id\": 0, \"email\": \"sample\", \"external_id\": null, \"name\": null, \"locale\": null, \"metadata\": {}}}}",
+            "{\"data\": {\"id\": 0, \"subscription_id\": 0, \"action\": \"pause\", \"status\": \"pending\", \"customer_message\": null, " +
+                "\"redirect_url\": null, \"created_at\": null}}",
         )
         val result = api().cancelSubscriptionAtPeriodEnd("sample-arg")
         assertNotNull(result)
@@ -121,8 +131,8 @@ class CustomerPortalTest : TestBase() {
             "POST",
             "/v2/customer-portal/subscriptions/sample-arg/actions/cancel-immediately",
             200,
-            "{\"data\": {\"id\": 0, \"status\": \"sample\", \"provider_subscription_id\": null, \"provider_customer_id\": null, " +
-                "\"customer\": {\"id\": 0, \"email\": \"sample\", \"external_id\": null, \"name\": null, \"locale\": null, \"metadata\": {}}}}",
+            "{\"data\": {\"id\": 0, \"subscription_id\": 0, \"action\": \"pause\", \"status\": \"pending\", \"customer_message\": null, " +
+                "\"redirect_url\": null, \"created_at\": null}}",
         )
         val result = api().cancelSubscriptionImmediately("sample-arg")
         assertNotNull(result)
@@ -134,8 +144,8 @@ class CustomerPortalTest : TestBase() {
             "POST",
             "/v2/customer-portal/subscriptions/sample-arg/actions/pause",
             200,
-            "{\"data\": {\"id\": 0, \"status\": \"sample\", \"provider_subscription_id\": null, \"provider_customer_id\": null, " +
-                "\"customer\": {\"id\": 0, \"email\": \"sample\", \"external_id\": null, \"name\": null, \"locale\": null, \"metadata\": {}}}}",
+            "{\"data\": {\"id\": 0, \"subscription_id\": 0, \"action\": \"pause\", \"status\": \"pending\", \"customer_message\": null, " +
+                "\"redirect_url\": null, \"created_at\": null}}",
         )
         val result = api().pauseSubscription("sample-arg")
         assertNotNull(result)
@@ -147,8 +157,8 @@ class CustomerPortalTest : TestBase() {
             "POST",
             "/v2/customer-portal/subscriptions/sample-arg/actions/resume",
             200,
-            "{\"data\": {\"id\": 0, \"status\": \"sample\", \"provider_subscription_id\": null, \"provider_customer_id\": null, " +
-                "\"customer\": {\"id\": 0, \"email\": \"sample\", \"external_id\": null, \"name\": null, \"locale\": null, \"metadata\": {}}}}",
+            "{\"data\": {\"id\": 0, \"subscription_id\": 0, \"action\": \"pause\", \"status\": \"pending\", \"customer_message\": null, " +
+                "\"redirect_url\": null, \"created_at\": null}}",
         )
         val result = api().resumeSubscription("sample-arg")
         assertNotNull(result)
@@ -160,8 +170,8 @@ class CustomerPortalTest : TestBase() {
             "POST",
             "/v2/customer-portal/subscriptions/sample-arg/actions/update-payment-method",
             200,
-            "{\"data\": {\"id\": 0, \"status\": \"sample\", \"provider_subscription_id\": null, \"provider_customer_id\": null, " +
-                "\"customer\": {\"id\": 0, \"email\": \"sample\", \"external_id\": null, \"name\": null, \"locale\": null, \"metadata\": {}}}}",
+            "{\"data\": {\"id\": 0, \"subscription_id\": 0, \"action\": \"pause\", \"status\": \"pending\", \"customer_message\": null, " +
+                "\"redirect_url\": null, \"created_at\": null}}",
         )
         val result = api().updateSubscriptionPaymentMethod("sample-arg")
         assertNotNull(result)
@@ -173,11 +183,18 @@ class CustomerPortalTest : TestBase() {
             "POST",
             "/v2/customer-portal/subscriptions/sample-arg/actions/change-plan/preview",
             200,
-            "{\"data\": {\"id\": 0, \"status\": \"sample\", \"provider_subscription_id\": null, \"provider_customer_id\": null, " +
-                "\"customer\": {\"id\": 0, \"email\": \"sample\", \"external_id\": null, \"name\": null, \"locale\": null, \"metadata\": {}}}}",
+            "{\"data\": {\"preview_token\": null, \"expires_at\": null, \"preview\": {}, \"customer_message\": null}}",
         )
-        val result = api().previewSubscriptionPlanChange("sample-arg")
+        val result = api().previewSubscriptionPlanChange("sample-arg", targetVariantId = 0)
         assertNotNull(result)
+        wireMockRule.verify(
+            postRequestedFor(
+                    urlPathMatching(
+                        "/v2/customer-portal/subscriptions/sample-arg/actions/change-plan/preview"
+                    )
+                )
+                .withRequestBody(matchingJsonPath("\$.target_variant_id"))
+        )
     }
 
     @Test
@@ -186,11 +203,26 @@ class CustomerPortalTest : TestBase() {
             "POST",
             "/v2/customer-portal/subscriptions/sample-arg/actions/change-plan/confirm",
             200,
-            "{\"data\": {\"id\": 0, \"status\": \"sample\", \"provider_subscription_id\": null, \"provider_customer_id\": null, " +
-                "\"customer\": {\"id\": 0, \"email\": \"sample\", \"external_id\": null, \"name\": null, \"locale\": null, \"metadata\": {}}}}",
+            "{\"data\": {\"id\": 0, \"subscription_id\": 0, \"action\": \"pause\", \"status\": \"pending\", \"customer_message\": null, " +
+                "\"redirect_url\": null, \"created_at\": null}}",
         )
-        val result = api().confirmSubscriptionPlanChange("sample-arg")
+        val result =
+            api()
+                .confirmSubscriptionPlanChange(
+                    "sample-arg",
+                    targetVariantId = 0,
+                    previewToken = "sample-arg",
+                )
         assertNotNull(result)
+        wireMockRule.verify(
+            postRequestedFor(
+                    urlPathMatching(
+                        "/v2/customer-portal/subscriptions/sample-arg/actions/change-plan/confirm"
+                    )
+                )
+                .withRequestBody(matchingJsonPath("\$.target_variant_id"))
+                .withRequestBody(matchingJsonPath("\$.preview_token"))
+        )
     }
 
     @Test
@@ -199,11 +231,23 @@ class CustomerPortalTest : TestBase() {
             "POST",
             "/v2/customer-portal/subscriptions/sample-arg/actions/change-renewal-date/preview",
             200,
-            "{\"data\": {\"id\": 0, \"status\": \"sample\", \"provider_subscription_id\": null, \"provider_customer_id\": null, " +
-                "\"customer\": {\"id\": 0, \"email\": \"sample\", \"external_id\": null, \"name\": null, \"locale\": null, \"metadata\": {}}}}",
+            "{\"data\": {\"preview_token\": null, \"expires_at\": null, \"preview\": {}, \"customer_message\": null}}",
         )
-        val result = api().previewSubscriptionRenewalDateChange("sample-arg")
+        val result =
+            api()
+                .previewSubscriptionRenewalDateChange(
+                    "sample-arg",
+                    renewalDate = OffsetDateTime.now(),
+                )
         assertNotNull(result)
+        wireMockRule.verify(
+            postRequestedFor(
+                    urlPathMatching(
+                        "/v2/customer-portal/subscriptions/sample-arg/actions/change-renewal-date/preview"
+                    )
+                )
+                .withRequestBody(matchingJsonPath("\$.renewal_date"))
+        )
     }
 
     @Test
@@ -212,11 +256,24 @@ class CustomerPortalTest : TestBase() {
             "POST",
             "/v2/customer-portal/subscriptions/sample-arg/actions/change-renewal-date/confirm",
             200,
-            "{\"data\": {\"id\": 0, \"status\": \"sample\", \"provider_subscription_id\": null, \"provider_customer_id\": null, " +
-                "\"customer\": {\"id\": 0, \"email\": \"sample\", \"external_id\": null, \"name\": null, \"locale\": null, \"metadata\": {}}}}",
+            "{\"data\": {\"id\": 0, \"subscription_id\": 0, \"action\": \"pause\", \"status\": \"pending\", \"customer_message\": null, " +
+                "\"redirect_url\": null, \"created_at\": null}}",
         )
-        val result = api().confirmSubscriptionRenewalDateChange("sample-arg")
+        val result =
+            api()
+                .confirmSubscriptionRenewalDateChange(
+                    "sample-arg",
+                    renewalDate = OffsetDateTime.now(),
+                )
         assertNotNull(result)
+        wireMockRule.verify(
+            postRequestedFor(
+                    urlPathMatching(
+                        "/v2/customer-portal/subscriptions/sample-arg/actions/change-renewal-date/confirm"
+                    )
+                )
+                .withRequestBody(matchingJsonPath("\$.renewal_date"))
+        )
     }
 
     @Test

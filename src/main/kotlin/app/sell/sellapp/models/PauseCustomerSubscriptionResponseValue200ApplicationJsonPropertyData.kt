@@ -3,41 +3,41 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.types.KeepSubscriptionResponseValue200ApplicationJsonPropertyDataAction
+import app.sell.sellapp.types.PauseCustomerSubscriptionResponseValue200ApplicationJsonPropertyDataStatus
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
+import java.time.OffsetDateTime
 
 /** PauseCustomerSubscriptionResponseValue200ApplicationJsonPropertyData model. */
 data class PauseCustomerSubscriptionResponseValue200ApplicationJsonPropertyData(
-    /** The id. */
+    /** The subscription action ID. */
     @JsonProperty("id") val id: Long,
 
-    /** The status. */
-    @JsonProperty("status") val status: String,
+    /** The SellApp subscription ID the action belongs to. */
+    @JsonProperty("subscription_id") val subscriptionId: Long,
 
-    /** The provider subscription id. */
-    @JsonProperty("provider_subscription_id") val providerSubscriptionId: String?,
+    /** The action. */
+    @JsonProperty("action")
+    val action: KeepSubscriptionResponseValue200ApplicationJsonPropertyDataAction,
 
-    /** The provider customer id. */
-    @JsonProperty("provider_customer_id") val providerCustomerId: String?,
+    /** `pending` means the provider or the customer still has to finish the action. */
+    @JsonProperty("status")
+    val status: PauseCustomerSubscriptionResponseValue200ApplicationJsonPropertyDataStatus,
 
-    /** The customer. */
-    @JsonProperty("customer")
-    val customer:
-        PauseCustomerSubscriptionResponseValue200ApplicationJsonPropertyDataPropertyCustomer,
+    /** The customer message. */
+    @JsonProperty("customer_message") val customerMessage: String?,
 
-    /** The subscription id. */
-    @JsonProperty("subscription_id") @Deprecated("Deprecated.") val subscriptionId: String? = null,
+    /**
+     * Where to send the customer to finish the action, such as a payment method update or a plan
+     * change they approve or pay for with the provider. `null` when nothing is left to do.
+     */
+    @JsonProperty("redirect_url") val redirectUrl: String?,
 
-    /** The customer id. */
-    @JsonProperty("customer_id") @Deprecated("Deprecated.") val customerId: String? = null,
-
-    /** The product variant id. */
-    @JsonProperty("product_variant_id")
-    @get:JsonInclude(JsonInclude.Include.NON_NULL)
-    val productVariantId: Long? = null,
+    /** The created at. */
+    @JsonProperty("created_at") val createdAt: OffsetDateTime?,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -50,7 +50,7 @@ data class PauseCustomerSubscriptionResponseValue200ApplicationJsonPropertyData(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"PauseCustomerSubscriptionResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"status\":{\"kind\":\"primitive\",\"type\":\"string\"},\"subscription_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"customer_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"provider_subscription_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"provider_customer_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"customer\":{\"kind\":\"object\",\"modelName\":\"PauseCustomerSubscriptionResponseValue200ApplicationJsonPropertyDataPropertyCustomer\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"email\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"email\"},\"external_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}},\"name\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}},\"locale\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"pattern\":\"^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*\$\"}}},\"metadata\":{\"kind\":\"object\",\"modelName\":\"PauseCustomerSubscriptionResponseValue200ApplicationJsonPropertyDataPropertyCustomerPropertyMetadata\",\"properties\":{},\"required\":[],\"additionalProperties\":{\"kind\":\"object\",\"modelName\":\"ScalarMetadataValue\",\"properties\":{},\"required\":[],\"additionalProperties\":true},\"constraints\":{\"maxProperties\":50}}},\"required\":[\"id\",\"email\",\"external_id\",\"name\",\"locale\",\"metadata\"],\"additionalProperties\":true},\"product_variant_id\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"required\":[\"id\",\"status\",\"provider_subscription_id\",\"provider_customer_id\",\"customer\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"PauseCustomerSubscriptionResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"subscription_id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"action\":{\"kind\":\"enum\",\"values\":[\"pause\",\"resume\",\"cancel_at_period_end\",\"cancel_immediately\",\"keep_subscription\",\"update_payment_method\",\"change_plan\",\"shift_billing_date\",\"set_auto_renew\"]},\"status\":{\"kind\":\"enum\",\"values\":[\"pending\",\"confirmed\",\"failed\",\"expired\",\"dismissed\"]},\"customer_message\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"redirect_url\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"uri\"}},\"created_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}}},\"required\":[\"id\",\"subscription_id\",\"action\",\"status\",\"customer_message\",\"redirect_url\",\"created_at\"],\"additionalProperties\":true}"
             )
     }
 }

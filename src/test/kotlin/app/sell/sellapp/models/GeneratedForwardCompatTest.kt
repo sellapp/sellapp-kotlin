@@ -6,18 +6,18 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 import app.sell.sellapp.types.BlacklistType
 import app.sell.sellapp.types.CatalogVisibility
 import app.sell.sellapp.types.CourseVisibility
+import app.sell.sellapp.types.CreateCouponResponseValue201ApplicationJsonPropertyDataAppliesTo
 import app.sell.sellapp.types.CreateCouponResponseValue201ApplicationJsonPropertyDataType
-import app.sell.sellapp.types.DeleteCouponResponseValue200ApplicationJsonPropertyDataType
+import app.sell.sellapp.types.CustomerPortalSubscriptionStatus
+import app.sell.sellapp.types.GetCouponResponseValue200ApplicationJsonPropertyDataAppliesTo
 import app.sell.sellapp.types.GetCouponResponseValue200ApplicationJsonPropertyDataType
+import app.sell.sellapp.types.ListCouponsResponseValue200ApplicationJsonPropertyDataItemAppliesTo
 import app.sell.sellapp.types.ListCouponsResponseValue200ApplicationJsonPropertyDataItemType
-import app.sell.sellapp.types.ReplaceCouponResponseValue200ApplicationJsonPropertyDataType
 import app.sell.sellapp.types.SdkCreateChargeRequestApplicationJsonPaymentMethod
 import app.sell.sellapp.types.SdkCreateChargeRequestApplicationJsonPaymentMethods
+import app.sell.sellapp.types.SdkCreateCouponRequestApplicationJsonAppliesTo
 import app.sell.sellapp.types.SdkCreateCouponRequestApplicationJsonType
-import app.sell.sellapp.types.SdkReplaceCouponRequestApplicationJsonType
-import app.sell.sellapp.types.SdkUpdateCouponRequestApplicationJsonType
 import app.sell.sellapp.types.StoreVisibility
-import app.sell.sellapp.types.UpdateCouponResponseValue200ApplicationJsonPropertyDataType
 import com.fasterxml.jackson.core.type.TypeReference
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -60,6 +60,18 @@ class GeneratedForwardCompatTest {
     }
 
     @Test
+    fun `unknown CustomerPortalSubscriptionStatus wire values retain their exact value`() {
+        // Simulates a future server release that introduces a new enum variant.
+        val parsed =
+            mapper.readValue(
+                "\"__oagen_new_variant__\"",
+                CustomerPortalSubscriptionStatus::class.java,
+            )
+        assertEquals("__oagen_new_variant__", parsed.value)
+        assertFalse(parsed.isKnown)
+    }
+
+    @Test
     fun `unknown SdkCreateChargeRequestApplicationJsonPaymentMethod wire values retain their exact value`() {
         // Simulates a future server release that introduces a new enum variant.
         val parsed =
@@ -96,12 +108,36 @@ class GeneratedForwardCompatTest {
     }
 
     @Test
+    fun `unknown ListCouponsResponseValue200ApplicationJsonPropertyDataItemAppliesTo wire values retain their exact value`() {
+        // Simulates a future server release that introduces a new enum variant.
+        val parsed =
+            mapper.readValue(
+                "\"__oagen_new_variant__\"",
+                ListCouponsResponseValue200ApplicationJsonPropertyDataItemAppliesTo::class.java,
+            )
+        assertEquals("__oagen_new_variant__", parsed.value)
+        assertFalse(parsed.isKnown)
+    }
+
+    @Test
     fun `unknown SdkCreateCouponRequestApplicationJsonType wire values retain their exact value`() {
         // Simulates a future server release that introduces a new enum variant.
         val parsed =
             mapper.readValue(
                 "\"__oagen_new_variant__\"",
                 SdkCreateCouponRequestApplicationJsonType::class.java,
+            )
+        assertEquals("__oagen_new_variant__", parsed.value)
+        assertFalse(parsed.isKnown)
+    }
+
+    @Test
+    fun `unknown SdkCreateCouponRequestApplicationJsonAppliesTo wire values retain their exact value`() {
+        // Simulates a future server release that introduces a new enum variant.
+        val parsed =
+            mapper.readValue(
+                "\"__oagen_new_variant__\"",
+                SdkCreateCouponRequestApplicationJsonAppliesTo::class.java,
             )
         assertEquals("__oagen_new_variant__", parsed.value)
         assertFalse(parsed.isKnown)
@@ -120,6 +156,18 @@ class GeneratedForwardCompatTest {
     }
 
     @Test
+    fun `unknown CreateCouponResponseValue201ApplicationJsonPropertyDataAppliesTo wire values retain their exact value`() {
+        // Simulates a future server release that introduces a new enum variant.
+        val parsed =
+            mapper.readValue(
+                "\"__oagen_new_variant__\"",
+                CreateCouponResponseValue201ApplicationJsonPropertyDataAppliesTo::class.java,
+            )
+        assertEquals("__oagen_new_variant__", parsed.value)
+        assertFalse(parsed.isKnown)
+    }
+
+    @Test
     fun `unknown GetCouponResponseValue200ApplicationJsonPropertyDataType wire values retain their exact value`() {
         // Simulates a future server release that introduces a new enum variant.
         val parsed =
@@ -132,71 +180,21 @@ class GeneratedForwardCompatTest {
     }
 
     @Test
-    fun `unknown SdkReplaceCouponRequestApplicationJsonType wire values retain their exact value`() {
+    fun `unknown GetCouponResponseValue200ApplicationJsonPropertyDataAppliesTo wire values retain their exact value`() {
         // Simulates a future server release that introduces a new enum variant.
         val parsed =
             mapper.readValue(
                 "\"__oagen_new_variant__\"",
-                SdkReplaceCouponRequestApplicationJsonType::class.java,
+                GetCouponResponseValue200ApplicationJsonPropertyDataAppliesTo::class.java,
             )
         assertEquals("__oagen_new_variant__", parsed.value)
         assertFalse(parsed.isKnown)
     }
 
     @Test
-    fun `unknown ReplaceCouponResponseValue200ApplicationJsonPropertyDataType wire values retain their exact value`() {
-        // Simulates a future server release that introduces a new enum variant.
-        val parsed =
-            mapper.readValue(
-                "\"__oagen_new_variant__\"",
-                ReplaceCouponResponseValue200ApplicationJsonPropertyDataType::class.java,
-            )
-        assertEquals("__oagen_new_variant__", parsed.value)
-        assertFalse(parsed.isKnown)
-    }
-
-    @Test
-    fun `unknown SdkUpdateCouponRequestApplicationJsonType wire values retain their exact value`() {
-        // Simulates a future server release that introduces a new enum variant.
-        val parsed =
-            mapper.readValue(
-                "\"__oagen_new_variant__\"",
-                SdkUpdateCouponRequestApplicationJsonType::class.java,
-            )
-        assertEquals("__oagen_new_variant__", parsed.value)
-        assertFalse(parsed.isKnown)
-    }
-
-    @Test
-    fun `unknown UpdateCouponResponseValue200ApplicationJsonPropertyDataType wire values retain their exact value`() {
-        // Simulates a future server release that introduces a new enum variant.
-        val parsed =
-            mapper.readValue(
-                "\"__oagen_new_variant__\"",
-                UpdateCouponResponseValue200ApplicationJsonPropertyDataType::class.java,
-            )
-        assertEquals("__oagen_new_variant__", parsed.value)
-        assertFalse(parsed.isKnown)
-    }
-
-    @Test
-    fun `unknown DeleteCouponResponseValue200ApplicationJsonPropertyDataType wire values retain their exact value`() {
-        // Simulates a future server release that introduces a new enum variant.
-        val parsed =
-            mapper.readValue(
-                "\"__oagen_new_variant__\"",
-                DeleteCouponResponseValue200ApplicationJsonPropertyDataType::class.java,
-            )
-        assertEquals("__oagen_new_variant__", parsed.value)
-        assertFalse(parsed.isKnown)
-    }
-
-    @Test
-    fun `CustomerPortalOrderLineItem retains unknown JSON fields`() {
-        val json =
-            "{\"__oagen_future_field__\": \"ignored\", \"id\": 0, \"product_id\": null, \"product_variant_id\": null, \"product_title\": " +
-                "null, \"variant_title\": null, \"quantity\": 0, \"status\": \"sample\"}"
-        val parsed = mapper.readValue(json, CustomerPortalOrderLineItem::class.java)
+    fun `SubscriptionPlanChangePreviewPayload retains unknown JSON fields`() {
+        val json = "{\"__oagen_future_field__\":\"ignored\"}"
+        val parsed = mapper.readValue(json, SubscriptionPlanChangePreviewPayload::class.java)
         assertNotNull(parsed)
         assertEquals("ignored", parsed.additionalProperties["__oagen_future_field__"]?.asText())
         val reserialized = mapper.readTree(mapper.writeValueAsString(parsed))

@@ -75,6 +75,11 @@ fun create(
         startsAt: OffsetDateTime? = null,
         endsAt: OffsetDateTime? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCreatePromotionResponseValue201ApplicationJson
 ```
@@ -89,6 +94,11 @@ fun create(
 | startsAt | `OffsetDateTime?` | No |
 | endsAt | `OffsetDateTime?` | No |
 | maxRedemptions | `Long?` | No |
+| appliesTo | `SdkCreateCouponRequestApplicationJsonAppliesTo?` | No |
+| subscriptionPayments | `Long?` | No |
+| storeWide | `Boolean?` | No |
+| products | `List<Long>?` | No |
+| productVariants | `List<Long>?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkCreatePromotionResponseValue201ApplicationJson`.
@@ -260,6 +270,11 @@ fun replace(
         priority: Long? = null,
         isStackable: Boolean? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         phases: List<ReplacePromotionRequestApplicationJsonPropertyPhasesItem>? = null,
         requestOptions: RequestOptions? = null,
     ): SdkReplacePromotionResponseValue200ApplicationJson
@@ -275,6 +290,11 @@ fun replace(
 | priority | `Long?` | No |
 | isStackable | `Boolean?` | No |
 | maxRedemptions | `Long?` | No |
+| appliesTo | `SdkCreateCouponRequestApplicationJsonAppliesTo?` | No |
+| subscriptionPayments | `Long?` | No |
+| storeWide | `Boolean?` | No |
+| products | `List<Long>?` | No |
+| productVariants | `List<Long>?` | No |
 | phases | `List<ReplacePromotionRequestApplicationJsonPropertyPhasesItem>?` | No |
 | requestOptions | `RequestOptions?` | No |
 
@@ -329,6 +349,11 @@ fun update(
         priority: PatchField<Long> = PatchField.Absent,
         isStackable: PatchField<Boolean> = PatchField.Absent,
         maxRedemptions: PatchField<Long?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
+        storeWide: PatchField<Boolean> = PatchField.Absent,
+        products: PatchField<List<Long>> = PatchField.Absent,
+        productVariants: PatchField<List<Long>> = PatchField.Absent,
         phases: PatchField<List<UpdatePromotionRequestApplicationJsonPropertyPhasesItem>> =
             PatchField.Absent,
         requestOptions: RequestOptions? = null,
@@ -345,6 +370,11 @@ fun update(
 | priority | `PatchField<Long>` | No |
 | isStackable | `PatchField<Boolean>` | No |
 | maxRedemptions | `PatchField<Long?>` | No |
+| appliesTo | `PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo>` | No |
+| subscriptionPayments | `PatchField<Long?>` | No |
+| storeWide | `PatchField<Boolean>` | No |
+| products | `PatchField<List<Long>>` | No |
+| productVariants | `PatchField<List<Long>>` | No |
 | phases | `PatchField<List<UpdatePromotionRequestApplicationJsonPropertyPhasesItem>>` | No |
 | requestOptions | `RequestOptions?` | No |
 
@@ -453,6 +483,11 @@ fun restore(
         startsAt: OffsetDateTime? = null,
         endsAt: OffsetDateTime? = null,
         maxRedemptions: Long? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
+        storeWide: Boolean? = null,
+        products: List<Long>? = null,
+        productVariants: List<Long>? = null,
         requestOptions: RequestOptions? = null,
     ): SdkRestorePromotionResponseValue200ApplicationJson
 ```
@@ -468,6 +503,11 @@ fun restore(
 | startsAt | `OffsetDateTime?` | No |
 | endsAt | `OffsetDateTime?` | No |
 | maxRedemptions | `Long?` | No |
+| appliesTo | `SdkCreateCouponRequestApplicationJsonAppliesTo?` | No |
+| subscriptionPayments | `Long?` | No |
+| storeWide | `Boolean?` | No |
+| products | `List<Long>?` | No |
+| productVariants | `List<Long>?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkRestorePromotionResponseValue200ApplicationJson`.

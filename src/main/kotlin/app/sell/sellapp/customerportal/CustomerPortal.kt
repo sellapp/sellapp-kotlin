@@ -12,7 +12,12 @@ import app.sell.sellapp.common.http.bodyOf
 import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.http.patchBodyOf
 import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.models.ConfirmCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata
+import app.sell.sellapp.models.ConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata
 import app.sell.sellapp.models.CustomerPortalOrder
+import app.sell.sellapp.models.CustomerPortalSubscription
+import app.sell.sellapp.models.PreviewCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata
+import app.sell.sellapp.models.PreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata
 import app.sell.sellapp.models.SdkCancelCustomerSubscriptionAtPeriodEndResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkCancelCustomerSubscriptionImmediatelyResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkConfirmCustomerSubscriptionPlanChangeResponseValue200ApplicationJson
@@ -22,7 +27,6 @@ import app.sell.sellapp.models.SdkGetCustomerPortalProfileResponseValue200Applic
 import app.sell.sellapp.models.SdkGetCustomerPortalSubscriptionCapabilitiesResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkGetCustomerPortalSubscriptionResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkListCustomerPortalEntitlementsResponseValue200ApplicationJson
-import app.sell.sellapp.models.SdkListCustomerPortalSubscriptionsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkPauseCustomerSubscriptionResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkPreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkPreviewCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson
@@ -30,7 +34,10 @@ import app.sell.sellapp.models.SdkResumeCustomerSubscriptionResponseValue200Appl
 import app.sell.sellapp.models.SdkUpdateCustomerPortalProfileResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkUpdateCustomerSubscriptionPaymentMethodResponseValue200ApplicationJson
 import app.sell.sellapp.models.UpdateCustomerPortalProfileRequestApplicationJsonPropertyMetadata
+import app.sell.sellapp.types.SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming
+import app.sell.sellapp.types.SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior
 import com.fasterxml.jackson.core.type.TypeReference
+import java.time.OffsetDateTime
 
 /**
  * API accessor for CustomerPortal.
@@ -373,45 +380,41 @@ class CustomerPortal(internal val sellapp: SellApp) {
     /**
      * List customer subscriptions
      *
-     * List subscriptions belonging to the customer session.
+     * List subscriptions belonging to the customer session, newest first, 15 per page.
+     * `trial_ends_at` is only set while a subscription is `TRIALING`.
      *
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
-     * @return the SdkListCustomerPortalSubscriptionsResponseValue200ApplicationJson
+     * @return a [app.sell.sellapp.common.http.Page] of results
      */
     @JvmOverloads
     fun listSubscriptions(
         requestOptions: RequestOptions? = null
-    ): SdkListCustomerPortalSubscriptionsResponseValue200ApplicationJson {
-        val config =
-            RequestConfig(
-                method = "GET",
-                path = "/v2/customer-portal/subscriptions",
-                requestOptions = requestOptions,
-                responseSchema =
-                    app.sell.sellapp.models
-                        .SdkListCustomerPortalSubscriptionsResponseValue200ApplicationJson
-                        .runtimeSchema,
-                operationId = "listCustomerPortalSubscriptions",
-                supportsIdempotency = false,
-            )
-        return sellapp.baseClient.request(
-            config,
-            SdkListCustomerPortalSubscriptionsResponseValue200ApplicationJson::class.java,
-        )
+    ): Page<CustomerPortalSubscription> {
+        val itemType = object : TypeReference<CustomerPortalSubscription>() {}
+        return sellapp.baseClient.requestPage(
+            method = "GET",
+            path = "/v2/customer-portal/subscriptions",
+            itemType = itemType,
+            requestOptions = requestOptions,
+            operationId = "listCustomerPortalSubscriptions",
+            supportsIdempotency = false,
+            itemSchema = app.sell.sellapp.models.CustomerPortalSubscription.runtimeSchema,
+            before = null,
+            after = null,
+        ) {}
     }
 
     @Suppress("UNCHECKED_CAST")
     fun listSubscriptionsWithResponse(
         requestOptions: RequestOptions? = null
-    ): RawResponse<SdkListCustomerPortalSubscriptionsResponseValue200ApplicationJson> {
+    ): RawResponse<Page<CustomerPortalSubscription>> {
         var captured: RawResponse<Any?>? = null
         val capturingOptions =
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
         listSubscriptions(capturingOptions)
-        return captured
-            as? RawResponse<SdkListCustomerPortalSubscriptionsResponseValue200ApplicationJson>
+        return captured as? RawResponse<Page<CustomerPortalSubscription>>
             ?: error("Response metadata was not captured")
     }
 
@@ -425,7 +428,7 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("listSubscriptionsSuspend")
     suspend fun listSubscriptionsSuspend(
         requestOptions: RequestOptions? = null
-    ): SdkListCustomerPortalSubscriptionsResponseValue200ApplicationJson =
+    ): Page<CustomerPortalSubscription> =
         sellapp.baseClient.runCancellable {
             listSubscriptions(requestOptions)
         }
@@ -441,7 +444,7 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("listSubscriptionsWithResponseSuspend")
     suspend fun listSubscriptionsWithResponseSuspend(
         requestOptions: RequestOptions? = null
-    ): RawResponse<SdkListCustomerPortalSubscriptionsResponseValue200ApplicationJson> =
+    ): RawResponse<Page<CustomerPortalSubscription>> =
         sellapp.baseClient.runCancellable {
             listSubscriptionsWithResponse(requestOptions)
         }
@@ -529,7 +532,14 @@ class CustomerPortal(internal val sellapp: SellApp) {
     /**
      * Retrieve subscription capabilities
      *
-     * Read immediately before displaying lifecycle controls.
+     * Read immediately before displaying lifecycle controls. Each of the nine actions (`pause`,
+     * `resume`, `cancel_at_period_end`, `cancel_immediately`, `keep_subscription`,
+     * `update_payment_method`, `change_plan`, `shift_billing_date`, and `set_auto_renew`) reports a
+     * status and the reason to show the customer when it is not available. While a Stripe, PayPal,
+     * or Razorpay subscription has a payment still owed, every action except `cancel_immediately`
+     * and, on Razorpay, `update_payment_method`, is `unsupported`. `resume` is `unsupported` on a
+     * subscription on hold for an unpaid renewal, which the customer pays and resumes on the
+     * store's customer portal page. The example is abbreviated to three of the actions.
      *
      * @param subscription The subscription identifier.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
@@ -687,13 +697,11 @@ class CustomerPortal(internal val sellapp: SellApp) {
     /**
      * Cancel at period end
      *
-     * Cancel at period end. Read capabilities first; state conflicts return 409.
+     * Schedule the subscription to end when the current period ends. The customer keeps access
+     * until then. Read capabilities first. A refusal returns 422 with the sentence to show the
+     * customer under `errors.subscription`.
      *
      * @param productSubscription The productSubscription identifier.
-     * @param previewId the preview id of the request.
-     * @param productVariantId the product variant id of the request.
-     * @param renewalDate the renewal date of the request.
-     * @param returnUrl the return url of the request.
      * @param reason the reason of the request.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkCancelCustomerSubscriptionAtPeriodEndResponseValue200ApplicationJson
@@ -701,21 +709,10 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmOverloads
     fun cancelSubscriptionAtPeriodEnd(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCancelCustomerSubscriptionAtPeriodEndResponseValue200ApplicationJson {
-        val body =
-            bodyOf(
-                "preview_id" to previewId,
-                "product_variant_id" to productVariantId,
-                "renewal_date" to renewalDate,
-                "return_url" to returnUrl,
-                "reason" to reason,
-            )
+        val body = bodyOf("reason" to reason)
         val config =
             RequestConfig(
                 method = "POST",
@@ -743,10 +740,6 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @Suppress("UNCHECKED_CAST")
     fun cancelSubscriptionAtPeriodEndWithResponse(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkCancelCustomerSubscriptionAtPeriodEndResponseValue200ApplicationJson> {
@@ -755,15 +748,7 @@ class CustomerPortal(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        cancelSubscriptionAtPeriodEnd(
-            productSubscription,
-            previewId,
-            productVariantId,
-            renewalDate,
-            returnUrl,
-            reason,
-            capturingOptions,
-        )
+        cancelSubscriptionAtPeriodEnd(productSubscription, reason, capturingOptions)
         return captured
             as? RawResponse<SdkCancelCustomerSubscriptionAtPeriodEndResponseValue200ApplicationJson>
             ?: error("Response metadata was not captured")
@@ -780,23 +765,11 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("cancelSubscriptionAtPeriodEndSuspend")
     suspend fun cancelSubscriptionAtPeriodEndSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCancelCustomerSubscriptionAtPeriodEndResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
-            cancelSubscriptionAtPeriodEnd(
-                productSubscription,
-                previewId,
-                productVariantId,
-                renewalDate,
-                returnUrl,
-                reason,
-                requestOptions,
-            )
+            cancelSubscriptionAtPeriodEnd(productSubscription, reason, requestOptions)
         }
 
     /**
@@ -810,35 +783,22 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("cancelSubscriptionAtPeriodEndWithResponseSuspend")
     suspend fun cancelSubscriptionAtPeriodEndWithResponseSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkCancelCustomerSubscriptionAtPeriodEndResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
-            cancelSubscriptionAtPeriodEndWithResponse(
-                productSubscription,
-                previewId,
-                productVariantId,
-                renewalDate,
-                returnUrl,
-                reason,
-                requestOptions,
-            )
+            cancelSubscriptionAtPeriodEndWithResponse(productSubscription, reason, requestOptions)
         }
 
     /**
      * Cancel immediately
      *
-     * Cancel immediately. Read capabilities first; state conflicts return 409.
+     * End the subscription now. A customer session cannot request a refund. It is the one action
+     * left on a Stripe or PayPal subscription with a payment still owed, and one of two left on a
+     * Razorpay one alongside a payment method update. Read capabilities first. A refusal returns
+     * 422 with the sentence to show the customer under `errors.subscription`.
      *
      * @param productSubscription The productSubscription identifier.
-     * @param previewId the preview id of the request.
-     * @param productVariantId the product variant id of the request.
-     * @param renewalDate the renewal date of the request.
-     * @param returnUrl the return url of the request.
      * @param reason the reason of the request.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkCancelCustomerSubscriptionImmediatelyResponseValue200ApplicationJson
@@ -846,21 +806,10 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmOverloads
     fun cancelSubscriptionImmediately(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCancelCustomerSubscriptionImmediatelyResponseValue200ApplicationJson {
-        val body =
-            bodyOf(
-                "preview_id" to previewId,
-                "product_variant_id" to productVariantId,
-                "renewal_date" to renewalDate,
-                "return_url" to returnUrl,
-                "reason" to reason,
-            )
+        val body = bodyOf("reason" to reason)
         val config =
             RequestConfig(
                 method = "POST",
@@ -888,10 +837,6 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @Suppress("UNCHECKED_CAST")
     fun cancelSubscriptionImmediatelyWithResponse(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkCancelCustomerSubscriptionImmediatelyResponseValue200ApplicationJson> {
@@ -900,15 +845,7 @@ class CustomerPortal(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        cancelSubscriptionImmediately(
-            productSubscription,
-            previewId,
-            productVariantId,
-            renewalDate,
-            returnUrl,
-            reason,
-            capturingOptions,
-        )
+        cancelSubscriptionImmediately(productSubscription, reason, capturingOptions)
         return captured
             as? RawResponse<SdkCancelCustomerSubscriptionImmediatelyResponseValue200ApplicationJson>
             ?: error("Response metadata was not captured")
@@ -925,23 +862,11 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("cancelSubscriptionImmediatelySuspend")
     suspend fun cancelSubscriptionImmediatelySuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCancelCustomerSubscriptionImmediatelyResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
-            cancelSubscriptionImmediately(
-                productSubscription,
-                previewId,
-                productVariantId,
-                renewalDate,
-                returnUrl,
-                reason,
-                requestOptions,
-            )
+            cancelSubscriptionImmediately(productSubscription, reason, requestOptions)
         }
 
     /**
@@ -955,35 +880,21 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("cancelSubscriptionImmediatelyWithResponseSuspend")
     suspend fun cancelSubscriptionImmediatelyWithResponseSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkCancelCustomerSubscriptionImmediatelyResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
-            cancelSubscriptionImmediatelyWithResponse(
-                productSubscription,
-                previewId,
-                productVariantId,
-                renewalDate,
-                returnUrl,
-                reason,
-                requestOptions,
-            )
+            cancelSubscriptionImmediatelyWithResponse(productSubscription, reason, requestOptions)
         }
 
     /**
      * Pause a subscription
      *
-     * Pause a subscription. Read capabilities first; state conflicts return 409.
+     * Pause billing, optionally until `resume_at`. Read capabilities first. A refusal returns 422
+     * with the sentence to show the customer under `errors.subscription`.
      *
      * @param productSubscription The productSubscription identifier.
-     * @param previewId the preview id of the request.
-     * @param productVariantId the product variant id of the request.
-     * @param renewalDate the renewal date of the request.
-     * @param returnUrl the return url of the request.
+     * @param resumeAt the resume at of the request.
      * @param reason the reason of the request.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkPauseCustomerSubscriptionResponseValue200ApplicationJson
@@ -991,19 +902,13 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmOverloads
     fun pauseSubscription(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        resumeAt: OffsetDateTime? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkPauseCustomerSubscriptionResponseValue200ApplicationJson {
         val body =
             bodyOf(
-                "preview_id" to previewId,
-                "product_variant_id" to productVariantId,
-                "renewal_date" to renewalDate,
-                "return_url" to returnUrl,
+                "resume_at" to resumeAt,
                 "reason" to reason,
             )
         val config =
@@ -1032,10 +937,7 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @Suppress("UNCHECKED_CAST")
     fun pauseSubscriptionWithResponse(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        resumeAt: OffsetDateTime? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkPauseCustomerSubscriptionResponseValue200ApplicationJson> {
@@ -1044,15 +946,7 @@ class CustomerPortal(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        pauseSubscription(
-            productSubscription,
-            previewId,
-            productVariantId,
-            renewalDate,
-            returnUrl,
-            reason,
-            capturingOptions,
-        )
+        pauseSubscription(productSubscription, resumeAt, reason, capturingOptions)
         return captured as? RawResponse<SdkPauseCustomerSubscriptionResponseValue200ApplicationJson>
             ?: error("Response metadata was not captured")
     }
@@ -1067,23 +961,12 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("pauseSubscriptionSuspend")
     suspend fun pauseSubscriptionSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        resumeAt: OffsetDateTime? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkPauseCustomerSubscriptionResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
-            pauseSubscription(
-                productSubscription,
-                previewId,
-                productVariantId,
-                renewalDate,
-                returnUrl,
-                reason,
-                requestOptions,
-            )
+            pauseSubscription(productSubscription, resumeAt, reason, requestOptions)
         }
 
     /**
@@ -1097,57 +980,32 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("pauseSubscriptionWithResponseSuspend")
     suspend fun pauseSubscriptionWithResponseSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        resumeAt: OffsetDateTime? = null,
         reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkPauseCustomerSubscriptionResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
-            pauseSubscriptionWithResponse(
-                productSubscription,
-                previewId,
-                productVariantId,
-                renewalDate,
-                returnUrl,
-                reason,
-                requestOptions,
-            )
+            pauseSubscriptionWithResponse(productSubscription, resumeAt, reason, requestOptions)
         }
 
     /**
      * Resume a subscription
      *
-     * Resume a subscription. Read capabilities first; state conflicts return 409.
+     * Resume a paused subscription. A subscription the store bills in house that is on hold for an
+     * unpaid renewal comes back only when the customer pays that renewal on the store's customer
+     * portal page, so it is refused. Read capabilities first. A refusal returns 422 with the
+     * sentence to show the customer under `errors.subscription`.
      *
      * @param productSubscription The productSubscription identifier.
-     * @param previewId the preview id of the request.
-     * @param productVariantId the product variant id of the request.
-     * @param renewalDate the renewal date of the request.
-     * @param returnUrl the return url of the request.
-     * @param reason the reason of the request.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkResumeCustomerSubscriptionResponseValue200ApplicationJson
      */
     @JvmOverloads
     fun resumeSubscription(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkResumeCustomerSubscriptionResponseValue200ApplicationJson {
-        val body =
-            bodyOf(
-                "preview_id" to previewId,
-                "product_variant_id" to productVariantId,
-                "renewal_date" to renewalDate,
-                "return_url" to returnUrl,
-                "reason" to reason,
-            )
+        val body = linkedMapOf<String, Any?>()
         val config =
             RequestConfig(
                 method = "POST",
@@ -1155,9 +1013,6 @@ class CustomerPortal(internal val sellapp: SellApp) {
                     "/v2/customer-portal/subscriptions/${encodePathSegment(productSubscription)}/actions/resume",
                 body = body,
                 requestOptions = requestOptions,
-                requestSchema =
-                    app.sell.sellapp.models.SdkResumeCustomerSubscriptionRequestApplicationJson
-                        .runtimeSchema,
                 responseSchema =
                     app.sell.sellapp.models
                         .SdkResumeCustomerSubscriptionResponseValue200ApplicationJson
@@ -1174,11 +1029,6 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @Suppress("UNCHECKED_CAST")
     fun resumeSubscriptionWithResponse(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkResumeCustomerSubscriptionResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -1186,15 +1036,7 @@ class CustomerPortal(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        resumeSubscription(
-            productSubscription,
-            previewId,
-            productVariantId,
-            renewalDate,
-            returnUrl,
-            reason,
-            capturingOptions,
-        )
+        resumeSubscription(productSubscription, capturingOptions)
         return captured
             as? RawResponse<SdkResumeCustomerSubscriptionResponseValue200ApplicationJson>
             ?: error("Response metadata was not captured")
@@ -1210,23 +1052,10 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("resumeSubscriptionSuspend")
     suspend fun resumeSubscriptionSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkResumeCustomerSubscriptionResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
-            resumeSubscription(
-                productSubscription,
-                previewId,
-                productVariantId,
-                renewalDate,
-                returnUrl,
-                reason,
-                requestOptions,
-            )
+            resumeSubscription(productSubscription, requestOptions)
         }
 
     /**
@@ -1240,57 +1069,31 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("resumeSubscriptionWithResponseSuspend")
     suspend fun resumeSubscriptionWithResponseSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkResumeCustomerSubscriptionResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
-            resumeSubscriptionWithResponse(
-                productSubscription,
-                previewId,
-                productVariantId,
-                renewalDate,
-                returnUrl,
-                reason,
-                requestOptions,
-            )
+            resumeSubscriptionWithResponse(productSubscription, requestOptions)
         }
 
     /**
      * Update payment method
      *
-     * Update payment method. Read capabilities first; state conflicts return 409.
+     * Start a payment method update. Send the customer to `redirect_url` to finish it with the
+     * provider. Read capabilities first. A refusal returns 422 with the sentence to show the
+     * customer under `errors.subscription`.
      *
      * @param productSubscription The productSubscription identifier.
-     * @param previewId the preview id of the request.
-     * @param productVariantId the product variant id of the request.
-     * @param renewalDate the renewal date of the request.
      * @param returnUrl the return url of the request.
-     * @param reason the reason of the request.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkUpdateCustomerSubscriptionPaymentMethodResponseValue200ApplicationJson
      */
     @JvmOverloads
     fun updateSubscriptionPaymentMethod(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
         returnUrl: String? = null,
-        reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateCustomerSubscriptionPaymentMethodResponseValue200ApplicationJson {
-        val body =
-            bodyOf(
-                "preview_id" to previewId,
-                "product_variant_id" to productVariantId,
-                "renewal_date" to renewalDate,
-                "return_url" to returnUrl,
-                "reason" to reason,
-            )
+        val body = bodyOf("return_url" to returnUrl)
         val config =
             RequestConfig(
                 method = "POST",
@@ -1318,11 +1121,7 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @Suppress("UNCHECKED_CAST")
     fun updateSubscriptionPaymentMethodWithResponse(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
         returnUrl: String? = null,
-        reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkUpdateCustomerSubscriptionPaymentMethodResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -1330,15 +1129,7 @@ class CustomerPortal(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        updateSubscriptionPaymentMethod(
-            productSubscription,
-            previewId,
-            productVariantId,
-            renewalDate,
-            returnUrl,
-            reason,
-            capturingOptions,
-        )
+        updateSubscriptionPaymentMethod(productSubscription, returnUrl, capturingOptions)
         return captured
             as?
             RawResponse<SdkUpdateCustomerSubscriptionPaymentMethodResponseValue200ApplicationJson>
@@ -1356,23 +1147,11 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("updateSubscriptionPaymentMethodSuspend")
     suspend fun updateSubscriptionPaymentMethodSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
         returnUrl: String? = null,
-        reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateCustomerSubscriptionPaymentMethodResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
-            updateSubscriptionPaymentMethod(
-                productSubscription,
-                previewId,
-                productVariantId,
-                renewalDate,
-                returnUrl,
-                reason,
-                requestOptions,
-            )
+            updateSubscriptionPaymentMethod(productSubscription, returnUrl, requestOptions)
         }
 
     /**
@@ -1386,21 +1165,13 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("updateSubscriptionPaymentMethodWithResponseSuspend")
     suspend fun updateSubscriptionPaymentMethodWithResponseSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
         returnUrl: String? = null,
-        reason: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkUpdateCustomerSubscriptionPaymentMethodResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
             updateSubscriptionPaymentMethodWithResponse(
                 productSubscription,
-                previewId,
-                productVariantId,
-                renewalDate,
                 returnUrl,
-                reason,
                 requestOptions,
             )
         }
@@ -1408,35 +1179,41 @@ class CustomerPortal(internal val sellapp: SellApp) {
     /**
      * Preview a plan change
      *
-     * Preview a plan change. Read capabilities first; state conflicts return 409.
+     * Preview a plan change before confirming it. On Stripe and in-house subscriptions,
+     * `preview.payment_required` says whether confirming charges `amount_due` today or leaves any
+     * amount to the next invoice, and `preview.renewal_date` says when the subscription renews
+     * next. A plan change during a trial never charges today. Read capabilities first. A refusal
+     * returns 422 with the sentence to show the customer under `errors.subscription`.
      *
      * @param productSubscription The productSubscription identifier.
-     * @param previewId the preview id of the request.
-     * @param productVariantId the product variant id of the request.
-     * @param renewalDate the renewal date of the request.
-     * @param returnUrl the return url of the request.
-     * @param reason the reason of the request.
+     * @param targetVariantId the target variant id of the request.
+     * @param effectiveTiming the effective timing of the request.
+     * @param prorationBehavior the proration behavior of the request.
+     * @param metadata the metadata of the request.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkPreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJson
      */
     @JvmOverloads
     fun previewSubscriptionPlanChange(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
+        targetVariantId: Long,
+        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =
+            null,
+        prorationBehavior:
+            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =
+            null,
+        metadata: PreviewCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): SdkPreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJson {
         val body =
             bodyOf(
-                "preview_id" to previewId,
-                "product_variant_id" to productVariantId,
-                "renewal_date" to renewalDate,
-                "return_url" to returnUrl,
-                "reason" to reason,
+                "target_variant_id" to targetVariantId,
+                "effective_timing" to effectiveTiming,
+                "proration_behavior" to prorationBehavior,
+                "metadata" to metadata,
             )
+        body["target_variant_id"] = targetVariantId
         val config =
             RequestConfig(
                 method = "POST",
@@ -1453,7 +1230,7 @@ class CustomerPortal(internal val sellapp: SellApp) {
                         .SdkPreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJson
                         .runtimeSchema,
                 operationId = "previewCustomerSubscriptionPlanChange",
-                supportsIdempotency = true,
+                supportsIdempotency = false,
             )
         return sellapp.baseClient.request(
             config,
@@ -1464,11 +1241,14 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @Suppress("UNCHECKED_CAST")
     fun previewSubscriptionPlanChangeWithResponse(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
+        targetVariantId: Long,
+        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =
+            null,
+        prorationBehavior:
+            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =
+            null,
+        metadata: PreviewCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkPreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -1478,11 +1258,10 @@ class CustomerPortal(internal val sellapp: SellApp) {
             }
         previewSubscriptionPlanChange(
             productSubscription,
-            previewId,
-            productVariantId,
-            renewalDate,
-            returnUrl,
-            reason,
+            targetVariantId,
+            effectiveTiming,
+            prorationBehavior,
+            metadata,
             capturingOptions,
         )
         return captured
@@ -1501,21 +1280,23 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("previewSubscriptionPlanChangeSuspend")
     suspend fun previewSubscriptionPlanChangeSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
+        targetVariantId: Long,
+        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =
+            null,
+        prorationBehavior:
+            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =
+            null,
+        metadata: PreviewCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): SdkPreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
             previewSubscriptionPlanChange(
                 productSubscription,
-                previewId,
-                productVariantId,
-                renewalDate,
-                returnUrl,
-                reason,
+                targetVariantId,
+                effectiveTiming,
+                prorationBehavior,
+                metadata,
                 requestOptions,
             )
         }
@@ -1531,21 +1312,23 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("previewSubscriptionPlanChangeWithResponseSuspend")
     suspend fun previewSubscriptionPlanChangeWithResponseSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
+        targetVariantId: Long,
+        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =
+            null,
+        prorationBehavior:
+            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =
+            null,
+        metadata: PreviewCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkPreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
             previewSubscriptionPlanChangeWithResponse(
                 productSubscription,
-                previewId,
-                productVariantId,
-                renewalDate,
-                returnUrl,
-                reason,
+                targetVariantId,
+                effectiveTiming,
+                prorationBehavior,
+                metadata,
                 requestOptions,
             )
         }
@@ -1553,35 +1336,44 @@ class CustomerPortal(internal val sellapp: SellApp) {
     /**
      * Confirm a plan change
      *
-     * Confirm a plan change. Read capabilities first; state conflicts return 409.
+     * Confirm a previewed plan change, sending back its `preview_token`. When the change still
+     * needs the customer to approve it with the provider or pay for it, the action is `pending` and
+     * `redirect_url` says where. Read capabilities first. A refusal returns 422 with the sentence
+     * to show the customer under `errors.subscription`.
      *
      * @param productSubscription The productSubscription identifier.
-     * @param previewId the preview id of the request.
-     * @param productVariantId the product variant id of the request.
-     * @param renewalDate the renewal date of the request.
-     * @param returnUrl the return url of the request.
-     * @param reason the reason of the request.
+     * @param targetVariantId the target variant id of the request.
+     * @param previewToken the preview token of the request.
+     * @param effectiveTiming the effective timing of the request.
+     * @param prorationBehavior the proration behavior of the request.
+     * @param metadata the metadata of the request.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkConfirmCustomerSubscriptionPlanChangeResponseValue200ApplicationJson
      */
     @JvmOverloads
     fun confirmSubscriptionPlanChange(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
+        targetVariantId: Long,
+        previewToken: String,
+        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =
+            null,
+        prorationBehavior:
+            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =
+            null,
+        metadata: ConfirmCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): SdkConfirmCustomerSubscriptionPlanChangeResponseValue200ApplicationJson {
         val body =
             bodyOf(
-                "preview_id" to previewId,
-                "product_variant_id" to productVariantId,
-                "renewal_date" to renewalDate,
-                "return_url" to returnUrl,
-                "reason" to reason,
+                "target_variant_id" to targetVariantId,
+                "preview_token" to previewToken,
+                "effective_timing" to effectiveTiming,
+                "proration_behavior" to prorationBehavior,
+                "metadata" to metadata,
             )
+        body["target_variant_id"] = targetVariantId
+        body["preview_token"] = previewToken
         val config =
             RequestConfig(
                 method = "POST",
@@ -1609,11 +1401,15 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @Suppress("UNCHECKED_CAST")
     fun confirmSubscriptionPlanChangeWithResponse(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
+        targetVariantId: Long,
+        previewToken: String,
+        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =
+            null,
+        prorationBehavior:
+            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =
+            null,
+        metadata: ConfirmCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkConfirmCustomerSubscriptionPlanChangeResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -1623,11 +1419,11 @@ class CustomerPortal(internal val sellapp: SellApp) {
             }
         confirmSubscriptionPlanChange(
             productSubscription,
-            previewId,
-            productVariantId,
-            renewalDate,
-            returnUrl,
-            reason,
+            targetVariantId,
+            previewToken,
+            effectiveTiming,
+            prorationBehavior,
+            metadata,
             capturingOptions,
         )
         return captured
@@ -1646,21 +1442,25 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("confirmSubscriptionPlanChangeSuspend")
     suspend fun confirmSubscriptionPlanChangeSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
+        targetVariantId: Long,
+        previewToken: String,
+        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =
+            null,
+        prorationBehavior:
+            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =
+            null,
+        metadata: ConfirmCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): SdkConfirmCustomerSubscriptionPlanChangeResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
             confirmSubscriptionPlanChange(
                 productSubscription,
-                previewId,
-                productVariantId,
-                renewalDate,
-                returnUrl,
-                reason,
+                targetVariantId,
+                previewToken,
+                effectiveTiming,
+                prorationBehavior,
+                metadata,
                 requestOptions,
             )
         }
@@ -1676,21 +1476,25 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("confirmSubscriptionPlanChangeWithResponseSuspend")
     suspend fun confirmSubscriptionPlanChangeWithResponseSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
-        reason: String? = null,
+        targetVariantId: Long,
+        previewToken: String,
+        effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =
+            null,
+        prorationBehavior:
+            SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =
+            null,
+        metadata: ConfirmCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkConfirmCustomerSubscriptionPlanChangeResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
             confirmSubscriptionPlanChangeWithResponse(
                 productSubscription,
-                previewId,
-                productVariantId,
-                renewalDate,
-                returnUrl,
-                reason,
+                targetVariantId,
+                previewToken,
+                effectiveTiming,
+                prorationBehavior,
+                metadata,
                 requestOptions,
             )
         }
@@ -1698,35 +1502,34 @@ class CustomerPortal(internal val sellapp: SellApp) {
     /**
      * Preview a renewal-date change
      *
-     * Preview a renewal-date change. Read capabilities first; state conflicts return 409.
+     * Preview moving the next renewal to `renewal_date`. `preview` is the provider's own preview,
+     * so its keys differ per provider. Read capabilities first. A refusal returns 422 with the
+     * sentence to show the customer under `errors.subscription`.
      *
      * @param productSubscription The productSubscription identifier.
-     * @param previewId the preview id of the request.
-     * @param productVariantId the product variant id of the request.
      * @param renewalDate the renewal date of the request.
-     * @param returnUrl the return url of the request.
      * @param reason the reason of the request.
+     * @param metadata the metadata of the request.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkPreviewCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson
      */
     @JvmOverloads
     fun previewSubscriptionRenewalDateChange(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        renewalDate: OffsetDateTime,
         reason: String? = null,
+        metadata:
+            PreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): SdkPreviewCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson {
         val body =
             bodyOf(
-                "preview_id" to previewId,
-                "product_variant_id" to productVariantId,
                 "renewal_date" to renewalDate,
-                "return_url" to returnUrl,
                 "reason" to reason,
+                "metadata" to metadata,
             )
+        body["renewal_date"] = renewalDate
         val config =
             RequestConfig(
                 method = "POST",
@@ -1743,7 +1546,7 @@ class CustomerPortal(internal val sellapp: SellApp) {
                         .SdkPreviewCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson
                         .runtimeSchema,
                 operationId = "previewCustomerSubscriptionRenewalDateChange",
-                supportsIdempotency = true,
+                supportsIdempotency = false,
             )
         return sellapp.baseClient.request(
             config,
@@ -1755,11 +1558,11 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @Suppress("UNCHECKED_CAST")
     fun previewSubscriptionRenewalDateChangeWithResponse(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        renewalDate: OffsetDateTime,
         reason: String? = null,
+        metadata:
+            PreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkPreviewCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -1769,11 +1572,9 @@ class CustomerPortal(internal val sellapp: SellApp) {
             }
         previewSubscriptionRenewalDateChange(
             productSubscription,
-            previewId,
-            productVariantId,
             renewalDate,
-            returnUrl,
             reason,
+            metadata,
             capturingOptions,
         )
         return captured
@@ -1794,21 +1595,19 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("previewSubscriptionRenewalDateChangeSuspend")
     suspend fun previewSubscriptionRenewalDateChangeSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        renewalDate: OffsetDateTime,
         reason: String? = null,
+        metadata:
+            PreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): SdkPreviewCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
             previewSubscriptionRenewalDateChange(
                 productSubscription,
-                previewId,
-                productVariantId,
                 renewalDate,
-                returnUrl,
                 reason,
+                metadata,
                 requestOptions,
             )
         }
@@ -1824,21 +1623,19 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("previewSubscriptionRenewalDateChangeWithResponseSuspend")
     suspend fun previewSubscriptionRenewalDateChangeWithResponseSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        renewalDate: OffsetDateTime,
         reason: String? = null,
+        metadata:
+            PreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkPreviewCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
             previewSubscriptionRenewalDateChangeWithResponse(
                 productSubscription,
-                previewId,
-                productVariantId,
                 renewalDate,
-                returnUrl,
                 reason,
+                metadata,
                 requestOptions,
             )
         }
@@ -1846,35 +1643,37 @@ class CustomerPortal(internal val sellapp: SellApp) {
     /**
      * Confirm a renewal-date change
      *
-     * Confirm a renewal-date change. Read capabilities first; state conflicts return 409.
+     * Confirm a renewal-date change, sending the `preview_token` when the plan requires a preview.
+     * Read capabilities first. A refusal returns 422 with the sentence to show the customer under
+     * `errors.subscription`.
      *
      * @param productSubscription The productSubscription identifier.
-     * @param previewId the preview id of the request.
-     * @param productVariantId the product variant id of the request.
      * @param renewalDate the renewal date of the request.
-     * @param returnUrl the return url of the request.
+     * @param previewToken the preview token of the request.
      * @param reason the reason of the request.
+     * @param metadata the metadata of the request.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkConfirmCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson
      */
     @JvmOverloads
     fun confirmSubscriptionRenewalDateChange(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        renewalDate: OffsetDateTime,
+        previewToken: String? = null,
         reason: String? = null,
+        metadata:
+            ConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): SdkConfirmCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson {
         val body =
             bodyOf(
-                "preview_id" to previewId,
-                "product_variant_id" to productVariantId,
                 "renewal_date" to renewalDate,
-                "return_url" to returnUrl,
+                "preview_token" to previewToken,
                 "reason" to reason,
+                "metadata" to metadata,
             )
+        body["renewal_date"] = renewalDate
         val config =
             RequestConfig(
                 method = "POST",
@@ -1903,11 +1702,12 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @Suppress("UNCHECKED_CAST")
     fun confirmSubscriptionRenewalDateChangeWithResponse(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        renewalDate: OffsetDateTime,
+        previewToken: String? = null,
         reason: String? = null,
+        metadata:
+            ConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkConfirmCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -1917,11 +1717,10 @@ class CustomerPortal(internal val sellapp: SellApp) {
             }
         confirmSubscriptionRenewalDateChange(
             productSubscription,
-            previewId,
-            productVariantId,
             renewalDate,
-            returnUrl,
+            previewToken,
             reason,
+            metadata,
             capturingOptions,
         )
         return captured
@@ -1942,21 +1741,21 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("confirmSubscriptionRenewalDateChangeSuspend")
     suspend fun confirmSubscriptionRenewalDateChangeSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        renewalDate: OffsetDateTime,
+        previewToken: String? = null,
         reason: String? = null,
+        metadata:
+            ConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): SdkConfirmCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
             confirmSubscriptionRenewalDateChange(
                 productSubscription,
-                previewId,
-                productVariantId,
                 renewalDate,
-                returnUrl,
+                previewToken,
                 reason,
+                metadata,
                 requestOptions,
             )
         }
@@ -1972,21 +1771,21 @@ class CustomerPortal(internal val sellapp: SellApp) {
     @JvmName("confirmSubscriptionRenewalDateChangeWithResponseSuspend")
     suspend fun confirmSubscriptionRenewalDateChangeWithResponseSuspend(
         productSubscription: String,
-        previewId: String? = null,
-        productVariantId: Long? = null,
-        renewalDate: String? = null,
-        returnUrl: String? = null,
+        renewalDate: OffsetDateTime,
+        previewToken: String? = null,
         reason: String? = null,
+        metadata:
+            ConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata? =
+            null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkConfirmCustomerSubscriptionRenewalDateChangeResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
             confirmSubscriptionRenewalDateChangeWithResponse(
                 productSubscription,
-                previewId,
-                productVariantId,
                 renewalDate,
-                returnUrl,
+                previewToken,
                 reason,
+                metadata,
                 requestOptions,
             )
         }

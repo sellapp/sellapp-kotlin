@@ -2,6 +2,44 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SdkPauseCustomerSubscriptionRequestApplicationJson]. */
-typealias SdkConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJson =
-    SdkPauseCustomerSubscriptionRequestApplicationJson
+import app.sell.sellapp.common.json.runtimeSchema
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
+import java.time.OffsetDateTime
+
+/** SdkConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJson model. */
+data class SdkConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJson(
+    /** The renewal date. */
+    @JsonProperty("renewal_date") val renewalDate: OffsetDateTime,
+
+    /** The preview token. */
+    @JsonProperty("preview_token") val previewToken: String? = null,
+
+    /** The reason. */
+    @JsonProperty("reason") val reason: String? = null,
+
+    /** The metadata. */
+    @JsonProperty("metadata")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val metadata:
+        ConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata? =
+        null,
+) {
+    /** Additive response fields retained verbatim for forward compatibility. */
+    @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
+
+    @JsonAnySetter
+    fun setAdditionalProperty(name: String, value: JsonNode) {
+        additionalProperties[name] = value
+    }
+
+    companion object {
+        internal val runtimeSchema =
+            runtimeSchema(
+                "{\"kind\":\"object\",\"modelName\":\"SdkConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJson\",\"properties\":{\"renewal_date\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"},\"preview_token\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":128}}},\"reason\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":500}}},\"metadata\":{\"kind\":\"object\",\"modelName\":\"ConfirmCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata\",\"properties\":{},\"required\":[],\"additionalProperties\":true}},\"required\":[\"renewal_date\"],\"additionalProperties\":true}"
+            )
+    }
+}

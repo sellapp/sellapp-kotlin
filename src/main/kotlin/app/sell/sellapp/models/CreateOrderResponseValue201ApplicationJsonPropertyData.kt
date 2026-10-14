@@ -34,7 +34,11 @@ data class CreateOrderResponseValue201ApplicationJsonPropertyData(
     @JsonProperty("totals")
     val totals: CreateOrderResponseValue201ApplicationJsonPropertyDataPropertyTotals,
 
-    /** The coupon id. */
+    /**
+     * The coupon this order was sold with, or null. A subscription's renewal and plan-change orders
+     * carry null, even while the subscription still bills a discounted price, so a coupon's `limit`
+     * counts a subscription once, at signup.
+     */
     @JsonProperty("coupon_id") val couponId: Long?,
 
     /** The line items. */

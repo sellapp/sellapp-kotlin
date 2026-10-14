@@ -3,9 +3,9 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.types.GetSubscriptionCapabilitiesResponseValue200ApplicationJsonPropertyDataPropertyCapabilitiesMapValueStatus
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
 
@@ -14,13 +14,16 @@ import com.fasterxml.jackson.databind.JsonNode
  * model.
  */
 data class GetCustomerPortalSubscriptionCapabilitiesResponseValue200ApplicationJsonPropertyDataPropertyCapabilitiesMapValue(
-    /** The available. */
-    @JsonProperty("available") val available: Boolean,
+    /** The status. */
+    @JsonProperty("status")
+    val status:
+        GetSubscriptionCapabilitiesResponseValue200ApplicationJsonPropertyDataPropertyCapabilitiesMapValueStatus,
 
-    /** The reason. */
-    @JsonProperty("reason")
-    @get:JsonInclude(JsonInclude.Include.NON_NULL)
-    val reason: String? = null,
+    /** The customer reason. */
+    @JsonProperty("customer_reason") val customerReason: String?,
+
+    /** The seller reason. */
+    @JsonProperty("seller_reason") val sellerReason: String?,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -33,7 +36,7 @@ data class GetCustomerPortalSubscriptionCapabilitiesResponseValue200ApplicationJ
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"GetCustomerPortalSubscriptionCapabilitiesResponseValue200ApplicationJsonPropertyDataPropertyCapabilitiesMapValue\",\"properties\":{\"available\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"reason\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"available\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"GetCustomerPortalSubscriptionCapabilitiesResponseValue200ApplicationJsonPropertyDataPropertyCapabilitiesMapValue\",\"properties\":{\"status\":{\"kind\":\"enum\",\"values\":[\"available\",\"requires_redirect\",\"seller_only\",\"customer_only\",\"manual_proration\",\"unsupported\"]},\"customer_reason\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"seller_reason\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}}},\"required\":[\"status\",\"customer_reason\",\"seller_reason\"],\"additionalProperties\":true}"
             )
     }
 }

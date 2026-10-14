@@ -90,7 +90,11 @@ data class SdkCreateChargeRequestApplicationJson(
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
     val metadata: CreateChargeRequestApplicationJsonPropertyMetadata? = null,
 
-    /** The coupon code. */
+    /**
+     * Optional coupon code. A charge takes a store-wide coupon for one-time purchases only: a
+     * coupon whose `applies_to` is `subscriptions` returns `422` with `Coupon code {code} only
+     * applies to subscriptions.`
+     */
     @JsonProperty("coupon_code") val couponCode: String? = null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */

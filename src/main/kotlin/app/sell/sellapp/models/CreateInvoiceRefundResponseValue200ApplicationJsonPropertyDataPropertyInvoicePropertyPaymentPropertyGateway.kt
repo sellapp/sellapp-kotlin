@@ -18,8 +18,12 @@ data class CreateInvoiceRefundResponseValue200ApplicationJsonPropertyDataPropert
     val data:
         CreateInvoiceRefundResponseValue200ApplicationJsonPropertyDataPropertyInvoicePropertyPaymentPropertyGatewayPropertyData,
 
-    /** The type. */
-    @JsonProperty("type") val type: String,
+    /**
+     * The payment method, or `null` for an invoice that costs nothing. A free trial sold through
+     * Stripe, PayPal, or Razorpay keeps its payment method, because that provider bills the plan
+     * once the trial ends.
+     */
+    @JsonProperty("type") val type: String?,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -32,7 +36,7 @@ data class CreateInvoiceRefundResponseValue200ApplicationJsonPropertyDataPropert
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"CreateInvoiceRefundResponseValue200ApplicationJsonPropertyDataPropertyInvoicePropertyPaymentPropertyGateway\",\"properties\":{\"data\":{\"kind\":\"object\",\"modelName\":\"CreateInvoiceRefundResponseValue200ApplicationJsonPropertyDataPropertyInvoicePropertyPaymentPropertyGatewayPropertyData\",\"properties\":{},\"required\":[],\"additionalProperties\":true},\"type\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"data\",\"type\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"CreateInvoiceRefundResponseValue200ApplicationJsonPropertyDataPropertyInvoicePropertyPaymentPropertyGateway\",\"properties\":{\"data\":{\"kind\":\"object\",\"modelName\":\"CreateInvoiceRefundResponseValue200ApplicationJsonPropertyDataPropertyInvoicePropertyPaymentPropertyGatewayPropertyData\",\"properties\":{},\"required\":[],\"additionalProperties\":true},\"type\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}}},\"required\":[\"data\",\"type\"],\"additionalProperties\":true}"
             )
     }
 }

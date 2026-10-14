@@ -5,39 +5,26 @@ package app.sell.sellapp.models
 import app.sell.sellapp.common.json.runtimeSchema
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
+import java.time.OffsetDateTime
 
 /** PreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJsonPropertyData model. */
 data class PreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJsonPropertyData(
-    /** The id. */
-    @JsonProperty("id") val id: Long,
+    /**
+     * Send this back to the matching confirm route. A preview expires 30 minutes after it is
+     * created.
+     */
+    @JsonProperty("preview_token") val previewToken: String?,
 
-    /** The status. */
-    @JsonProperty("status") val status: String,
+    /** The expires at. */
+    @JsonProperty("expires_at") val expiresAt: OffsetDateTime?,
 
-    /** The provider subscription id. */
-    @JsonProperty("provider_subscription_id") val providerSubscriptionId: String?,
+    /** The preview. */
+    @JsonProperty("preview") val preview: SubscriptionPlanChangePreviewPayload,
 
-    /** The provider customer id. */
-    @JsonProperty("provider_customer_id") val providerCustomerId: String?,
-
-    /** The customer. */
-    @JsonProperty("customer")
-    val customer:
-        PreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJsonPropertyDataPropertyCustomer,
-
-    /** The subscription id. */
-    @JsonProperty("subscription_id") @Deprecated("Deprecated.") val subscriptionId: String? = null,
-
-    /** The customer id. */
-    @JsonProperty("customer_id") @Deprecated("Deprecated.") val customerId: String? = null,
-
-    /** The product variant id. */
-    @JsonProperty("product_variant_id")
-    @get:JsonInclude(JsonInclude.Include.NON_NULL)
-    val productVariantId: Long? = null,
+    /** The customer message. */
+    @JsonProperty("customer_message") val customerMessage: String?,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -50,7 +37,7 @@ data class PreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJsonP
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"PreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"status\":{\"kind\":\"primitive\",\"type\":\"string\"},\"subscription_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"customer_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"provider_subscription_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"provider_customer_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"customer\":{\"kind\":\"object\",\"modelName\":\"PreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJsonPropertyDataPropertyCustomer\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"email\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"email\"},\"external_id\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}},\"name\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}},\"locale\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"pattern\":\"^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*\$\"}}},\"metadata\":{\"kind\":\"object\",\"modelName\":\"PreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJsonPropertyDataPropertyCustomerPropertyMetadata\",\"properties\":{},\"required\":[],\"additionalProperties\":{\"kind\":\"object\",\"modelName\":\"ScalarMetadataValue\",\"properties\":{},\"required\":[],\"additionalProperties\":true},\"constraints\":{\"maxProperties\":50}}},\"required\":[\"id\",\"email\",\"external_id\",\"name\",\"locale\",\"metadata\"],\"additionalProperties\":true},\"product_variant_id\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"required\":[\"id\",\"status\",\"provider_subscription_id\",\"provider_customer_id\",\"customer\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"PreviewCustomerSubscriptionPlanChangeResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"preview_token\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"expires_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"preview\":{\"kind\":\"object\",\"modelName\":\"SubscriptionPlanChangePreviewPayload\",\"properties\":{\"provider\":{\"kind\":\"primitive\",\"type\":\"string\"},\"payment_required\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"renewal_date\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"amount_due\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"discount_warning\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[],\"additionalProperties\":true},\"customer_message\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}}},\"required\":[\"preview_token\",\"expires_at\",\"preview\",\"customer_message\"],\"additionalProperties\":true}"
             )
     }
 }

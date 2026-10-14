@@ -39,16 +39,16 @@ function readArchive(file, maxEntries = 10000) {
 
 const execute = promisify(execFile);
 const libraries = resolve('examples/build/install/sellapp-onboarding/lib');
-const archive = readArchive(resolve(libraries, 'sellapp-0.1.1.jar'));
+const archive = readArchive(resolve(libraries, 'sellapp-0.2.0.jar'));
 for (const name of ['README.md', 'LICENSE.txt', 'NOTICE.txt', 'docs/usage.md', 'docs/methods.md', 'examples/README.md', 'examples/src/main/kotlin/Onboarding.kt']) assert(archive.has('META-INF/sellapp/' + name), 'Missing JAR documentation: ' + name);
 assert(archive.get('META-INF/sellapp/README.md').toString().startsWith('# SellApp Kotlin SDK'));
 for (const name of archive.keys()) assert(!/(^|\/)(test|tests|testdata|fixtures|build)(\/|$)/.test(name), 'Unwanted JAR content: ' + name);
 assert(!archive.has('sellapp/examples/OnboardingKt.class'), 'Example classes must not be included in the SDK JAR');
 const pom = readFileSync('build/publications/maven/pom-default.xml', 'utf8');
-for (const text of ['<groupId>app.sell</groupId>', '<artifactId>sellapp</artifactId>', '<url>https://sell.app/docs/api</url>', '<licenses>', '<developers>', '<connection>scm:git:https://github.com/sellapp/sellapp-kotlin.git</connection>', '<tag>v0.1.1</tag>']) assert(pom.includes(text), 'Missing POM metadata: ' + text);
-const sources = readArchive(resolve('build/libs/sellapp-0.1.1-sources.jar'));
+for (const text of ['<groupId>app.sell</groupId>', '<artifactId>sellapp</artifactId>', '<url>https://sell.app/docs/api</url>', '<licenses>', '<developers>', '<connection>scm:git:https://github.com/sellapp/sellapp-kotlin.git</connection>', '<tag>v0.2.0</tag>']) assert(pom.includes(text), 'Missing POM metadata: ' + text);
+const sources = readArchive(resolve('build/libs/sellapp-0.2.0-sources.jar'));
 assert(sources.has('app/sell/sellapp/SellApp.kt'), 'Missing SDK sources');
-const reference = readArchive(resolve('build/libs/sellapp-0.1.1-javadoc.jar'), 30000);
+const reference = readArchive(resolve('build/libs/sellapp-0.2.0-javadoc.jar'), 30000);
 assert(reference.has('index.html') && [...reference.keys()].some((name) => name.endsWith('/-sell-app/index.html')), 'Missing generated Kotlin API documentation');
 const classpath = readdirSync(libraries).filter((name) => name.endsWith('.jar')).map((name) => resolve(libraries, name)).join(delimiter);
 let mode = 'first';

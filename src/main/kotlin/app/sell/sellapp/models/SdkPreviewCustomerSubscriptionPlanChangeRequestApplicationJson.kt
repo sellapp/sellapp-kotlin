@@ -2,6 +2,51 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SdkPauseCustomerSubscriptionRequestApplicationJson]. */
-typealias SdkPreviewCustomerSubscriptionPlanChangeRequestApplicationJson =
-    SdkPauseCustomerSubscriptionRequestApplicationJson
+import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.types.SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming
+import app.sell.sellapp.types.SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
+
+/** SdkPreviewCustomerSubscriptionPlanChangeRequestApplicationJson model. */
+data class SdkPreviewCustomerSubscriptionPlanChangeRequestApplicationJson(
+    /** The target variant id. */
+    @JsonProperty("target_variant_id") val targetVariantId: Long,
+
+    /** The effective timing. */
+    @JsonProperty("effective_timing")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val effectiveTiming: SdkConfirmSubscriptionPlanChangeRequestApplicationJsonEffectiveTiming? =
+        null,
+
+    /** The proration behavior. */
+    @JsonProperty("proration_behavior")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val prorationBehavior:
+        SdkConfirmSubscriptionPlanChangeRequestApplicationJsonProrationBehavior? =
+        null,
+
+    /** The metadata. */
+    @JsonProperty("metadata")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val metadata: PreviewCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata? =
+        null,
+) {
+    /** Additive response fields retained verbatim for forward compatibility. */
+    @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
+
+    @JsonAnySetter
+    fun setAdditionalProperty(name: String, value: JsonNode) {
+        additionalProperties[name] = value
+    }
+
+    companion object {
+        internal val runtimeSchema =
+            runtimeSchema(
+                "{\"kind\":\"object\",\"modelName\":\"SdkPreviewCustomerSubscriptionPlanChangeRequestApplicationJson\",\"properties\":{\"target_variant_id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"effective_timing\":{\"kind\":\"enum\",\"values\":[\"immediate\",\"next_renewal\"]},\"proration_behavior\":{\"kind\":\"enum\",\"values\":[\"invoice_now\",\"credit_next_invoice\",\"none\",\"provider_default\"]},\"metadata\":{\"kind\":\"object\",\"modelName\":\"PreviewCustomerSubscriptionPlanChangeRequestApplicationJsonPropertyMetadata\",\"properties\":{},\"required\":[],\"additionalProperties\":true}},\"required\":[\"target_variant_id\"],\"additionalProperties\":true}"
+            )
+    }
+}

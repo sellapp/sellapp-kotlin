@@ -81,6 +81,7 @@ fun create(
         maximumPurchaseQuantity: Long? = null,
         bulkDiscount: List<CreateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>? =
             null,
+        customPaymentMethodIds: List<String>? = null,
         otherSettings: CreateProductVariantRequestApplicationJsonPropertyOtherSettings? = null,
         expectedUpdatedAt: OffsetDateTime? = null,
         requestOptions: RequestOptions? = null,
@@ -98,6 +99,7 @@ fun create(
 | minimumPurchaseQuantity | `Long?` | No |
 | maximumPurchaseQuantity | `Long?` | No |
 | bulkDiscount | `List<CreateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>?` | No |
+| customPaymentMethodIds | `List<String>?` | No |
 | otherSettings | `CreateProductVariantRequestApplicationJsonPropertyOtherSettings?` | No |
 | expectedUpdatedAt | `OffsetDateTime?` | No |
 | requestOptions | `RequestOptions?` | No |
@@ -216,9 +218,11 @@ fun replace(
             List<ReplaceProductVariantWithPutRequestApplicationJsonPropertyBulkDiscountItem>? =
             null,
         paymentMethods: List<PaymentMethod>? = null,
+        customPaymentMethodIds: List<String>? = null,
         otherSettings: ReplaceProductVariantWithPutRequestApplicationJsonPropertyOtherSettings? =
             null,
         expectedUpdatedAt: OffsetDateTime? = null,
+        stock: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkReplaceProductVariantWithPutResponseValue200ApplicationJson
 ```
@@ -235,8 +239,10 @@ fun replace(
 | maximumPurchaseQuantity | `Long?` | No |
 | bulkDiscount | `List<ReplaceProductVariantWithPutRequestApplicationJsonPropertyBulkDiscountItem>?` | No |
 | paymentMethods | `List<PaymentMethod>?` | No |
+| customPaymentMethodIds | `List<String>?` | No |
 | otherSettings | `ReplaceProductVariantWithPutRequestApplicationJsonPropertyOtherSettings?` | No |
 | expectedUpdatedAt | `OffsetDateTime?` | No |
+| stock | `Long?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkReplaceProductVariantWithPutResponseValue200ApplicationJson`.
@@ -296,9 +302,11 @@ fun update(
             PatchField<List<UpdateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>> =
             PatchField.Absent,
         paymentMethods: PatchField<List<PaymentMethod>> = PatchField.Absent,
+        customPaymentMethodIds: PatchField<List<String>> = PatchField.Absent,
         otherSettings: PatchField<UpdateProductVariantRequestApplicationJsonPropertyOtherSettings> =
             PatchField.Absent,
         expectedUpdatedAt: PatchField<OffsetDateTime> = PatchField.Absent,
+        stock: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateProductVariantResponseValue200ApplicationJson
 ```
@@ -315,8 +323,10 @@ fun update(
 | maximumPurchaseQuantity | `PatchField<Long?>` | No |
 | bulkDiscount | `PatchField<List<UpdateProductVariantRequestApplicationJsonPropertyBulkDiscountItem>>` | No |
 | paymentMethods | `PatchField<List<PaymentMethod>>` | No |
+| customPaymentMethodIds | `PatchField<List<String>>` | No |
 | otherSettings | `PatchField<UpdateProductVariantRequestApplicationJsonPropertyOtherSettings>` | No |
 | expectedUpdatedAt | `PatchField<OffsetDateTime>` | No |
+| stock | `PatchField<Long?>` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkUpdateProductVariantResponseValue200ApplicationJson`.
@@ -364,6 +374,7 @@ Delete a product variant
 fun delete(
         product: String,
         variant: String,
+        expectedUpdatedAt: OffsetDateTime? = null,
         requestOptions: RequestOptions? = null,
     )
 ```
@@ -372,6 +383,7 @@ fun delete(
 | --- | --- | --- |
 | product | `String` | Yes |
 | variant | `String` | Yes |
+| expectedUpdatedAt | `OffsetDateTime?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Unit`.

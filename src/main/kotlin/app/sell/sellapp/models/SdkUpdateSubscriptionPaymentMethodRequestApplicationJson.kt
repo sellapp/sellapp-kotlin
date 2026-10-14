@@ -2,6 +2,35 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SdkResumeSubscriptionRequestApplicationJson]. */
-typealias SdkUpdateSubscriptionPaymentMethodRequestApplicationJson =
-    SdkResumeSubscriptionRequestApplicationJson
+import app.sell.sellapp.common.json.runtimeSchema
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
+
+/** SdkUpdateSubscriptionPaymentMethodRequestApplicationJson model. */
+data class SdkUpdateSubscriptionPaymentMethodRequestApplicationJson(
+    /** Optional idempotency key. You may also send this as the Idempotency-Key header. */
+    @JsonProperty("idempotency_key") val idempotencyKey: String? = null,
+
+    /**
+     * Where Stripe returns the customer once its hosted page finishes. Defaults to the store's
+     * customer portal page for this subscription. Razorpay subscriptions ignore it.
+     */
+    @JsonProperty("return_url") val returnUrl: String? = null,
+) {
+    /** Additive response fields retained verbatim for forward compatibility. */
+    @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
+
+    @JsonAnySetter
+    fun setAdditionalProperty(name: String, value: JsonNode) {
+        additionalProperties[name] = value
+    }
+
+    companion object {
+        internal val runtimeSchema =
+            runtimeSchema(
+                "{\"kind\":\"object\",\"modelName\":\"SdkUpdateSubscriptionPaymentMethodRequestApplicationJson\",\"properties\":{\"idempotency_key\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":128}}},\"return_url\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"uri\",\"constraints\":{\"maxLength\":2000}}}},\"required\":[],\"additionalProperties\":true}"
+            )
+    }
+}

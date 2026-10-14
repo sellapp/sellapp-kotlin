@@ -155,7 +155,9 @@ class Charges(internal val sellapp: SellApp) {
      * @param useAllPaymentMethods the use all payment methods of the request.
      * @param deliverable the deliverable of the request.
      * @param metadata the metadata of the request.
-     * @param couponCode the coupon code of the request.
+     * @param couponCode Optional coupon code. A charge takes a store-wide coupon for one-time
+     *   purchases only: a coupon whose `applies_to` is `subscriptions` returns `422` with `Coupon
+     *   code {code} only applies to subscriptions.`
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkCreateChargeResponseValue201ApplicationJson
      */

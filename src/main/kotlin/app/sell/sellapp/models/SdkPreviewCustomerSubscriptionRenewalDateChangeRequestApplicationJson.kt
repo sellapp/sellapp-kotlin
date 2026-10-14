@@ -2,6 +2,41 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SdkPauseCustomerSubscriptionRequestApplicationJson]. */
-typealias SdkPreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJson =
-    SdkPauseCustomerSubscriptionRequestApplicationJson
+import app.sell.sellapp.common.json.runtimeSchema
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
+import java.time.OffsetDateTime
+
+/** SdkPreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJson model. */
+data class SdkPreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJson(
+    /** The renewal date. */
+    @JsonProperty("renewal_date") val renewalDate: OffsetDateTime,
+
+    /** The reason. */
+    @JsonProperty("reason") val reason: String? = null,
+
+    /** The metadata. */
+    @JsonProperty("metadata")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val metadata:
+        PreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata? =
+        null,
+) {
+    /** Additive response fields retained verbatim for forward compatibility. */
+    @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
+
+    @JsonAnySetter
+    fun setAdditionalProperty(name: String, value: JsonNode) {
+        additionalProperties[name] = value
+    }
+
+    companion object {
+        internal val runtimeSchema =
+            runtimeSchema(
+                "{\"kind\":\"object\",\"modelName\":\"SdkPreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJson\",\"properties\":{\"renewal_date\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"},\"reason\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":500}}},\"metadata\":{\"kind\":\"object\",\"modelName\":\"PreviewCustomerSubscriptionRenewalDateChangeRequestApplicationJsonPropertyMetadata\",\"properties\":{},\"required\":[],\"additionalProperties\":true}},\"required\":[\"renewal_date\"],\"additionalProperties\":true}"
+            )
+    }
+}

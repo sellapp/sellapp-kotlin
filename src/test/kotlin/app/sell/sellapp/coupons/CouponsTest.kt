@@ -37,7 +37,7 @@ class CouponsTest : TestBase() {
             "{\"data\": {\"id\": 0, \"code\": \"sample\", \"type\": \"PERCENTAGE\", \"discount\": \"sample\", \"limit\": null, " +
                 "\"store_wide\": false, \"minimum_amount\": null, \"expires_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", " +
                 "\"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"deleted_at\": null, \"maximum_discount_amount\": null, " +
-                "\"products\": [], \"product_variants\": []}}",
+                "\"applies_to\": \"one_time\", \"subscription_payments\": null, \"products\": [], \"product_variants\": []}}",
         )
         val result = api().get("sample-arg")
         assertNotNull(result)
@@ -52,7 +52,7 @@ class CouponsTest : TestBase() {
             "{\"data\": {\"id\": 0, \"code\": \"sample\", \"type\": \"PERCENTAGE\", \"discount\": \"sample\", \"limit\": null, " +
                 "\"store_wide\": false, \"minimum_amount\": null, \"expires_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", " +
                 "\"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"deleted_at\": null, \"maximum_discount_amount\": null, " +
-                "\"products\": [], \"product_variants\": []}}",
+                "\"applies_to\": \"one_time\", \"subscription_payments\": null, \"products\": [], \"product_variants\": []}}",
         )
         val result = api().replace("sample-arg")
         assertNotNull(result)
@@ -67,7 +67,7 @@ class CouponsTest : TestBase() {
             "{\"data\": {\"id\": 0, \"code\": \"sample\", \"type\": \"PERCENTAGE\", \"discount\": \"sample\", \"limit\": null, " +
                 "\"store_wide\": false, \"minimum_amount\": null, \"expires_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", " +
                 "\"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"deleted_at\": null, \"maximum_discount_amount\": null, " +
-                "\"products\": [], \"product_variants\": []}}",
+                "\"applies_to\": \"one_time\", \"subscription_payments\": null, \"products\": [], \"product_variants\": []}}",
         )
         val result = api().update("sample-arg")
         assertNotNull(result)
@@ -79,7 +79,7 @@ class CouponsTest : TestBase() {
             "DELETE",
             "/v1/coupons/sample-arg",
             204,
-            "{\"data\": {\"id\": 0, \"code\": \"sample\", \"type\": \"PERCENTAGE\", \"discount\": \"sample\", \"limit\": null, \"store_wide\": false, \"minimum_amount\": null, \"expires_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"deleted_at\": null, \"maximum_discount_amount\": null, \"products\": [], \"product_variants\": []}}",
+            "{\"data\": {\"id\": 0, \"code\": \"sample\", \"type\": \"PERCENTAGE\", \"discount\": \"sample\", \"limit\": null, \"store_wide\": false, \"minimum_amount\": null, \"expires_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"deleted_at\": null, \"maximum_discount_amount\": null, \"applies_to\": \"one_time\", \"subscription_payments\": null, \"products\": [], \"product_variants\": []}}",
         )
         api().delete("sample-arg")
     }
@@ -147,7 +147,7 @@ class CouponsTest : TestBase() {
             "{\"data\": {\"id\": 0, \"code\": \"sample\", \"type\": \"PERCENTAGE\", \"discount\": \"sample\", \"limit\": null, " +
                 "\"store_wide\": false, \"minimum_amount\": null, \"expires_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", " +
                 "\"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"deleted_at\": null, \"maximum_discount_amount\": null, " +
-                "\"products\": [], \"product_variants\": []}}",
+                "\"applies_to\": \"one_time\", \"subscription_payments\": null, \"products\": [], \"product_variants\": []}}",
         )
         val result = api().v2GetCoupon("sample-arg")
         assertNotNull(result)
@@ -162,7 +162,7 @@ class CouponsTest : TestBase() {
             "{\"data\": {\"id\": 0, \"code\": \"sample\", \"type\": \"PERCENTAGE\", \"discount\": \"sample\", \"limit\": null, " +
                 "\"store_wide\": false, \"minimum_amount\": null, \"expires_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", " +
                 "\"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"deleted_at\": null, \"maximum_discount_amount\": null, " +
-                "\"products\": [], \"product_variants\": []}}",
+                "\"applies_to\": \"one_time\", \"subscription_payments\": null, \"products\": [], \"product_variants\": []}}",
         )
         val result = api().v2ReplaceCoupon("sample-arg")
         assertNotNull(result)
@@ -177,7 +177,7 @@ class CouponsTest : TestBase() {
             "{\"data\": {\"id\": 0, \"code\": \"sample\", \"type\": \"PERCENTAGE\", \"discount\": \"sample\", \"limit\": null, " +
                 "\"store_wide\": false, \"minimum_amount\": null, \"expires_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", " +
                 "\"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"deleted_at\": null, \"maximum_discount_amount\": null, " +
-                "\"products\": [], \"product_variants\": []}}",
+                "\"applies_to\": \"one_time\", \"subscription_payments\": null, \"products\": [], \"product_variants\": []}}",
         )
         val result = api().v2UpdateCoupon("sample-arg")
         assertNotNull(result)
@@ -189,7 +189,7 @@ class CouponsTest : TestBase() {
             "DELETE",
             "/v2/coupons/sample-arg",
             204,
-            "{\"data\": {\"id\": 0, \"code\": \"sample\", \"type\": \"PERCENTAGE\", \"discount\": \"sample\", \"limit\": null, \"store_wide\": false, \"minimum_amount\": null, \"expires_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"deleted_at\": null, \"maximum_discount_amount\": null, \"products\": [], \"product_variants\": []}}",
+            "{\"data\": {\"id\": 0, \"code\": \"sample\", \"type\": \"PERCENTAGE\", \"discount\": \"sample\", \"limit\": null, \"store_wide\": false, \"minimum_amount\": null, \"expires_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"deleted_at\": null, \"maximum_discount_amount\": null, \"applies_to\": \"one_time\", \"subscription_payments\": null, \"products\": [], \"product_variants\": []}}",
         )
         api().v2DeleteCoupon("sample-arg")
     }

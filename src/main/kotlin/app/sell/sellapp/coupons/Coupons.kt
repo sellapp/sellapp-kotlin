@@ -40,6 +40,7 @@ import app.sell.sellapp.models.V2SearchCouponsRequestApplicationJsonPropertyIncl
 import app.sell.sellapp.models.V2SearchCouponsRequestApplicationJsonPropertySearch
 import app.sell.sellapp.models.V2SearchCouponsRequestApplicationJsonPropertySortItem
 import app.sell.sellapp.models.V2SearchCouponsResponseValue200ApplicationJsonPropertyDataItem
+import app.sell.sellapp.types.SdkCreateCouponRequestApplicationJsonAppliesTo
 import app.sell.sellapp.types.SdkCreateCouponRequestApplicationJsonType
 import com.fasterxml.jackson.core.type.TypeReference
 import java.time.OffsetDateTime
@@ -159,15 +160,31 @@ class Coupons(internal val sellapp: SellApp) {
      * @param code the code of the request.
      * @param type the type of the request.
      * @param discount A decimal discount value of at least 1. Percentage discounts cannot exceed
-     *   100; amount discounts use the store currency's major unit.
+     *   100; amount discounts use the store currency's major unit. A `subscriptions` coupon cannot
+     *   take 100% off: that returns `422` on `discount`, so offer a free trial instead.
      * @param storeWide the store wide of the request.
-     * @param products Product IDs the coupon applies to when store_wide is false.
+     * @param products Product IDs the coupon applies to when store_wide is false. Each product you
+     *   add must sell a variant of the coupon's kind: a subscription plan for a `subscriptions`
+     *   coupon, or a one-time variant for a `one_time` one. Another product returns `422` on
+     *   `products`.
      * @param productVariants Optional variant restrictions. Every variant must belong to a selected
-     *   product. Products without listed variants remain eligible on all variants.
+     *   product. Products without listed variants remain eligible on all variants. Each variant you
+     *   add must be of the coupon's kind, a subscription plan or a one-time variant; another
+     *   returns `422` on `product_variants`.
      * @param limit the limit of the request.
      * @param expiresAt A future date and time, or null for no expiry.
-     * @param minimumAmount A decimal minimum order amount in the store currency's major unit, or
-     *   null for no minimum.
+     * @param minimumAmount A decimal minimum amount in the store currency's major unit that the
+     *   order lines of the coupon's kind must reach, or null for no minimum.
+     * @param appliesTo What the coupon discounts: `one_time` for one-time purchases, or
+     *   `subscriptions` for the first payments of a subscription plan. A new coupon defaults to
+     *   `one_time`, and an update that leaves this out keeps the current kind. The coupon only
+     *   discounts order lines of its kind.
+     * @param subscriptionPayments How many payments a `subscriptions` coupon discounts, counting
+     *   the signup payment as the first, so `3` discounts the signup and the next two renewals. A
+     *   `subscriptions` coupon needs one, and an update that leaves it out keeps the stored number.
+     *   Missing on a `subscriptions` coupon, or outside 1 to 36, it returns `422` on
+     *   `subscription_payments` with `The number of discounted payments must be between 1 and 36.`
+     *   A `one_time` coupon always stores null here.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkCreateCouponResponseValue201ApplicationJson
      */
@@ -182,6 +199,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCreateCouponResponseValue201ApplicationJson {
         val body =
@@ -195,6 +214,8 @@ class Coupons(internal val sellapp: SellApp) {
                 "limit" to limit,
                 "expires_at" to expiresAt,
                 "minimum_amount" to minimumAmount,
+                "applies_to" to appliesTo,
+                "subscription_payments" to subscriptionPayments,
             )
         body["code"] = code
         body["type"] = type
@@ -231,6 +252,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkCreateCouponResponseValue201ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -248,6 +271,8 @@ class Coupons(internal val sellapp: SellApp) {
             limit,
             expiresAt,
             minimumAmount,
+            appliesTo,
+            subscriptionPayments,
             capturingOptions,
         )
         return captured as? RawResponse<SdkCreateCouponResponseValue201ApplicationJson>
@@ -271,6 +296,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCreateCouponResponseValue201ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -284,6 +311,8 @@ class Coupons(internal val sellapp: SellApp) {
                 limit,
                 expiresAt,
                 minimumAmount,
+                appliesTo,
+                subscriptionPayments,
                 requestOptions,
             )
         }
@@ -306,6 +335,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkCreateCouponResponseValue201ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -319,6 +350,8 @@ class Coupons(internal val sellapp: SellApp) {
                 limit,
                 expiresAt,
                 minimumAmount,
+                appliesTo,
+                subscriptionPayments,
                 requestOptions,
             )
         }
@@ -425,15 +458,31 @@ class Coupons(internal val sellapp: SellApp) {
      * @param code the code of the request.
      * @param type the type of the request.
      * @param discount A decimal discount value of at least 1. Percentage discounts cannot exceed
-     *   100; amount discounts use the store currency's major unit.
+     *   100; amount discounts use the store currency's major unit. A `subscriptions` coupon cannot
+     *   take 100% off: that returns `422` on `discount`, so offer a free trial instead.
      * @param storeWide the store wide of the request.
-     * @param products Product IDs the coupon applies to when store_wide is false.
+     * @param products Product IDs the coupon applies to when store_wide is false. Each product you
+     *   add must sell a variant of the coupon's kind: a subscription plan for a `subscriptions`
+     *   coupon, or a one-time variant for a `one_time` one. Another product returns `422` on
+     *   `products`.
      * @param productVariants Optional variant restrictions. Omit to preserve existing restrictions
-     *   or send an empty array to allow every variant of the selected products.
+     *   or send an empty array to allow every variant of the selected products. Each variant you
+     *   add must be of the coupon's kind, a subscription plan or a one-time variant; another
+     *   returns `422` on `product_variants`.
      * @param limit the limit of the request.
      * @param expiresAt A future date and time, or null for no expiry.
-     * @param minimumAmount A decimal minimum order amount in the store currency's major unit, or
-     *   null for no minimum.
+     * @param minimumAmount A decimal minimum amount in the store currency's major unit that the
+     *   order lines of the coupon's kind must reach, or null for no minimum.
+     * @param appliesTo What the coupon discounts: `one_time` for one-time purchases, or
+     *   `subscriptions` for the first payments of a subscription plan. A new coupon defaults to
+     *   `one_time`, and an update that leaves this out keeps the current kind. The coupon only
+     *   discounts order lines of its kind.
+     * @param subscriptionPayments How many payments a `subscriptions` coupon discounts, counting
+     *   the signup payment as the first, so `3` discounts the signup and the next two renewals. A
+     *   `subscriptions` coupon needs one, and an update that leaves it out keeps the stored number.
+     *   Missing on a `subscriptions` coupon, or outside 1 to 36, it returns `422` on
+     *   `subscription_payments` with `The number of discounted payments must be between 1 and 36.`
+     *   A `one_time` coupon always stores null here.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkReplaceCouponResponseValue200ApplicationJson
      */
@@ -451,6 +500,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkReplaceCouponResponseValue200ApplicationJson {
         val params = mutableListOf<Pair<String, String>>()
@@ -467,6 +518,8 @@ class Coupons(internal val sellapp: SellApp) {
                 "limit" to limit,
                 "expires_at" to expiresAt,
                 "minimum_amount" to minimumAmount,
+                "applies_to" to appliesTo,
+                "subscription_payments" to subscriptionPayments,
             )
         val config =
             RequestConfig(
@@ -503,6 +556,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkReplaceCouponResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -523,6 +578,8 @@ class Coupons(internal val sellapp: SellApp) {
             limit,
             expiresAt,
             minimumAmount,
+            appliesTo,
+            subscriptionPayments,
             capturingOptions,
         )
         return captured as? RawResponse<SdkReplaceCouponResponseValue200ApplicationJson>
@@ -549,6 +606,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkReplaceCouponResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -565,6 +624,8 @@ class Coupons(internal val sellapp: SellApp) {
                 limit,
                 expiresAt,
                 minimumAmount,
+                appliesTo,
+                subscriptionPayments,
                 requestOptions,
             )
         }
@@ -590,6 +651,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkReplaceCouponResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -606,6 +669,8 @@ class Coupons(internal val sellapp: SellApp) {
                 limit,
                 expiresAt,
                 minimumAmount,
+                appliesTo,
+                subscriptionPayments,
                 requestOptions,
             )
         }
@@ -621,15 +686,31 @@ class Coupons(internal val sellapp: SellApp) {
      * @param code the code of the request.
      * @param type the type of the request.
      * @param discount A decimal discount value of at least 1. Percentage discounts cannot exceed
-     *   100; amount discounts use the store currency's major unit.
+     *   100; amount discounts use the store currency's major unit. A `subscriptions` coupon cannot
+     *   take 100% off: that returns `422` on `discount`, so offer a free trial instead.
      * @param storeWide the store wide of the request.
-     * @param products Product IDs the coupon applies to when store_wide is false.
+     * @param products Product IDs the coupon applies to when store_wide is false. Each product you
+     *   add must sell a variant of the coupon's kind: a subscription plan for a `subscriptions`
+     *   coupon, or a one-time variant for a `one_time` one. Another product returns `422` on
+     *   `products`.
      * @param productVariants Optional variant restrictions. Omit to preserve existing restrictions
-     *   or send an empty array to allow every variant of the selected products.
+     *   or send an empty array to allow every variant of the selected products. Each variant you
+     *   add must be of the coupon's kind, a subscription plan or a one-time variant; another
+     *   returns `422` on `product_variants`.
      * @param limit the limit of the request.
      * @param expiresAt A future date and time, or null for no expiry.
-     * @param minimumAmount A decimal minimum order amount in the store currency's major unit, or
-     *   null for no minimum.
+     * @param minimumAmount A decimal minimum amount in the store currency's major unit that the
+     *   order lines of the coupon's kind must reach, or null for no minimum.
+     * @param appliesTo What the coupon discounts: `one_time` for one-time purchases, or
+     *   `subscriptions` for the first payments of a subscription plan. A new coupon defaults to
+     *   `one_time`, and an update that leaves this out keeps the current kind. The coupon only
+     *   discounts order lines of its kind.
+     * @param subscriptionPayments How many payments a `subscriptions` coupon discounts, counting
+     *   the signup payment as the first, so `3` discounts the signup and the next two renewals. A
+     *   `subscriptions` coupon needs one, and an update that leaves it out keeps the stored number.
+     *   Missing on a `subscriptions` coupon, or outside 1 to 36, it returns `422` on
+     *   `subscription_payments` with `The number of discounted payments must be between 1 and 36.`
+     *   A `one_time` coupon always stores null here.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkUpdateCouponResponseValue200ApplicationJson
      */
@@ -647,6 +728,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: PatchField<Long?> = PatchField.Absent,
         expiresAt: PatchField<OffsetDateTime?> = PatchField.Absent,
         minimumAmount: PatchField<Any?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateCouponResponseValue200ApplicationJson {
         val params = mutableListOf<Pair<String, String>>()
@@ -663,6 +746,8 @@ class Coupons(internal val sellapp: SellApp) {
                 "limit" to limit,
                 "expires_at" to expiresAt,
                 "minimum_amount" to minimumAmount,
+                "applies_to" to appliesTo,
+                "subscription_payments" to subscriptionPayments,
             )
         val config =
             RequestConfig(
@@ -699,6 +784,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: PatchField<Long?> = PatchField.Absent,
         expiresAt: PatchField<OffsetDateTime?> = PatchField.Absent,
         minimumAmount: PatchField<Any?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkUpdateCouponResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -719,6 +806,8 @@ class Coupons(internal val sellapp: SellApp) {
             limit,
             expiresAt,
             minimumAmount,
+            appliesTo,
+            subscriptionPayments,
             capturingOptions,
         )
         return captured as? RawResponse<SdkUpdateCouponResponseValue200ApplicationJson>
@@ -745,6 +834,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: PatchField<Long?> = PatchField.Absent,
         expiresAt: PatchField<OffsetDateTime?> = PatchField.Absent,
         minimumAmount: PatchField<Any?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateCouponResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -761,6 +852,8 @@ class Coupons(internal val sellapp: SellApp) {
                 limit,
                 expiresAt,
                 minimumAmount,
+                appliesTo,
+                subscriptionPayments,
                 requestOptions,
             )
         }
@@ -786,6 +879,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: PatchField<Long?> = PatchField.Absent,
         expiresAt: PatchField<OffsetDateTime?> = PatchField.Absent,
         minimumAmount: PatchField<Any?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkUpdateCouponResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -802,6 +897,8 @@ class Coupons(internal val sellapp: SellApp) {
                 limit,
                 expiresAt,
                 minimumAmount,
+                appliesTo,
+                subscriptionPayments,
                 requestOptions,
             )
         }
@@ -1395,15 +1492,31 @@ class Coupons(internal val sellapp: SellApp) {
      * @param code the code of the request.
      * @param type the type of the request.
      * @param discount A decimal discount value of at least 1. Percentage discounts cannot exceed
-     *   100; amount discounts use the store currency's major unit.
+     *   100; amount discounts use the store currency's major unit. A `subscriptions` coupon cannot
+     *   take 100% off: that returns `422` on `discount`, so offer a free trial instead.
      * @param storeWide the store wide of the request.
-     * @param products Product IDs the coupon applies to when store_wide is false.
+     * @param products Product IDs the coupon applies to when store_wide is false. Each product you
+     *   add must sell a variant of the coupon's kind: a subscription plan for a `subscriptions`
+     *   coupon, or a one-time variant for a `one_time` one. Another product returns `422` on
+     *   `products`.
      * @param productVariants Optional variant restrictions. Every variant must belong to a selected
-     *   product. Products without listed variants remain eligible on all variants.
+     *   product. Products without listed variants remain eligible on all variants. Each variant you
+     *   add must be of the coupon's kind, a subscription plan or a one-time variant; another
+     *   returns `422` on `product_variants`.
      * @param limit the limit of the request.
      * @param expiresAt A future date and time, or null for no expiry.
-     * @param minimumAmount A decimal minimum order amount in the store currency's major unit, or
-     *   null for no minimum.
+     * @param minimumAmount A decimal minimum amount in the store currency's major unit that the
+     *   order lines of the coupon's kind must reach, or null for no minimum.
+     * @param appliesTo What the coupon discounts: `one_time` for one-time purchases, or
+     *   `subscriptions` for the first payments of a subscription plan. A new coupon defaults to
+     *   `one_time`, and an update that leaves this out keeps the current kind. The coupon only
+     *   discounts order lines of its kind.
+     * @param subscriptionPayments How many payments a `subscriptions` coupon discounts, counting
+     *   the signup payment as the first, so `3` discounts the signup and the next two renewals. A
+     *   `subscriptions` coupon needs one, and an update that leaves it out keeps the stored number.
+     *   Missing on a `subscriptions` coupon, or outside 1 to 36, it returns `422` on
+     *   `subscription_payments` with `The number of discounted payments must be between 1 and 36.`
+     *   A `one_time` coupon always stores null here.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkV2CreateCouponResponseValue201ApplicationJson
      */
@@ -1418,6 +1531,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkV2CreateCouponResponseValue201ApplicationJson {
         val body =
@@ -1431,6 +1546,8 @@ class Coupons(internal val sellapp: SellApp) {
                 "limit" to limit,
                 "expires_at" to expiresAt,
                 "minimum_amount" to minimumAmount,
+                "applies_to" to appliesTo,
+                "subscription_payments" to subscriptionPayments,
             )
         body["code"] = code
         body["type"] = type
@@ -1467,6 +1584,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkV2CreateCouponResponseValue201ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -1484,6 +1603,8 @@ class Coupons(internal val sellapp: SellApp) {
             limit,
             expiresAt,
             minimumAmount,
+            appliesTo,
+            subscriptionPayments,
             capturingOptions,
         )
         return captured as? RawResponse<SdkV2CreateCouponResponseValue201ApplicationJson>
@@ -1508,6 +1629,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkV2CreateCouponResponseValue201ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -1521,6 +1644,8 @@ class Coupons(internal val sellapp: SellApp) {
                 limit,
                 expiresAt,
                 minimumAmount,
+                appliesTo,
+                subscriptionPayments,
                 requestOptions,
             )
         }
@@ -1543,6 +1668,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkV2CreateCouponResponseValue201ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -1556,6 +1683,8 @@ class Coupons(internal val sellapp: SellApp) {
                 limit,
                 expiresAt,
                 minimumAmount,
+                appliesTo,
+                subscriptionPayments,
                 requestOptions,
             )
         }
@@ -1794,15 +1923,31 @@ class Coupons(internal val sellapp: SellApp) {
      * @param code the code of the request.
      * @param type the type of the request.
      * @param discount A decimal discount value of at least 1. Percentage discounts cannot exceed
-     *   100; amount discounts use the store currency's major unit.
+     *   100; amount discounts use the store currency's major unit. A `subscriptions` coupon cannot
+     *   take 100% off: that returns `422` on `discount`, so offer a free trial instead.
      * @param storeWide the store wide of the request.
-     * @param products Product IDs the coupon applies to when store_wide is false.
+     * @param products Product IDs the coupon applies to when store_wide is false. Each product you
+     *   add must sell a variant of the coupon's kind: a subscription plan for a `subscriptions`
+     *   coupon, or a one-time variant for a `one_time` one. Another product returns `422` on
+     *   `products`.
      * @param productVariants Optional variant restrictions. Omit to preserve existing restrictions
-     *   or send an empty array to allow every variant of the selected products.
+     *   or send an empty array to allow every variant of the selected products. Each variant you
+     *   add must be of the coupon's kind, a subscription plan or a one-time variant; another
+     *   returns `422` on `product_variants`.
      * @param limit the limit of the request.
      * @param expiresAt A future date and time, or null for no expiry.
-     * @param minimumAmount A decimal minimum order amount in the store currency's major unit, or
-     *   null for no minimum.
+     * @param minimumAmount A decimal minimum amount in the store currency's major unit that the
+     *   order lines of the coupon's kind must reach, or null for no minimum.
+     * @param appliesTo What the coupon discounts: `one_time` for one-time purchases, or
+     *   `subscriptions` for the first payments of a subscription plan. A new coupon defaults to
+     *   `one_time`, and an update that leaves this out keeps the current kind. The coupon only
+     *   discounts order lines of its kind.
+     * @param subscriptionPayments How many payments a `subscriptions` coupon discounts, counting
+     *   the signup payment as the first, so `3` discounts the signup and the next two renewals. A
+     *   `subscriptions` coupon needs one, and an update that leaves it out keeps the stored number.
+     *   Missing on a `subscriptions` coupon, or outside 1 to 36, it returns `422` on
+     *   `subscription_payments` with `The number of discounted payments must be between 1 and 36.`
+     *   A `one_time` coupon always stores null here.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkV2ReplaceCouponResponseValue200ApplicationJson
      */
@@ -1820,6 +1965,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkV2ReplaceCouponResponseValue200ApplicationJson {
         val params = mutableListOf<Pair<String, String>>()
@@ -1836,6 +1983,8 @@ class Coupons(internal val sellapp: SellApp) {
                 "limit" to limit,
                 "expires_at" to expiresAt,
                 "minimum_amount" to minimumAmount,
+                "applies_to" to appliesTo,
+                "subscription_payments" to subscriptionPayments,
             )
         val config =
             RequestConfig(
@@ -1872,6 +2021,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkV2ReplaceCouponResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -1892,6 +2043,8 @@ class Coupons(internal val sellapp: SellApp) {
             limit,
             expiresAt,
             minimumAmount,
+            appliesTo,
+            subscriptionPayments,
             capturingOptions,
         )
         return captured as? RawResponse<SdkV2ReplaceCouponResponseValue200ApplicationJson>
@@ -1919,6 +2072,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkV2ReplaceCouponResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -1935,6 +2090,8 @@ class Coupons(internal val sellapp: SellApp) {
                 limit,
                 expiresAt,
                 minimumAmount,
+                appliesTo,
+                subscriptionPayments,
                 requestOptions,
             )
         }
@@ -1960,6 +2117,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: Long? = null,
         expiresAt: OffsetDateTime? = null,
         minimumAmount: Any? = null,
+        appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+        subscriptionPayments: Long? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkV2ReplaceCouponResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -1976,6 +2135,8 @@ class Coupons(internal val sellapp: SellApp) {
                 limit,
                 expiresAt,
                 minimumAmount,
+                appliesTo,
+                subscriptionPayments,
                 requestOptions,
             )
         }
@@ -1993,15 +2154,31 @@ class Coupons(internal val sellapp: SellApp) {
      * @param code the code of the request.
      * @param type the type of the request.
      * @param discount A decimal discount value of at least 1. Percentage discounts cannot exceed
-     *   100; amount discounts use the store currency's major unit.
+     *   100; amount discounts use the store currency's major unit. A `subscriptions` coupon cannot
+     *   take 100% off: that returns `422` on `discount`, so offer a free trial instead.
      * @param storeWide the store wide of the request.
-     * @param products Product IDs the coupon applies to when store_wide is false.
+     * @param products Product IDs the coupon applies to when store_wide is false. Each product you
+     *   add must sell a variant of the coupon's kind: a subscription plan for a `subscriptions`
+     *   coupon, or a one-time variant for a `one_time` one. Another product returns `422` on
+     *   `products`.
      * @param productVariants Optional variant restrictions. Omit to preserve existing restrictions
-     *   or send an empty array to allow every variant of the selected products.
+     *   or send an empty array to allow every variant of the selected products. Each variant you
+     *   add must be of the coupon's kind, a subscription plan or a one-time variant; another
+     *   returns `422` on `product_variants`.
      * @param limit the limit of the request.
      * @param expiresAt A future date and time, or null for no expiry.
-     * @param minimumAmount A decimal minimum order amount in the store currency's major unit, or
-     *   null for no minimum.
+     * @param minimumAmount A decimal minimum amount in the store currency's major unit that the
+     *   order lines of the coupon's kind must reach, or null for no minimum.
+     * @param appliesTo What the coupon discounts: `one_time` for one-time purchases, or
+     *   `subscriptions` for the first payments of a subscription plan. A new coupon defaults to
+     *   `one_time`, and an update that leaves this out keeps the current kind. The coupon only
+     *   discounts order lines of its kind.
+     * @param subscriptionPayments How many payments a `subscriptions` coupon discounts, counting
+     *   the signup payment as the first, so `3` discounts the signup and the next two renewals. A
+     *   `subscriptions` coupon needs one, and an update that leaves it out keeps the stored number.
+     *   Missing on a `subscriptions` coupon, or outside 1 to 36, it returns `422` on
+     *   `subscription_payments` with `The number of discounted payments must be between 1 and 36.`
+     *   A `one_time` coupon always stores null here.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkV2UpdateCouponResponseValue200ApplicationJson
      */
@@ -2019,6 +2196,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: PatchField<Long?> = PatchField.Absent,
         expiresAt: PatchField<OffsetDateTime?> = PatchField.Absent,
         minimumAmount: PatchField<Any?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkV2UpdateCouponResponseValue200ApplicationJson {
         val params = mutableListOf<Pair<String, String>>()
@@ -2035,6 +2214,8 @@ class Coupons(internal val sellapp: SellApp) {
                 "limit" to limit,
                 "expires_at" to expiresAt,
                 "minimum_amount" to minimumAmount,
+                "applies_to" to appliesTo,
+                "subscription_payments" to subscriptionPayments,
             )
         val config =
             RequestConfig(
@@ -2071,6 +2252,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: PatchField<Long?> = PatchField.Absent,
         expiresAt: PatchField<OffsetDateTime?> = PatchField.Absent,
         minimumAmount: PatchField<Any?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkV2UpdateCouponResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -2091,6 +2274,8 @@ class Coupons(internal val sellapp: SellApp) {
             limit,
             expiresAt,
             minimumAmount,
+            appliesTo,
+            subscriptionPayments,
             capturingOptions,
         )
         return captured as? RawResponse<SdkV2UpdateCouponResponseValue200ApplicationJson>
@@ -2118,6 +2303,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: PatchField<Long?> = PatchField.Absent,
         expiresAt: PatchField<OffsetDateTime?> = PatchField.Absent,
         minimumAmount: PatchField<Any?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkV2UpdateCouponResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -2134,6 +2321,8 @@ class Coupons(internal val sellapp: SellApp) {
                 limit,
                 expiresAt,
                 minimumAmount,
+                appliesTo,
+                subscriptionPayments,
                 requestOptions,
             )
         }
@@ -2159,6 +2348,8 @@ class Coupons(internal val sellapp: SellApp) {
         limit: PatchField<Long?> = PatchField.Absent,
         expiresAt: PatchField<OffsetDateTime?> = PatchField.Absent,
         minimumAmount: PatchField<Any?> = PatchField.Absent,
+        appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
+        subscriptionPayments: PatchField<Long?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkV2UpdateCouponResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -2175,6 +2366,8 @@ class Coupons(internal val sellapp: SellApp) {
                 limit,
                 expiresAt,
                 minimumAmount,
+                appliesTo,
+                subscriptionPayments,
                 requestOptions,
             )
         }

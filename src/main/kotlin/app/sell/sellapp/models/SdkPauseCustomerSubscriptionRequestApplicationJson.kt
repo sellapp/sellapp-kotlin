@@ -5,36 +5,17 @@ package app.sell.sellapp.models
 import app.sell.sellapp.common.json.runtimeSchema
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
+import java.time.OffsetDateTime
 
 /** SdkPauseCustomerSubscriptionRequestApplicationJson model. */
 data class SdkPauseCustomerSubscriptionRequestApplicationJson(
-    /** The preview id. */
-    @JsonProperty("preview_id")
-    @get:JsonInclude(JsonInclude.Include.NON_NULL)
-    val previewId: String? = null,
-
-    /** The product variant id. */
-    @JsonProperty("product_variant_id")
-    @get:JsonInclude(JsonInclude.Include.NON_NULL)
-    val productVariantId: Long? = null,
-
-    /** The renewal date. */
-    @JsonProperty("renewal_date")
-    @get:JsonInclude(JsonInclude.Include.NON_NULL)
-    val renewalDate: String? = null,
-
-    /** The return url. */
-    @JsonProperty("return_url")
-    @get:JsonInclude(JsonInclude.Include.NON_NULL)
-    val returnUrl: String? = null,
+    /** The resume at. */
+    @JsonProperty("resume_at") val resumeAt: OffsetDateTime? = null,
 
     /** The reason. */
-    @JsonProperty("reason")
-    @get:JsonInclude(JsonInclude.Include.NON_NULL)
-    val reason: String? = null,
+    @JsonProperty("reason") val reason: String? = null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -47,7 +28,7 @@ data class SdkPauseCustomerSubscriptionRequestApplicationJson(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"SdkPauseCustomerSubscriptionRequestApplicationJson\",\"properties\":{\"preview_id\":{\"kind\":\"primitive\",\"type\":\"string\"},\"product_variant_id\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"renewal_date\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date\"},\"return_url\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"uri\"},\"reason\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"SdkPauseCustomerSubscriptionRequestApplicationJson\",\"properties\":{\"resume_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"reason\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":500}}}},\"required\":[],\"additionalProperties\":true}"
             )
     }
 }

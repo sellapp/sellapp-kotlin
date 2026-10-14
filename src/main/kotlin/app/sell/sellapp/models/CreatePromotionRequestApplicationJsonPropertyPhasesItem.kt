@@ -16,7 +16,12 @@ data class CreatePromotionRequestApplicationJsonPropertyPhasesItem(
     @JsonProperty("discount_type")
     val discountType: CreatePromotionRequestApplicationJsonPropertyPhasesItemDiscountType,
 
-    /** Percentage from 1 through 100, or a fixed decimal amount of at least 1. */
+    /**
+     * Percentage from 1 through 100, or a fixed decimal amount of at least 1. A `subscriptions`
+     * promotion cannot take 100% off: such a phase returns `422` on
+     * `phases.{index}.discount_value`, or on `subscription_payments` when an update switches the
+     * promotion to `subscriptions` without sending `phases`. Offer a free trial instead.
+     */
     @JsonProperty("discount_value") val discountValue: Any,
 
     /** A future date and time, or null for no time limit. */

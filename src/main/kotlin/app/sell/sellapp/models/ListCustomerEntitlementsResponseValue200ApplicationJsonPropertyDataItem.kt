@@ -19,7 +19,13 @@ data class ListCustomerEntitlementsResponseValue200ApplicationJsonPropertyDataIt
     @JsonProperty("kind")
     val kind: ListCustomerEntitlementsResponseValue200ApplicationJsonPropertyDataItemKind,
 
-    /** The state. */
+    /**
+     * Whether the customer has this access now. For `subscription_access`: `active` while the
+     * subscription is active, trialing, or past due, because a past-due subscription keeps access
+     * while its payment is collected; `suspended` while it is unpaid, paused, or on hold for an
+     * unpaid renewal, until it is paid or resumed; `revoked` once cancelled; `pending` while
+     * incomplete; `expired` when its first payment expired.
+     */
     @JsonProperty("state")
     val state: ListCustomerEntitlementsResponseValue200ApplicationJsonPropertyDataItemState,
 
