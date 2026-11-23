@@ -122,6 +122,11 @@ List all license keys
 fun list(
         limit: Int? = null,
         page: Long? = null,
+        key: String? = null,
+        customerEmail: String? = null,
+        productId: Long? = null,
+        orderId: Long? = null,
+        validity: LicensesValidity? = null,
         requestOptions: RequestOptions? = null,
     ): Page<SdkListLicenseKeysResponseValue200ApplicationJson>
 ```
@@ -130,6 +135,11 @@ fun list(
 | --- | --- | --- |
 | limit | `Int?` | No |
 | page | `Long?` | No |
+| key | `String?` | No |
+| customerEmail | `String?` | No |
+| productId | `Long?` | No |
+| orderId | `Long?` | No |
+| validity | `LicensesValidity?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<SdkListLicenseKeysResponseValue200ApplicationJson>`.

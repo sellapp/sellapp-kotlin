@@ -13,6 +13,7 @@ import app.sell.sellapp.common.http.patchBodyOf
 import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.models.SdkCreateWalletBonusTierResponseValue201ApplicationJson
 import app.sell.sellapp.models.SdkListWalletBonusTiersResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkQuoteWalletBonusTierResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkReplaceWalletBonusTierResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkRestoreWalletBonusTierResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkUpdateWalletBonusTierResponseValue200ApplicationJson
@@ -30,9 +31,9 @@ class WalletBonusTiers(internal val sellapp: SellApp) {
     /**
      * List wallet bonus tiers
      *
-     * List current and archived store records. Requires the `wallet` or `wallet:write` API ability.
-     * OAuth callers use the admin grant and select a store with X-STORE. Current membership and
-     * role permissions apply to every request.
+     * List current and archived store records. Requires the `wallet` or `wallet:write` API-key
+     * ability. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * membership and role permissions apply to every request.
      *
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkListWalletBonusTiersResponseValue200ApplicationJson
@@ -104,9 +105,9 @@ class WalletBonusTiers(internal val sellapp: SellApp) {
     /**
      * Create a wallet bonus tier
      *
-     * Create a wallet bonus tier. Requires the `wallet:write` API ability and the store wallet
-     * permission. OAuth callers use the admin grant and select a store with X-STORE. Current
-     * membership and role permissions apply to every request.
+     * Create a wallet bonus tier. Requires the `wallet:write` API-key ability and the wallet
+     * permission in your team role. OAuth callers use the admin grant and select a store with
+     * X-STORE. Current membership and role permissions apply to every request.
      *
      * @param minimumTopUpCents the minimum top up cents of the request.
      * @param bonusKind the bonus kind of the request.
@@ -261,9 +262,9 @@ class WalletBonusTiers(internal val sellapp: SellApp) {
     /**
      * Update a wallet bonus tier
      *
-     * Update a wallet bonus tier. Requires the `wallet:write` API ability and the store wallet
-     * permission. OAuth callers use the admin grant and select a store with X-STORE. Current
-     * membership and role permissions apply to every request.
+     * Update a wallet bonus tier. Requires the `wallet:write` API-key ability and the wallet
+     * permission in your team role. OAuth callers use the admin grant and select a store with
+     * X-STORE. Current membership and role permissions apply to every request.
      *
      * @param bonusTier The bonusTier path parameter.
      * @param minimumTopUpCents the minimum top up cents of the request.
@@ -426,9 +427,9 @@ class WalletBonusTiers(internal val sellapp: SellApp) {
     /**
      * Update a wallet bonus tier
      *
-     * Update a wallet bonus tier. Requires the `wallet:write` API ability and the store wallet
-     * permission. OAuth callers use the admin grant and select a store with X-STORE. Current
-     * membership and role permissions apply to every request.
+     * Update a wallet bonus tier. Requires the `wallet:write` API-key ability and the wallet
+     * permission in your team role. OAuth callers use the admin grant and select a store with
+     * X-STORE. Current membership and role permissions apply to every request.
      *
      * @param bonusTier The bonusTier path parameter.
      * @param minimumTopUpCents the minimum top up cents of the request.
@@ -588,9 +589,9 @@ class WalletBonusTiers(internal val sellapp: SellApp) {
     /**
      * Archive a wallet bonus tier
      *
-     * Archive a wallet bonus tier. Requires the `wallet:write` API ability and the store wallet
-     * permission. OAuth callers use the admin grant and select a store with X-STORE. Current
-     * membership and role permissions apply to every request.
+     * Archive a wallet bonus tier. Requires the `wallet:write` API-key ability and the wallet
+     * permission in your team role. OAuth callers use the admin grant and select a store with
+     * X-STORE. Current membership and role permissions apply to every request.
      *
      * @param bonusTier The bonusTier path parameter.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
@@ -662,9 +663,9 @@ class WalletBonusTiers(internal val sellapp: SellApp) {
     /**
      * Restore a wallet bonus tier
      *
-     * Restore a wallet bonus tier. Requires the `wallet:write` API ability and the store wallet
-     * permission. OAuth callers use the admin grant and select a store with X-STORE. Current
-     * membership and role permissions apply to every request.
+     * Restore a wallet bonus tier. Requires the `wallet:write` API-key ability and the wallet
+     * permission in your team role. OAuth callers use the admin grant and select a store with
+     * X-STORE. Current membership and role permissions apply to every request.
      *
      * @param bonusTier The bonusTier path parameter.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
@@ -738,5 +739,91 @@ class WalletBonusTiers(internal val sellapp: SellApp) {
     ): RawResponse<SdkRestoreWalletBonusTierResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
             restoreWithResponse(bonusTier, requestOptions)
+        }
+
+    /**
+     * Quote a wallet bonus tier
+     *
+     * See which bonus tier a top-up of a given amount would earn right now, and how much bonus it
+     * would add, without creating anything. Amounts are integer USD cents: `top_up_cents=20000`
+     * asks about a $200.00 top-up. Requires the `wallet` or `wallet:write` API-key ability and the
+     * wallet permission in your team role. A missing amount, `0`, or an amount above 999999999999
+     * returns `422` on `top_up_cents`. Only your store's active tiers are considered. OAuth callers
+     * use the admin grant and select a store with X-STORE. Current membership and role permissions
+     * apply to every request.
+     *
+     * @param topUpCents The top-up amount to quote, in integer USD cents.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkQuoteWalletBonusTierResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun quote(
+        topUpCents: Long,
+        requestOptions: RequestOptions? = null,
+    ): SdkQuoteWalletBonusTierResponseValue200ApplicationJson {
+        val params = mutableListOf<Pair<String, String>>()
+        params += "top_up_cents" to topUpCents.toString()
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/wallet-bonus-tiers/quote",
+                queryParams = params,
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models.SdkQuoteWalletBonusTierResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "quoteWalletBonusTier",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkQuoteWalletBonusTierResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun quoteWithResponse(
+        topUpCents: Long,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkQuoteWalletBonusTierResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        quote(topUpCents, capturingOptions)
+        return captured as? RawResponse<SdkQuoteWalletBonusTierResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [quote]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [quote] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("quoteSuspend")
+    suspend fun quoteSuspend(
+        topUpCents: Long,
+        requestOptions: RequestOptions? = null,
+    ): SdkQuoteWalletBonusTierResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            quote(topUpCents, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [quoteWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [quoteWithResponse] under `withContext(Dispatchers.IO)`, so this is
+     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("quoteWithResponseSuspend")
+    suspend fun quoteWithResponseSuspend(
+        topUpCents: Long,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkQuoteWalletBonusTierResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            quoteWithResponse(topUpCents, requestOptions)
         }
 }

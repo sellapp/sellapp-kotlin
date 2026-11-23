@@ -10,6 +10,7 @@ import app.sell.sellapp.test.TestBase
 import app.sell.sellapp.types.SdkUpdateAffiliatePayoutStatusRequestApplicationJsonStatus
 import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
 import com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -78,6 +79,17 @@ class AffiliatePayoutsTest : TestBase() {
         wireMockRule.verify(
             patchRequestedFor(urlPathMatching("/v2/affiliate-payouts/sample-arg/status"))
                 .withRequestBody(matchingJsonPath("\$.status"))
+        )
+    }
+
+    @Test
+    fun `markPaid returns a typed response`() {
+        stubResponse("POST", "/v2/affiliate-payouts/mark-paid", 200, "{\"data\": []}")
+        val result = api().markPaid(payoutIds = listOf<Long>(1), expectedTotalUsdCents = 1)
+        assertNotNull(result)
+        wireMockRule.verify(
+            postRequestedFor(urlPathMatching("/v2/affiliate-payouts/mark-paid"))
+                .withRequestBody(matchingJsonPath("\$.expected_total_usd_cents"))
         )
     }
 

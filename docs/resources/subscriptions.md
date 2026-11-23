@@ -75,6 +75,14 @@ fun list(
         page: Long? = null,
         pagination: Boolean? = null,
         status: List<SubscriptionsStatus>? = null,
+        orderId: Long? = null,
+        productId: Long? = null,
+        renewsAfter: String? = null,
+        renewsBefore: String? = null,
+        cancelledAfter: String? = null,
+        cancelledBefore: String? = null,
+        scheduledToCancel: Boolean? = null,
+        paused: Boolean? = null,
         requestOptions: RequestOptions? = null,
     ): Page<SdkListSubscriptionsResponseValue200ApplicationJson>
 ```
@@ -85,6 +93,14 @@ fun list(
 | page | `Long?` | No |
 | pagination | `Boolean?` | No |
 | status | `List<SubscriptionsStatus>?` | No |
+| orderId | `Long?` | No |
+| productId | `Long?` | No |
+| renewsAfter | `String?` | No |
+| renewsBefore | `String?` | No |
+| cancelledAfter | `String?` | No |
+| cancelledBefore | `String?` | No |
+| scheduledToCancel | `Boolean?` | No |
+| paused | `Boolean?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<SdkListSubscriptionsResponseValue200ApplicationJson>`.
@@ -137,6 +153,14 @@ fun search(
         sort: List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchSubscriptionsRequestApplicationJsonPropertySearch? = null,
         includes: List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>? = null,
+        orderId: Long? = null,
+        productId: Long? = null,
+        renewsAfter: String? = null,
+        renewsBefore: String? = null,
+        cancelledAfter: String? = null,
+        cancelledBefore: String? = null,
+        scheduledToCancel: Boolean? = null,
+        paused: Boolean? = null,
         requestOptions: RequestOptions? = null,
     ): Page<SdkSearchSubscriptionsResponseValue200ApplicationJson>
 ```
@@ -150,6 +174,14 @@ fun search(
 | sort | `List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>?` | No |
 | search | `SearchSubscriptionsRequestApplicationJsonPropertySearch?` | No |
 | includes | `List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>?` | No |
+| orderId | `Long?` | No |
+| productId | `Long?` | No |
+| renewsAfter | `String?` | No |
+| renewsBefore | `String?` | No |
+| cancelledAfter | `String?` | No |
+| cancelledBefore | `String?` | No |
+| scheduledToCancel | `Boolean?` | No |
+| paused | `Boolean?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<SdkSearchSubscriptionsResponseValue200ApplicationJson>`.

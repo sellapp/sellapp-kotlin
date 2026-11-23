@@ -15,6 +15,31 @@ class VariantDeliverablesTest : TestBase() {
     private fun api() = VariantDeliverables(createSellAppClient())
 
     @Test
+    fun `preview returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/products/sample-arg/variants/sample-arg/deliverable/buyer-notification",
+            200,
+            "{\"data\": {\"product_id\": 0, \"variant_id\": 0, \"file_count\": 0, \"order_count\": 0, \"email_count\": 0, " +
+                "\"has_upload_in_progress\": false}}",
+        )
+        val result = api().preview("sample-arg", "sample-arg")
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `notify returns a typed response`() {
+        stubResponse(
+            "POST",
+            "/v2/products/sample-arg/variants/sample-arg/deliverable/buyer-notification",
+            200,
+            "{\"data\": {\"status\": \"queued\", \"product_id\": 0, \"variant_id\": 0, \"order_count\": 0, \"email_count\": 0}}",
+        )
+        val result = api().notify("sample-arg", "sample-arg")
+        assertNotNull(result)
+    }
+
+    @Test
     fun `get returns a typed response`() {
         stubResponse(
             "GET",
@@ -27,34 +52,50 @@ class VariantDeliverablesTest : TestBase() {
     }
 
     @Test
-    fun `get translates 401 to UnauthorizedException`() {
-        stubResponse("GET", "/v2/products/sample-arg/variants/sample-arg/deliverable", 401)
+    fun `preview translates 401 to UnauthorizedException`() {
+        stubResponse(
+            "GET",
+            "/v2/products/sample-arg/variants/sample-arg/deliverable/buyer-notification",
+            401,
+        )
         assertThrows(UnauthorizedException::class.java) {
-            api().get("sample-arg", "sample-arg")
+            api().preview("sample-arg", "sample-arg")
         }
     }
 
     @Test
-    fun `get translates 404 to NotFoundException`() {
-        stubResponse("GET", "/v2/products/sample-arg/variants/sample-arg/deliverable", 404)
+    fun `preview translates 404 to NotFoundException`() {
+        stubResponse(
+            "GET",
+            "/v2/products/sample-arg/variants/sample-arg/deliverable/buyer-notification",
+            404,
+        )
         assertThrows(NotFoundException::class.java) {
-            api().get("sample-arg", "sample-arg")
+            api().preview("sample-arg", "sample-arg")
         }
     }
 
     @Test
-    fun `get translates 429 to RateLimitException`() {
-        stubResponse("GET", "/v2/products/sample-arg/variants/sample-arg/deliverable", 429)
+    fun `preview translates 429 to RateLimitException`() {
+        stubResponse(
+            "GET",
+            "/v2/products/sample-arg/variants/sample-arg/deliverable/buyer-notification",
+            429,
+        )
         assertThrows(RateLimitException::class.java) {
-            api().get("sample-arg", "sample-arg")
+            api().preview("sample-arg", "sample-arg")
         }
     }
 
     @Test
-    fun `get translates 500 to GenericServerException`() {
-        stubResponse("GET", "/v2/products/sample-arg/variants/sample-arg/deliverable", 500)
+    fun `preview translates 500 to GenericServerException`() {
+        stubResponse(
+            "GET",
+            "/v2/products/sample-arg/variants/sample-arg/deliverable/buyer-notification",
+            500,
+        )
         assertThrows(GenericServerException::class.java) {
-            api().get("sample-arg", "sample-arg")
+            api().preview("sample-arg", "sample-arg")
         }
     }
 }

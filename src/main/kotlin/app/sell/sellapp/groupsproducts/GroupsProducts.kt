@@ -485,10 +485,12 @@ class GroupsProducts(internal val sellapp: SellApp) {
      * Search products within group
      *
      * Search the products in a group using JSON body filters, search terms, includes, and sort
-     * instructions. OAuth callers use the admin grant and select a store with X-STORE. Current
-     * membership and role permissions apply to every request.
+     * instructions, 15 per page by default. OAuth callers use the admin grant and select a store
+     * with X-STORE. Current membership and role permissions apply to every request.
      *
      * @param group The group path parameter.
+     * @param limit Number of items to return per page.
+     * @param page Page number to return.
      * @param filters the filters of the request.
      * @param sort the sort of the request.
      * @param search the search of the request.
@@ -499,6 +501,8 @@ class GroupsProducts(internal val sellapp: SellApp) {
     @JvmOverloads
     fun search(
         group: String,
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<SearchProductsWithinGroupRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchProductsWithinGroupRequestApplicationJsonPropertySortItem>? = null,
         search: SearchProductsWithinGroupRequestApplicationJsonPropertySearch? = null,
@@ -523,12 +527,17 @@ class GroupsProducts(internal val sellapp: SellApp) {
                     .runtimeSchema,
             before = null,
             after = null,
-        ) {}
+        ) {
+            limit?.let { add("limit" to it.toString()) }
+            page?.let { add("page" to it.toString()) }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun searchWithResponse(
         group: String,
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<SearchProductsWithinGroupRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchProductsWithinGroupRequestApplicationJsonPropertySortItem>? = null,
         search: SearchProductsWithinGroupRequestApplicationJsonPropertySearch? = null,
@@ -540,7 +549,7 @@ class GroupsProducts(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        search(group, filters, sort, search, includes, capturingOptions)
+        search(group, limit, page, filters, sort, search, includes, capturingOptions)
         return captured
             as?
             RawResponse<
@@ -557,6 +566,8 @@ class GroupsProducts(internal val sellapp: SellApp) {
     @JvmName("searchSuspend")
     suspend fun searchSuspend(
         group: String,
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<SearchProductsWithinGroupRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchProductsWithinGroupRequestApplicationJsonPropertySortItem>? = null,
         search: SearchProductsWithinGroupRequestApplicationJsonPropertySearch? = null,
@@ -564,7 +575,7 @@ class GroupsProducts(internal val sellapp: SellApp) {
         requestOptions: RequestOptions? = null,
     ): Page<SearchProductsWithinGroupResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            search(group, filters, sort, search, includes, requestOptions)
+            search(group, limit, page, filters, sort, search, includes, requestOptions)
         }
 
     /**
@@ -577,6 +588,8 @@ class GroupsProducts(internal val sellapp: SellApp) {
     @JvmName("searchWithResponseSuspend")
     suspend fun searchWithResponseSuspend(
         group: String,
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<SearchProductsWithinGroupRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchProductsWithinGroupRequestApplicationJsonPropertySortItem>? = null,
         search: SearchProductsWithinGroupRequestApplicationJsonPropertySearch? = null,
@@ -584,6 +597,6 @@ class GroupsProducts(internal val sellapp: SellApp) {
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<SearchProductsWithinGroupResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            searchWithResponse(group, filters, sort, search, includes, requestOptions)
+            searchWithResponse(group, limit, page, filters, sort, search, includes, requestOptions)
         }
 }

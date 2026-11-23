@@ -3,7 +3,7 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
-import app.sell.sellapp.types.CreateProductRequestApplicationJsonPropertyAdditionalInformationItemType
+import app.sell.sellapp.types.CreateCheckoutFieldTemplateRequestApplicationJsonPropertyFieldsItemType
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode
 data class BatchCreateProductsRequestApplicationJsonPropertyResourcesItemPropertyAdditionalInformationItem(
     /** The type. */
     @JsonProperty("type")
-    val type: CreateProductRequestApplicationJsonPropertyAdditionalInformationItemType,
+    val type: CreateCheckoutFieldTemplateRequestApplicationJsonPropertyFieldsItemType,
 
     /** The required. */
     @JsonProperty("required") val required: Boolean,

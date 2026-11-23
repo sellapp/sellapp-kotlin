@@ -10,12 +10,14 @@ List exports
 
 ```kotlin
 fun list(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        requestOptions: RequestOptions? = null,
     ): Page<ListExportsResponseValue200ApplicationJsonPropertyDataItem>
 ```
 
 | Argument | Native type | Required |
 | --- | --- | --- |
+| page | `Long?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<ListExportsResponseValue200ApplicationJsonPropertyDataItem>`.

@@ -261,11 +261,21 @@ List blacklist rules
 [API reference](https://sell.app/docs/api/blacklists/list-blacklists) · Effect: **read**
 
 ```kotlin
-fun v2ListBlacklists(requestOptions: RequestOptions? = null): Page<Blacklist>
+fun v2ListBlacklists(
+        limit: Long? = null,
+        page: Long? = null,
+        search: String? = null,
+        type: BlacklistType? = null,
+        requestOptions: RequestOptions? = null,
+    ): Page<Blacklist>
 ```
 
 | Argument | Native type | Required |
 | --- | --- | --- |
+| limit | `Long?` | No |
+| page | `Long?` | No |
+| search | `String?` | No |
+| type | `BlacklistType?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<Blacklist>`.

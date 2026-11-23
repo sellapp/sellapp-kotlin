@@ -11,8 +11,10 @@ import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.models.SdkCompleteCommunityConnectionResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkListCommunityConnectionsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkListCommunityFailedGrantReasonsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkPollCommunityConnectionResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkStartCommunityConnectionResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkSyncDiscordRolesResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkVerifyCommunityConnectionResponseValue200ApplicationJson
 import app.sell.sellapp.types.SdkStartCommunityConnectionRequestApplicationJsonMode
 
@@ -550,5 +552,180 @@ class CommunityConnections(internal val sellapp: SellApp) {
     ): RawResponse<Unit> =
         sellapp.baseClient.runCancellable {
             disconnectWithResponse(platform, requestOptions)
+        }
+
+    /**
+     * List community failed grant reasons
+     *
+     * List why community access grants failed across all platforms, with how many grants failed for
+     * each reason and what you can do about it, most frequent first. A grant is the access a
+     * purchase gives a customer, such as a Discord role or a place in a Telegram group. Only
+     * reasons that still need attention or are retried are counted; failures nobody can act on,
+     * such as a customer who left the server, are not. Only SellApp's records are read; no platform
+     * is contacted. An empty `data` array means no grant is failing. Requires the `community`
+     * API-key ability and the `community` permission in your team role. OAuth callers use the admin
+     * grant and select a store with X-STORE. Current membership and role permissions apply to every
+     * request.
+     *
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkListCommunityFailedGrantReasonsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun listFailedGrantReasons(
+        requestOptions: RequestOptions? = null
+    ): SdkListCommunityFailedGrantReasonsResponseValue200ApplicationJson {
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/community-connections/failed-grant-reasons",
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkListCommunityFailedGrantReasonsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "listCommunityFailedGrantReasons",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkListCommunityFailedGrantReasonsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun listFailedGrantReasonsWithResponse(
+        requestOptions: RequestOptions? = null
+    ): RawResponse<SdkListCommunityFailedGrantReasonsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        listFailedGrantReasons(capturingOptions)
+        return captured
+            as? RawResponse<SdkListCommunityFailedGrantReasonsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [listFailedGrantReasons]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [listFailedGrantReasons] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("listFailedGrantReasonsSuspend")
+    suspend fun listFailedGrantReasonsSuspend(
+        requestOptions: RequestOptions? = null
+    ): SdkListCommunityFailedGrantReasonsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            listFailedGrantReasons(requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [listFailedGrantReasonsWithResponse]. Use this from a `suspend`
+     * function or coroutine scope.
+     *
+     * Delegates to the blocking [listFailedGrantReasonsWithResponse] under
+     * `withContext(Dispatchers.IO)`, so this is safe to call from any coroutine dispatcher
+     * (including `Dispatchers.Main`).
+     */
+    @JvmName("listFailedGrantReasonsWithResponseSuspend")
+    suspend fun listFailedGrantReasonsWithResponseSuspend(
+        requestOptions: RequestOptions? = null
+    ): RawResponse<SdkListCommunityFailedGrantReasonsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            listFailedGrantReasonsWithResponse(requestOptions)
+        }
+
+    /**
+     * Sync Discord roles
+     *
+     * Read the role list of the store's Discord servers from Discord again and check the bot's role
+     * position, which tells whether the bot can give the roles your products sell. Syncs every
+     * connected server, or only `server_id`. A server Discord refuses is reported on its own row
+     * with `synced: false`, and the others still sync; `failed_count` counts those rows. Nothing is
+     * given to or taken from a member, so repeating the request is safe. `422` on `platform` when
+     * no Discord server is connected, and on `server_id` when that server is not connected to this
+     * store. Requires the `community` API-key ability and the `community` permission in your team
+     * role. OAuth callers use the admin grant and select a store with X-STORE. Current membership
+     * and role permissions apply to every request.
+     *
+     * @param serverId The Discord server to sync. Leave out or send `null` to sync every connected
+     *   server.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkSyncDiscordRolesResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun syncDiscordRoles(
+        serverId: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkSyncDiscordRolesResponseValue200ApplicationJson {
+        val body = bodyOf("server_id" to serverId)
+        val config =
+            RequestConfig(
+                method = "POST",
+                path = "/v2/community-connections/discord/sync-roles",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkSyncDiscordRolesRequestApplicationJson.runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models.SdkSyncDiscordRolesResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "syncDiscordRoles",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkSyncDiscordRolesResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun syncDiscordRolesWithResponse(
+        serverId: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkSyncDiscordRolesResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        syncDiscordRoles(serverId, capturingOptions)
+        return captured as? RawResponse<SdkSyncDiscordRolesResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [syncDiscordRoles]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [syncDiscordRoles] under `withContext(Dispatchers.IO)`, so this is
+     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("syncDiscordRolesSuspend")
+    suspend fun syncDiscordRolesSuspend(
+        serverId: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkSyncDiscordRolesResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            syncDiscordRoles(serverId, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [syncDiscordRolesWithResponse]. Use this from a `suspend` function
+     * or coroutine scope.
+     *
+     * Delegates to the blocking [syncDiscordRolesWithResponse] under `withContext(Dispatchers.IO)`,
+     * so this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("syncDiscordRolesWithResponseSuspend")
+    suspend fun syncDiscordRolesWithResponseSuspend(
+        serverId: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkSyncDiscordRolesResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            syncDiscordRolesWithResponse(serverId, requestOptions)
         }
 }

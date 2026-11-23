@@ -326,3 +326,107 @@ Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API r
 
 [Response access, transport controls, pagination, and typed errors](../usage.md)
 
+## listFailedGrantReasons
+
+List community failed grant reasons
+
+[API reference](https://sell.app/docs/api/community-connections/list-failed-grant-reasons) · Effect: **read**
+
+```kotlin
+fun listFailedGrantReasons(
+        requestOptions: RequestOptions? = null
+    ): SdkListCommunityFailedGrantReasonsResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkListCommunityFailedGrantReasonsResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.communityConnections.listFailedGrantReasons()
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## syncDiscordRoles
+
+Sync Discord roles
+
+[API reference](https://sell.app/docs/api/community-connections/sync-discord-roles) · Effect: **consequential**
+
+```kotlin
+fun syncDiscordRoles(
+        serverId: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkSyncDiscordRolesResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| serverId | `String?` | No |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkSyncDiscordRolesResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.communityConnections.syncDiscordRoles()
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+

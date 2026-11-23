@@ -8,10 +8,13 @@ import app.sell.sellapp.common.http.PatchField
 import app.sell.sellapp.common.http.RawResponse
 import app.sell.sellapp.common.http.RequestConfig
 import app.sell.sellapp.common.http.RequestOptions
+import app.sell.sellapp.common.http.bodyOf
 import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.http.patchBodyOf
 import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.models.CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem
 import app.sell.sellapp.models.SdkCancelAppointmentResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkCreateBookingProductResponseValue201ApplicationJson
 import app.sell.sellapp.models.SdkGetAppointmentResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkListAppointmentsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkSearchAppointmentsResponseValue200ApplicationJson
@@ -20,6 +23,11 @@ import app.sell.sellapp.models.SearchAppointmentsRequestApplicationJsonPropertyF
 import app.sell.sellapp.models.SearchAppointmentsRequestApplicationJsonPropertyIncludesItem
 import app.sell.sellapp.models.SearchAppointmentsRequestApplicationJsonPropertySearch
 import app.sell.sellapp.models.SearchAppointmentsRequestApplicationJsonPropertySortItem
+import app.sell.sellapp.types.CatalogVisibility
+import app.sell.sellapp.types.PaymentMethod
+import app.sell.sellapp.types.SdkCreateBookingProductRequestApplicationJsonCurrency
+import app.sell.sellapp.types.SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit
+import app.sell.sellapp.types.SdkCreateBookingProductRequestApplicationJsonVideoProvider
 import com.fasterxml.jackson.core.type.TypeReference
 import java.time.OffsetDateTime
 
@@ -519,5 +527,315 @@ class Bookings(internal val sellapp: SellApp) {
     ): RawResponse<SdkCancelAppointmentResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
             cancelWithResponse(booking, status, requestOptions)
+        }
+
+    /**
+     * Create a booking product
+     *
+     * Create a draft booking product with one draft option that customers book as a timed
+     * appointment, one per purchase and one customer per time slot. Nothing can be booked until you
+     * publish it, whatever `visibility` you send: `visibility`, `PRIVATE` by default, applies once
+     * the product is published. Publish it with `POST /v2/products/{product}/publish`. Schedule
+     * fields you leave out take their defaults; read the result with `GET
+     * /v2/products/{product}/variants/{variant}/booking`. Each successful call creates another
+     * product, so do not retry blindly after a lost response: list your products first. Requires
+     * the `listing` API-key ability and the `listing` permission in your team role. OAuth callers
+     * use the admin grant and select a store with X-STORE. Current membership and role permissions
+     * apply to every request.
+     *
+     * @param title The product name customers see. The URL slug is made from it.
+     * @param priceCents The price of one appointment in the smallest unit of `currency`: `2500`
+     *   means $25.00 in USD, and `0` makes it free. A paid price outside the currency's limits,
+     *   such as below 0.50 in USD, returns `422` on `price_cents`.
+     * @param description The product description as HTML, 5 to 5000 characters. Leave it out to
+     *   start without one.
+     * @param visibility the visibility of the request.
+     * @param variantTitle The name of the bookable option.
+     * @param variantDescription The option's description. Defaults to the product description, or
+     *   to `Book an appointment for` and the title when there is none.
+     * @param compareAtPriceCents An optional crossed-out price shown next to the real one, in the
+     *   same unit. It must be higher than `price_cents` and within the currency's limits; otherwise
+     *   the request returns `422` on `compare_at_price_cents`.
+     * @param currency The currency of both prices.
+     * @param paymentMethods How customers can pay. Each must be enabled for the store, or the
+     *   request returns `422` on `payment_methods`. Leave it out to use the store's default payment
+     *   methods for the currency; a paid booking with none available returns `422` on
+     *   `payment_methods`.
+     * @param timezone The IANA timezone the weekly availability is read in. Defaults to the store's
+     *   timezone.
+     * @param durationMinutes the duration minutes of the request.
+     * @param minNoticeMinutes the min notice minutes of the request.
+     * @param maxAdvanceDays the max advance days of the request.
+     * @param bufferBeforeMinutes the buffer before minutes of the request.
+     * @param bufferAfterMinutes the buffer after minutes of the request.
+     * @param providerConnectionIds the provider connection ids of the request.
+     * @param videoProvider the video provider of the request.
+     * @param videoProviderConnectionId the video provider connection id of the request.
+     * @param remindersEnabled the reminders enabled of the request.
+     * @param reminderOffsetValue the reminder offset value of the request.
+     * @param reminderOffsetUnit the reminder offset unit of the request.
+     * @param availability Weekly opening hours, one entry per day from `1` to `7`, in 30-minute
+     *   steps. Days you leave out are closed. Leave the whole list out to open days `1` to `5` from
+     *   09:00 to 17:00.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkCreateBookingProductResponseValue201ApplicationJson
+     */
+    @JvmOverloads
+    fun create(
+        title: String,
+        priceCents: Long,
+        description: String? = null,
+        visibility: CatalogVisibility? = null,
+        variantTitle: String? = null,
+        variantDescription: String? = null,
+        compareAtPriceCents: Long? = null,
+        currency: SdkCreateBookingProductRequestApplicationJsonCurrency? = null,
+        paymentMethods: List<PaymentMethod>? = null,
+        timezone: String? = null,
+        durationMinutes: Long? = null,
+        minNoticeMinutes: Long? = null,
+        maxAdvanceDays: Long? = null,
+        bufferBeforeMinutes: Long? = null,
+        bufferAfterMinutes: Long? = null,
+        providerConnectionIds: List<Long>? = null,
+        videoProvider: SdkCreateBookingProductRequestApplicationJsonVideoProvider? = null,
+        videoProviderConnectionId: Long? = null,
+        remindersEnabled: Boolean? = null,
+        reminderOffsetValue: Long? = null,
+        reminderOffsetUnit: SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit? = null,
+        availability: List<CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem>? =
+            null,
+        requestOptions: RequestOptions? = null,
+    ): SdkCreateBookingProductResponseValue201ApplicationJson {
+        val body =
+            bodyOf(
+                "title" to title,
+                "price_cents" to priceCents,
+                "description" to description,
+                "visibility" to visibility,
+                "variant_title" to variantTitle,
+                "variant_description" to variantDescription,
+                "compare_at_price_cents" to compareAtPriceCents,
+                "currency" to currency,
+                "payment_methods" to paymentMethods,
+                "timezone" to timezone,
+                "duration_minutes" to durationMinutes,
+                "min_notice_minutes" to minNoticeMinutes,
+                "max_advance_days" to maxAdvanceDays,
+                "buffer_before_minutes" to bufferBeforeMinutes,
+                "buffer_after_minutes" to bufferAfterMinutes,
+                "provider_connection_ids" to providerConnectionIds,
+                "video_provider" to videoProvider,
+                "video_provider_connection_id" to videoProviderConnectionId,
+                "reminders_enabled" to remindersEnabled,
+                "reminder_offset_value" to reminderOffsetValue,
+                "reminder_offset_unit" to reminderOffsetUnit,
+                "availability" to availability,
+            )
+        body["title"] = title
+        body["price_cents"] = priceCents
+        val config =
+            RequestConfig(
+                method = "POST",
+                path = "/v2/booking-products",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkCreateBookingProductRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models.SdkCreateBookingProductResponseValue201ApplicationJson
+                        .runtimeSchema,
+                operationId = "createBookingProduct",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkCreateBookingProductResponseValue201ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun createWithResponse(
+        title: String,
+        priceCents: Long,
+        description: String? = null,
+        visibility: CatalogVisibility? = null,
+        variantTitle: String? = null,
+        variantDescription: String? = null,
+        compareAtPriceCents: Long? = null,
+        currency: SdkCreateBookingProductRequestApplicationJsonCurrency? = null,
+        paymentMethods: List<PaymentMethod>? = null,
+        timezone: String? = null,
+        durationMinutes: Long? = null,
+        minNoticeMinutes: Long? = null,
+        maxAdvanceDays: Long? = null,
+        bufferBeforeMinutes: Long? = null,
+        bufferAfterMinutes: Long? = null,
+        providerConnectionIds: List<Long>? = null,
+        videoProvider: SdkCreateBookingProductRequestApplicationJsonVideoProvider? = null,
+        videoProviderConnectionId: Long? = null,
+        remindersEnabled: Boolean? = null,
+        reminderOffsetValue: Long? = null,
+        reminderOffsetUnit: SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit? = null,
+        availability: List<CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem>? =
+            null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkCreateBookingProductResponseValue201ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        create(
+            title,
+            priceCents,
+            description,
+            visibility,
+            variantTitle,
+            variantDescription,
+            compareAtPriceCents,
+            currency,
+            paymentMethods,
+            timezone,
+            durationMinutes,
+            minNoticeMinutes,
+            maxAdvanceDays,
+            bufferBeforeMinutes,
+            bufferAfterMinutes,
+            providerConnectionIds,
+            videoProvider,
+            videoProviderConnectionId,
+            remindersEnabled,
+            reminderOffsetValue,
+            reminderOffsetUnit,
+            availability,
+            capturingOptions,
+        )
+        return captured as? RawResponse<SdkCreateBookingProductResponseValue201ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [create]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [create] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("createSuspend")
+    suspend fun createSuspend(
+        title: String,
+        priceCents: Long,
+        description: String? = null,
+        visibility: CatalogVisibility? = null,
+        variantTitle: String? = null,
+        variantDescription: String? = null,
+        compareAtPriceCents: Long? = null,
+        currency: SdkCreateBookingProductRequestApplicationJsonCurrency? = null,
+        paymentMethods: List<PaymentMethod>? = null,
+        timezone: String? = null,
+        durationMinutes: Long? = null,
+        minNoticeMinutes: Long? = null,
+        maxAdvanceDays: Long? = null,
+        bufferBeforeMinutes: Long? = null,
+        bufferAfterMinutes: Long? = null,
+        providerConnectionIds: List<Long>? = null,
+        videoProvider: SdkCreateBookingProductRequestApplicationJsonVideoProvider? = null,
+        videoProviderConnectionId: Long? = null,
+        remindersEnabled: Boolean? = null,
+        reminderOffsetValue: Long? = null,
+        reminderOffsetUnit: SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit? = null,
+        availability: List<CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem>? =
+            null,
+        requestOptions: RequestOptions? = null,
+    ): SdkCreateBookingProductResponseValue201ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            create(
+                title,
+                priceCents,
+                description,
+                visibility,
+                variantTitle,
+                variantDescription,
+                compareAtPriceCents,
+                currency,
+                paymentMethods,
+                timezone,
+                durationMinutes,
+                minNoticeMinutes,
+                maxAdvanceDays,
+                bufferBeforeMinutes,
+                bufferAfterMinutes,
+                providerConnectionIds,
+                videoProvider,
+                videoProviderConnectionId,
+                remindersEnabled,
+                reminderOffsetValue,
+                reminderOffsetUnit,
+                availability,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Coroutine-aware variant of [createWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [createWithResponse] under `withContext(Dispatchers.IO)`, so this
+     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("createWithResponseSuspend")
+    suspend fun createWithResponseSuspend(
+        title: String,
+        priceCents: Long,
+        description: String? = null,
+        visibility: CatalogVisibility? = null,
+        variantTitle: String? = null,
+        variantDescription: String? = null,
+        compareAtPriceCents: Long? = null,
+        currency: SdkCreateBookingProductRequestApplicationJsonCurrency? = null,
+        paymentMethods: List<PaymentMethod>? = null,
+        timezone: String? = null,
+        durationMinutes: Long? = null,
+        minNoticeMinutes: Long? = null,
+        maxAdvanceDays: Long? = null,
+        bufferBeforeMinutes: Long? = null,
+        bufferAfterMinutes: Long? = null,
+        providerConnectionIds: List<Long>? = null,
+        videoProvider: SdkCreateBookingProductRequestApplicationJsonVideoProvider? = null,
+        videoProviderConnectionId: Long? = null,
+        remindersEnabled: Boolean? = null,
+        reminderOffsetValue: Long? = null,
+        reminderOffsetUnit: SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit? = null,
+        availability: List<CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem>? =
+            null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkCreateBookingProductResponseValue201ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            createWithResponse(
+                title,
+                priceCents,
+                description,
+                visibility,
+                variantTitle,
+                variantDescription,
+                compareAtPriceCents,
+                currency,
+                paymentMethods,
+                timezone,
+                durationMinutes,
+                minNoticeMinutes,
+                maxAdvanceDays,
+                bufferBeforeMinutes,
+                bufferAfterMinutes,
+                providerConnectionIds,
+                videoProvider,
+                videoProviderConnectionId,
+                remindersEnabled,
+                reminderOffsetValue,
+                reminderOffsetUnit,
+                availability,
+                requestOptions,
+            )
         }
 }

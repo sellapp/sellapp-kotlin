@@ -2944,6 +2944,71 @@ class GeneratedModelRoundTripTest {
     }
 
     @Test
+    fun `GetChargeSummaryResponseValue200ApplicationJsonPropertyDataPropertyPeriod round-trips through Jackson`() {
+        val json =
+            "{\"preset\": \"sample\", \"start_date\": \"2024-01-01\", \"end_date\": \"2024-01-01\", \"timezone\": \"sample\", \"currency\": " +
+                "\"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetChargeSummaryResponseValue200ApplicationJsonPropertyDataPropertyPeriod::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetChargeSummaryResponseValue200ApplicationJsonPropertyDataPropertyComparedWith round-trips through Jackson`() {
+        val json = "{\"start_date\": \"2024-01-01\", \"end_date\": \"2024-01-01\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetChargeSummaryResponseValue200ApplicationJsonPropertyDataPropertyComparedWith::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetChargeSummaryResponseValue200ApplicationJsonPropertyDataPropertyRevenue round-trips through Jackson`() {
+        val json =
+            "{\"currency\": \"sample\", \"total_cents\": 0, \"previous_total_cents\": 0, \"formatted\": \"sample\", \"previous_formatted\": " +
+                "\"sample\", \"trend\": \"sample\", \"trend_up\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetChargeSummaryResponseValue200ApplicationJsonPropertyDataPropertyRevenue::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetChargeSummaryResponseValue200ApplicationJsonPropertyDataPropertyCompletedCharges round-trips through Jackson`() {
+        val json =
+            "{\"count\": 0, \"previous_count\": 0, \"trend\": \"sample\", \"trend_up\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetChargeSummaryResponseValue200ApplicationJsonPropertyDataPropertyCompletedCharges::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
     fun `SearchGroupsRequestApplicationJsonPropertyIncludesItem round-trips through Jackson`() {
         val json = "{\"relation\": \"sample\"}"
         val parsed =
@@ -2974,7 +3039,7 @@ class GeneratedModelRoundTripTest {
 
     @Test
     fun `SearchProductsRequestApplicationJsonPropertyIncludesItem round-trips through Jackson`() {
-        val json = "{\"relation\": \"sample\"}"
+        val json = "{\"relation\": \"variants\"}"
         val parsed =
             mapper.readValue(
                 json,
@@ -4193,6 +4258,193 @@ class GeneratedModelRoundTripTest {
     }
 
     @Test
+    fun `PublishProductResponseValue200ApplicationJsonPropertyDataPropertyImagesItemPropertyMetadata round-trips through Jackson`() {
+        val json =
+            "{\"size\": 0, \"filename\": \"sample\", \"extension\": \"sample\", \"mime_type\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                PublishProductResponseValue200ApplicationJsonPropertyDataPropertyImagesItemPropertyMetadata::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `PublishProductResponseValue200ApplicationJsonPropertyDataPropertyAdditionalInformationItem round-trips through Jackson`() {
+        val json =
+            "{\"required\": false, \"key\": \"sample\", \"type\": \"sample\", \"label\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                PublishProductResponseValue200ApplicationJsonPropertyDataPropertyAdditionalInformationItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `PublishProductResponseValue200ApplicationJsonPropertyDataPropertyVariantsItem round-trips through Jackson`() {
+        val json = "{\"id\": 0, \"title\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                PublishProductResponseValue200ApplicationJsonPropertyDataPropertyVariantsItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `DuplicateProductResponseValue201ApplicationJsonPropertyDataPropertyImagesItemPropertyMetadata round-trips through Jackson`() {
+        val json =
+            "{\"size\": 0, \"filename\": \"sample\", \"extension\": \"sample\", \"mime_type\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                DuplicateProductResponseValue201ApplicationJsonPropertyDataPropertyImagesItemPropertyMetadata::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `DuplicateProductResponseValue201ApplicationJsonPropertyDataPropertyAdditionalInformationItem round-trips through Jackson`() {
+        val json =
+            "{\"required\": false, \"key\": \"sample\", \"type\": \"sample\", \"label\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                DuplicateProductResponseValue201ApplicationJsonPropertyDataPropertyAdditionalInformationItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `DuplicateProductResponseValue201ApplicationJsonPropertyDataPropertyVariantsItem round-trips through Jackson`() {
+        val json = "{\"id\": 0, \"title\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                DuplicateProductResponseValue201ApplicationJsonPropertyDataPropertyVariantsItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `MoveProductResponseValue200ApplicationJsonPropertyDataPropertyImagesItemPropertyMetadata round-trips through Jackson`() {
+        val json =
+            "{\"size\": 0, \"filename\": \"sample\", \"extension\": \"sample\", \"mime_type\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                MoveProductResponseValue200ApplicationJsonPropertyDataPropertyImagesItemPropertyMetadata::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `MoveProductResponseValue200ApplicationJsonPropertyDataPropertyAdditionalInformationItem round-trips through Jackson`() {
+        val json =
+            "{\"required\": false, \"key\": \"sample\", \"type\": \"sample\", \"label\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                MoveProductResponseValue200ApplicationJsonPropertyDataPropertyAdditionalInformationItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `MoveProductResponseValue200ApplicationJsonPropertyDataPropertyVariantsItem round-trips through Jackson`() {
+        val json = "{\"id\": 0, \"title\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                MoveProductResponseValue200ApplicationJsonPropertyDataPropertyVariantsItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ListProductSimilarProductsResponseValue200ApplicationJsonPropertyDataItem round-trips through Jackson`() {
+        val json =
+            "{\"variant_id\": 0, \"variant_title\": \"sample\", \"product_id\": 0, \"product_title\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ListProductSimilarProductsResponseValue200ApplicationJsonPropertyDataItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkReplaceProductSimilarProductsRequestApplicationJson round-trips through Jackson`() {
+        val json = "{\"variant_ids\": []}"
+        val parsed =
+            mapper.readValue(
+                json,
+                SdkReplaceProductSimilarProductsRequestApplicationJson::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceProductSimilarProductsResponseValue200ApplicationJsonPropertyDataItem round-trips through Jackson`() {
+        val json =
+            "{\"variant_id\": 0, \"variant_title\": \"sample\", \"product_id\": 0, \"product_title\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceProductSimilarProductsResponseValue200ApplicationJsonPropertyDataItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
     fun `BatchCreateProductVariantsRequestApplicationJsonPropertyResourcesItemPropertyDeliverablePropertyDataPropertyBookingPropertyAvailabilityItem round-trips through Jackson`() {
         val json = "{\"day\": 1, \"enabled\": false, \"start\": \"sample\", \"end\": \"sample\"}"
         val parsed =
@@ -4677,6 +4929,558 @@ class GeneratedModelRoundTripTest {
     }
 
     @Test
+    fun `PublishProductVariantResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyFrequency round-trips through Jackson`() {
+        val json = "{\"value\": 0, \"interval\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                PublishProductVariantResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyFrequency::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `PublishProductVariantResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyPrice round-trips through Jackson`() {
+        val json = "{\"price\": \"sample\", \"currency\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                PublishProductVariantResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyPrice::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `PublishProductVariantResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyTrialPropertyPrice round-trips through Jackson`() {
+        val json = "{\"price\": \"sample\", \"currency\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                PublishProductVariantResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyTrialPropertyPrice::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `PublishProductVariantResponseValue200ApplicationJsonPropertyDataPropertyBulkDiscountItem round-trips through Jackson`() {
+        val json = "{\"discount_percentage\": 0, \"minimum_purchase_amount\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                PublishProductVariantResponseValue200ApplicationJsonPropertyDataPropertyBulkDiscountItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `PublishProductVariantResponseValue200ApplicationJsonPropertyDataPropertyOtherSettings round-trips through Jackson`() {
+        val json = "{\"quantity_increments\": 0, \"discord_data_required\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                PublishProductVariantResponseValue200ApplicationJsonPropertyDataPropertyOtherSettings::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `PublishProductVariantResponseValue200ApplicationJsonPropertyDataPropertyProductPropertyAdditionalInformationItem round-trips through Jackson`() {
+        val json =
+            "{\"required\": false, \"key\": \"sample\", \"type\": \"sample\", \"label\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                PublishProductVariantResponseValue200ApplicationJsonPropertyDataPropertyProductPropertyAdditionalInformationItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `DuplicateProductVariantResponseValue201ApplicationJsonPropertyDataPropertyPricingPropertyFrequency round-trips through Jackson`() {
+        val json = "{\"value\": 0, \"interval\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                DuplicateProductVariantResponseValue201ApplicationJsonPropertyDataPropertyPricingPropertyFrequency::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `DuplicateProductVariantResponseValue201ApplicationJsonPropertyDataPropertyPricingPropertyPrice round-trips through Jackson`() {
+        val json = "{\"price\": \"sample\", \"currency\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                DuplicateProductVariantResponseValue201ApplicationJsonPropertyDataPropertyPricingPropertyPrice::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `DuplicateProductVariantResponseValue201ApplicationJsonPropertyDataPropertyPricingPropertyTrialPropertyPrice round-trips through Jackson`() {
+        val json = "{\"price\": \"sample\", \"currency\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                DuplicateProductVariantResponseValue201ApplicationJsonPropertyDataPropertyPricingPropertyTrialPropertyPrice::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `DuplicateProductVariantResponseValue201ApplicationJsonPropertyDataPropertyBulkDiscountItem round-trips through Jackson`() {
+        val json = "{\"discount_percentage\": 0, \"minimum_purchase_amount\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                DuplicateProductVariantResponseValue201ApplicationJsonPropertyDataPropertyBulkDiscountItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `DuplicateProductVariantResponseValue201ApplicationJsonPropertyDataPropertyOtherSettings round-trips through Jackson`() {
+        val json = "{\"quantity_increments\": 0, \"discord_data_required\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                DuplicateProductVariantResponseValue201ApplicationJsonPropertyDataPropertyOtherSettings::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `DuplicateProductVariantResponseValue201ApplicationJsonPropertyDataPropertyProductPropertyAdditionalInformationItem round-trips through Jackson`() {
+        val json =
+            "{\"required\": false, \"key\": \"sample\", \"type\": \"sample\", \"label\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                DuplicateProductVariantResponseValue201ApplicationJsonPropertyDataPropertyProductPropertyAdditionalInformationItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkReorderProductVariantsRequestApplicationJson round-trips through Jackson`() {
+        val json = "{\"variant_ids\": [1]}"
+        val parsed =
+            mapper.readValue(json, SdkReorderProductVariantsRequestApplicationJson::class.java)
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReorderProductVariantsResponseValue200ApplicationJsonPropertyDataItemPropertyPricingPropertyFrequency round-trips through Jackson`() {
+        val json = "{\"value\": 0, \"interval\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReorderProductVariantsResponseValue200ApplicationJsonPropertyDataItemPropertyPricingPropertyFrequency::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReorderProductVariantsResponseValue200ApplicationJsonPropertyDataItemPropertyPricingPropertyPrice round-trips through Jackson`() {
+        val json = "{\"price\": \"sample\", \"currency\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReorderProductVariantsResponseValue200ApplicationJsonPropertyDataItemPropertyPricingPropertyPrice::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReorderProductVariantsResponseValue200ApplicationJsonPropertyDataItemPropertyPricingPropertyTrialPropertyPrice round-trips through Jackson`() {
+        val json = "{\"price\": \"sample\", \"currency\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReorderProductVariantsResponseValue200ApplicationJsonPropertyDataItemPropertyPricingPropertyTrialPropertyPrice::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReorderProductVariantsResponseValue200ApplicationJsonPropertyDataItemPropertyBulkDiscountItem round-trips through Jackson`() {
+        val json = "{\"discount_percentage\": 0, \"minimum_purchase_amount\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReorderProductVariantsResponseValue200ApplicationJsonPropertyDataItemPropertyBulkDiscountItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReorderProductVariantsResponseValue200ApplicationJsonPropertyDataItemPropertyOtherSettings round-trips through Jackson`() {
+        val json = "{\"quantity_increments\": 0, \"discord_data_required\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReorderProductVariantsResponseValue200ApplicationJsonPropertyDataItemPropertyOtherSettings::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReorderProductVariantsResponseValue200ApplicationJsonPropertyDataItemPropertyProductPropertyAdditionalInformationItem round-trips through Jackson`() {
+        val json =
+            "{\"required\": false, \"key\": \"sample\", \"type\": \"sample\", \"label\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReorderProductVariantsResponseValue200ApplicationJsonPropertyDataItemPropertyProductPropertyAdditionalInformationItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetVariantSubscriptionSettingsResponseValue200ApplicationJsonPropertyDataPropertyPausePolicy round-trips through Jackson`() {
+        val json =
+            "{\"max_pause_days\": 0, \"min_active_days_between_pauses\": 0, \"max_pauses_per_period\": 0, \"requires_resume_date\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetVariantSubscriptionSettingsResponseValue200ApplicationJsonPropertyDataPropertyPausePolicy::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetVariantSubscriptionSettingsResponseValue200ApplicationJsonPropertyDataPropertyBillingDatePolicy round-trips through Jackson`() {
+        val json =
+            "{\"max_shift_days\": 0, \"max_changes_per_period\": 0, \"allowed_day_min\": null, \"allowed_day_max\": null, " +
+                "\"preview_required\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetVariantSubscriptionSettingsResponseValue200ApplicationJsonPropertyDataPropertyBillingDatePolicy::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetVariantSubscriptionSettingsResponseValue200ApplicationJsonPropertyDataPropertyRenewalPolicy round-trips through Jackson`() {
+        val json = "{\"redeliver_on_renewal\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetVariantSubscriptionSettingsResponseValue200ApplicationJsonPropertyDataPropertyRenewalPolicy::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `UpdateVariantSubscriptionSettingsResponseValue200ApplicationJsonPropertyDataPropertyPausePolicy round-trips through Jackson`() {
+        val json =
+            "{\"max_pause_days\": 0, \"min_active_days_between_pauses\": 0, \"max_pauses_per_period\": 0, \"requires_resume_date\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                UpdateVariantSubscriptionSettingsResponseValue200ApplicationJsonPropertyDataPropertyPausePolicy::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `UpdateVariantSubscriptionSettingsResponseValue200ApplicationJsonPropertyDataPropertyBillingDatePolicy round-trips through Jackson`() {
+        val json =
+            "{\"max_shift_days\": 0, \"max_changes_per_period\": 0, \"allowed_day_min\": null, \"allowed_day_max\": null, " +
+                "\"preview_required\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                UpdateVariantSubscriptionSettingsResponseValue200ApplicationJsonPropertyDataPropertyBillingDatePolicy::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `UpdateVariantSubscriptionSettingsResponseValue200ApplicationJsonPropertyDataPropertyRenewalPolicy round-trips through Jackson`() {
+        val json = "{\"redeliver_on_renewal\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                UpdateVariantSubscriptionSettingsResponseValue200ApplicationJsonPropertyDataPropertyRenewalPolicy::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyFrequency round-trips through Jackson`() {
+        val json = "{\"value\": 0, \"interval\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyFrequency::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyPrice round-trips through Jackson`() {
+        val json = "{\"price\": \"sample\", \"currency\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyPrice::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyTrialPropertyPrice round-trips through Jackson`() {
+        val json = "{\"price\": \"sample\", \"currency\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyPricingPropertyTrialPropertyPrice::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyBulkDiscountItem round-trips through Jackson`() {
+        val json = "{\"discount_percentage\": 0, \"minimum_purchase_amount\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyBulkDiscountItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyOtherSettingsPropertyCommunityServersPropertyDiscord round-trips through Jackson`() {
+        val json =
+            "{\"server_id\": \"sample\", \"roles\": [], \"required\": false, \"remove_on_expire\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyOtherSettingsPropertyCommunityServersPropertyDiscord::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyOtherSettingsPropertyCommunityServersPropertyTelegram round-trips through Jackson`() {
+        val json =
+            "{\"server_id\": \"sample\", \"roles\": [], \"required\": false, \"remove_on_expire\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyOtherSettingsPropertyCommunityServersPropertyTelegram::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyOtherSettingsPropertyCommunityServersPropertySlack round-trips through Jackson`() {
+        val json =
+            "{\"server_id\": \"sample\", \"roles\": [], \"required\": false, \"remove_on_expire\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyOtherSettingsPropertyCommunityServersPropertySlack::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyOtherSettingsPropertyCommunityServersPropertyWhatsapp round-trips through Jackson`() {
+        val json =
+            "{\"server_id\": \"sample\", \"roles\": [], \"required\": false, \"remove_on_expire\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyOtherSettingsPropertyCommunityServersPropertyWhatsapp::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyProductPropertyAdditionalInformationItem round-trips through Jackson`() {
+        val json =
+            "{\"required\": false, \"key\": \"sample\", \"type\": \"sample\", \"label\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceVariantCommunityAccessResponseValue200ApplicationJsonPropertyDataPropertyProductPropertyAdditionalInformationItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `PreviewVariantBuyerNotificationResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"product_id\": 0, \"variant_id\": 0, \"file_count\": 0, \"order_count\": 0, \"email_count\": 0, \"has_upload_in_progress\": " +
+                "false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                PreviewVariantBuyerNotificationResponseValue200ApplicationJsonPropertyData::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `NotifyVariantBuyersResponseValue202ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"status\": \"queued\", \"product_id\": 0, \"variant_id\": 0, \"order_count\": 0, \"email_count\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                NotifyVariantBuyersResponseValue202ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
     fun `SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem round-trips through Jackson`() {
         val json = "{\"relation\": \"sample\"}"
         val parsed =
@@ -4875,6 +5679,20 @@ class GeneratedModelRoundTripTest {
             mapper.readValue(
                 json,
                 SearchPromotionsRequestApplicationJsonPropertyIncludesItem::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetPromotionUsageResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json = "{\"promotion_id\": 0, \"uses\": 0, \"recent_order_ids\": []}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetPromotionUsageResponseValue200ApplicationJsonPropertyData::class.java,
             )
         val reserialized = mapper.writeValueAsString(parsed)
         val tree1 = mapper.readTree(json)
@@ -5232,6 +6050,499 @@ class GeneratedModelRoundTripTest {
     }
 
     @Test
+    fun `ListSupportReplyTemplatesResponseValue200ApplicationJsonPropertyDataItem round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"label\": \"sample\", \"body\": \"sample\", \"placeholders\": [], \"is_active\": false, \"supports_manual\": false," +
+                " \"supports_auto_respond\": false, \"sort_order\": 0, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": " +
+                "\"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ListSupportReplyTemplatesResponseValue200ApplicationJsonPropertyDataItem::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `CreateSupportReplyTemplateResponseValue201ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"label\": \"sample\", \"body\": \"sample\", \"placeholders\": [], \"is_active\": false, \"supports_manual\": false," +
+                " \"supports_auto_respond\": false, \"sort_order\": 0, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": " +
+                "\"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                CreateSupportReplyTemplateResponseValue201ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportReplyTemplateResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"label\": \"sample\", \"body\": \"sample\", \"placeholders\": [], \"is_active\": false, \"supports_manual\": false," +
+                " \"supports_auto_respond\": false, \"sort_order\": 0, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": " +
+                "\"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportReplyTemplateResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceSupportReplyTemplateResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"label\": \"sample\", \"body\": \"sample\", \"placeholders\": [], \"is_active\": false, \"supports_manual\": false," +
+                " \"supports_auto_respond\": false, \"sort_order\": 0, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": " +
+                "\"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceSupportReplyTemplateResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `UpdateSupportReplyTemplateResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"label\": \"sample\", \"body\": \"sample\", \"placeholders\": [], \"is_active\": false, \"supports_manual\": false," +
+                " \"supports_auto_respond\": false, \"sort_order\": 0, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": " +
+                "\"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                UpdateSupportReplyTemplateResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `DeleteSupportReplyTemplateResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"label\": \"sample\", \"body\": \"sample\", \"placeholders\": [], \"is_active\": false, \"supports_manual\": false," +
+                " \"supports_auto_respond\": false, \"sort_order\": 0, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": " +
+                "\"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                DeleteSupportReplyTemplateResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `RenderSupportReplyTemplateResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"template_id\": 0, \"template_label\": \"sample\", \"ticket_id\": 0, \"text\": \"sample\", \"filled_from_ticket\": [], " +
+                "\"filled_from_values\": []}"
+        val parsed =
+            mapper.readValue(
+                json,
+                RenderSupportReplyTemplateResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkReorderSupportReplyTemplatesRequestApplicationJson round-trips through Jackson`() {
+        val json = "{\"ordered_template_ids\": [1]}"
+        val parsed =
+            mapper.readValue(
+                json,
+                SdkReorderSupportReplyTemplatesRequestApplicationJson::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReorderSupportReplyTemplatesResponseValue200ApplicationJsonPropertyDataItem round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"label\": \"sample\", \"body\": \"sample\", \"placeholders\": [], \"is_active\": false, \"supports_manual\": false," +
+                " \"supports_auto_respond\": false, \"sort_order\": 0, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": " +
+                "\"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReorderSupportReplyTemplatesResponseValue200ApplicationJsonPropertyDataItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportReplyTemplateOptionsResponseValue200ApplicationJsonPropertyDataPropertyDefaults round-trips through Jackson`() {
+        val json =
+            "{\"is_active\": false, \"supports_manual\": false, \"supports_auto_respond\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportReplyTemplateOptionsResponseValue200ApplicationJsonPropertyDataPropertyDefaults::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportReplyTemplateOptionsResponseValue200ApplicationJsonPropertyDataPropertyPermissions round-trips through Jackson`() {
+        val json = "{\"can_manage_automation\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportReplyTemplateOptionsResponseValue200ApplicationJsonPropertyDataPropertyPermissions::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportReplyTemplateOptionsResponseValue200ApplicationJsonPropertyDataPropertyCounts round-trips through Jackson`() {
+        val json = "{\"total\": 0, \"active\": 0, \"manual\": 0, \"auto\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportReplyTemplateOptionsResponseValue200ApplicationJsonPropertyDataPropertyCounts::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportReplyTemplateOptionsResponseValue200ApplicationJsonPropertyDataPropertyPlaceholdersItem round-trips through Jackson`() {
+        val json = "{\"key\": \"sample\", \"token\": \"sample\", \"label\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportReplyTemplateOptionsResponseValue200ApplicationJsonPropertyDataPropertyPlaceholdersItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportReplyTemplateOptionsResponseValue200ApplicationJsonPropertyDataPropertyPlaceholderGuidancePropertySuggestedReplacementsItem round-trips through Jackson`() {
+        val json =
+            "{\"requested\": \"sample\", \"replacement\": null, \"replacement_token\": null, \"message\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportReplyTemplateOptionsResponseValue200ApplicationJsonPropertyDataPropertyPlaceholderGuidancePropertySuggestedReplacementsItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportReplyTemplateOptionsResponseValue200ApplicationJsonPropertyDataPropertyAvailabilityFiltersItem round-trips through Jackson`() {
+        val json = "{\"value\": \"sample\", \"label\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportReplyTemplateOptionsResponseValue200ApplicationJsonPropertyDataPropertyAvailabilityFiltersItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportReplyTemplateOptionsResponseValue200ApplicationJsonPropertyDataPropertyActiveStateFiltersItem round-trips through Jackson`() {
+        val json = "{\"value\": \"sample\", \"label\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportReplyTemplateOptionsResponseValue200ApplicationJsonPropertyDataPropertyActiveStateFiltersItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ListSupportReasonsResponseValue200ApplicationJsonPropertyDataItem round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"label\": \"sample\", \"slug\": \"sample\", \"description\": null, \"is_active\": false, \"sort_order\": 0, " +
+                "\"product_ids\": [], \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ListSupportReasonsResponseValue200ApplicationJsonPropertyDataItem::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `CreateSupportReasonResponseValue201ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"label\": \"sample\", \"slug\": \"sample\", \"description\": null, \"is_active\": false, \"sort_order\": 0, " +
+                "\"product_ids\": [], \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                CreateSupportReasonResponseValue201ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportReasonResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"label\": \"sample\", \"slug\": \"sample\", \"description\": null, \"is_active\": false, \"sort_order\": 0, " +
+                "\"product_ids\": [], \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportReasonResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceSupportReasonResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"label\": \"sample\", \"slug\": \"sample\", \"description\": null, \"is_active\": false, \"sort_order\": 0, " +
+                "\"product_ids\": [], \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceSupportReasonResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `UpdateSupportReasonResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"label\": \"sample\", \"slug\": \"sample\", \"description\": null, \"is_active\": false, \"sort_order\": 0, " +
+                "\"product_ids\": [], \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                UpdateSupportReasonResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `DeleteSupportReasonResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"label\": \"sample\", \"slug\": \"sample\", \"description\": null, \"is_active\": false, \"sort_order\": 0, " +
+                "\"product_ids\": [], \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                DeleteSupportReasonResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportReasonOptionsResponseValue200ApplicationJsonPropertyDataPropertyDefaults round-trips through Jackson`() {
+        val json = "{\"is_active\": false, \"product_scope\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportReasonOptionsResponseValue200ApplicationJsonPropertyDataPropertyDefaults::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportReasonOptionsResponseValue200ApplicationJsonPropertyDataPropertyCounts round-trips through Jackson`() {
+        val json =
+            "{\"platform\": 0, \"custom_total\": 0, \"custom_active\": 0, \"custom_inactive\": 0, \"custom_product_scoped\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportReasonOptionsResponseValue200ApplicationJsonPropertyDataPropertyCounts::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportReasonOptionsResponseValue200ApplicationJsonPropertyDataPropertyCustomReasonsItemPropertyProductsItem round-trips through Jackson`() {
+        val json = "{\"id\": 0, \"title\": \"sample\", \"type\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportReasonOptionsResponseValue200ApplicationJsonPropertyDataPropertyCustomReasonsItemPropertyProductsItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportReasonOptionsResponseValue200ApplicationJsonPropertyDataPropertyProductScopeFiltersItem round-trips through Jackson`() {
+        val json = "{\"value\": \"sample\", \"label\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportReasonOptionsResponseValue200ApplicationJsonPropertyDataPropertyProductScopeFiltersItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportReasonOptionsResponseValue200ApplicationJsonPropertyDataPropertyActiveStateFiltersItem round-trips through Jackson`() {
+        val json = "{\"value\": \"sample\", \"label\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportReasonOptionsResponseValue200ApplicationJsonPropertyDataPropertyActiveStateFiltersItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkReorderSupportAutomationRulesRequestApplicationJson round-trips through Jackson`() {
+        val json = "{\"ordered_rule_ids\": [1]}"
+        val parsed =
+            mapper.readValue(
+                json,
+                SdkReorderSupportAutomationRulesRequestApplicationJson::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportAutomationSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"automation_enabled\": false, \"daily_refund_cap_cents\": null, \"currency\": \"USD\", \"active_rules_count\": 0, " +
+                "\"active_refund_rules_count\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportAutomationSettingsResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceSupportAutomationSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"automation_enabled\": false, \"daily_refund_cap_cents\": null, \"currency\": \"USD\", \"active_rules_count\": 0, " +
+                "\"active_refund_rules_count\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceSupportAutomationSettingsResponseValue200ApplicationJsonPropertyData::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `UpdateSupportAutomationSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"automation_enabled\": false, \"daily_refund_cap_cents\": null, \"currency\": \"USD\", \"active_rules_count\": 0, " +
+                "\"active_refund_rules_count\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                UpdateSupportAutomationSettingsResponseValue200ApplicationJsonPropertyData::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
     fun `CreateCustomerResponseValue201ApplicationJsonPropertyDataPropertyInsights round-trips through Jackson`() {
         val json =
             "{\"orders_count\": 0, \"line_items_count\": 0, \"completed_line_items_count\": 0, \"pending_line_items_count\": 0, " +
@@ -5304,7 +6615,7 @@ class GeneratedModelRoundTripTest {
     fun `ListOrdersResponseValue200ApplicationJsonPropertyDataItemPropertyTotals round-trips through Jackson`() {
         val json =
             "{\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}"
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}"
         val parsed =
             mapper.readValue(
                 json,
@@ -5346,7 +6657,7 @@ class GeneratedModelRoundTripTest {
     fun `CreateOrderResponseValue201ApplicationJsonPropertyDataPropertyTotals round-trips through Jackson`() {
         val json =
             "{\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}"
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}"
         val parsed =
             mapper.readValue(
                 json,
@@ -5378,7 +6689,7 @@ class GeneratedModelRoundTripTest {
     fun `SearchOrdersResponseValue200ApplicationJsonPropertyDataItemPropertyTotals round-trips through Jackson`() {
         val json =
             "{\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}"
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}"
         val parsed =
             mapper.readValue(
                 json,
@@ -5410,7 +6721,7 @@ class GeneratedModelRoundTripTest {
     fun `GetOrderResponseValue200ApplicationJsonPropertyDataPropertyTotals round-trips through Jackson`() {
         val json =
             "{\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}"
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}"
         val parsed =
             mapper.readValue(
                 json,
@@ -6197,6 +7508,22 @@ class GeneratedModelRoundTripTest {
     }
 
     @Test
+    fun `ResendAffiliateInvitationResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"email\": \"sample\", \"status\": \"pending\", \"invited_at\": null, \"application_submitted_at\": null, " +
+                "\"created_at\": null}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ResendAffiliateInvitationResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
     fun `SearchRewardRulesRequestApplicationJsonPropertyIncludesItem round-trips through Jackson`() {
         val json = "{\"relation\": \"sample\"}"
         val parsed =
@@ -6536,6 +7863,21 @@ class GeneratedModelRoundTripTest {
     }
 
     @Test
+    fun `GetUpsellOfferPerformanceResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"upsell_offer_id\": 0, \"impressions\": 0, \"checkout_starts\": 0, \"accepts\": 0, \"revenue_usd_cents\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetUpsellOfferPerformanceResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
     fun `ListCommunityConnectionsResponseValue200ApplicationJsonPropertyDataItemPropertyAccountsItem round-trips through Jackson`() {
         val json =
             "{\"id\": \"sample\", \"username\": null, \"display_name\": null, \"avatar_url\": null}"
@@ -6623,6 +7965,93 @@ class GeneratedModelRoundTripTest {
     }
 
     @Test
+    fun `GetCommunityServerResponseValue200ApplicationJsonPropertyDataPropertyAffectedVariantsItem round-trips through Jackson`() {
+        val json =
+            "{\"product_id\": 0, \"product\": \"sample\", \"variant_id\": 0, \"variant\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetCommunityServerResponseValue200ApplicationJsonPropertyDataPropertyAffectedVariantsItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `RemoveCommunityServerResponseValue200ApplicationJsonPropertyDataPropertyAccessRulesRemovedItem round-trips through Jackson`() {
+        val json =
+            "{\"product_id\": 0, \"product\": \"sample\", \"variant_id\": 0, \"variant\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                RemoveCommunityServerResponseValue200ApplicationJsonPropertyDataPropertyAccessRulesRemovedItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ListSlackAvailableChannelsResponseValue200ApplicationJsonPropertyDataPropertyChannelsItem round-trips through Jackson`() {
+        val json =
+            "{\"id\": \"sample\", \"name\": \"sample\", \"is_private\": false, \"num_members\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ListSlackAvailableChannelsResponseValue200ApplicationJsonPropertyDataPropertyChannelsItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkAddSlackChannelRequestApplicationJson round-trips through Jackson`() {
+        val json = "{\"channel_id\": \"sample\"}"
+        val parsed = mapper.readValue(json, SdkAddSlackChannelRequestApplicationJson::class.java)
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `AddSlackChannelResponseValue201ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json = "{\"id\": \"sample\", \"name\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                AddSlackChannelResponseValue201ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceSlackWorkspaceInviteLinkResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json = "{\"workspace_invite_link\": null}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceSlackWorkspaceInviteLinkResponseValue200ApplicationJsonPropertyData::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
     fun `GetWalletSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
         val json =
             "{\"enabled\": false, \"minimum_top_up_cents\": null, \"maximum_top_up_cents\": null, \"expiration_days\": null, " +
@@ -6668,10 +8097,94 @@ class GeneratedModelRoundTripTest {
     }
 
     @Test
-    fun `SdkAdjustCustomerWalletRequestApplicationJson round-trips through Jackson`() {
-        val json = "{\"amount_cents\": 0, \"idempotency_key\": \"sample\", \"note\": \"sample\"}"
+    fun `ListStoreWalletTransactionsResponseValue200ApplicationJsonPropertyMetaAllOfValue2PropertyFiltersPropertyCustomer round-trips through Jackson`() {
+        val json = "{\"id\": 0, \"email\": null}"
         val parsed =
-            mapper.readValue(json, SdkAdjustCustomerWalletRequestApplicationJson::class.java)
+            mapper.readValue(
+                json,
+                ListStoreWalletTransactionsResponseValue200ApplicationJsonPropertyMetaAllOfValue2PropertyFiltersPropertyCustomer::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ListStoreWalletTransactionsResponseValue200ApplicationJsonPropertyMetaAllOfValue2PropertySummary round-trips through Jackson`() {
+        val json =
+            "{\"entries_count\": 0, \"net_amount_cents\": 0, \"credits_cents\": 0, \"debits_cents\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ListStoreWalletTransactionsResponseValue200ApplicationJsonPropertyMetaAllOfValue2PropertySummary::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetWalletOverviewResponseValue200ApplicationJsonPropertyDataPropertySettings round-trips through Jackson`() {
+        val json =
+            "{\"wallet_enabled\": false, \"expiration_days\": null, \"min_topup_cents\": null, \"max_topup_cents\": null}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetWalletOverviewResponseValue200ApplicationJsonPropertyDataPropertySettings::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetWalletOverviewResponseValue200ApplicationJsonPropertyDataPropertyHealth round-trips through Jackson`() {
+        val json =
+            "{\"liability_cents\": 0, \"available_cents\": 0, \"held_cents\": 0, \"held_count\": 0, \"wallets_with_balance\": 0, " +
+                "\"total_wallets\": 0, \"frozen_wallets\": 0, \"expiring_soon_cents\": 0, \"expiring_soon_days\": 1}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetWalletOverviewResponseValue200ApplicationJsonPropertyDataPropertyHealth::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetWalletOverviewResponseValue200ApplicationJsonPropertyDataPropertyActivity round-trips through Jackson`() {
+        val json = "{\"topups_cents\": 0, \"customer_spend_cents\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetWalletOverviewResponseValue200ApplicationJsonPropertyDataPropertyActivity::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetWalletOverviewResponseValue200ApplicationJsonPropertyDataPropertyActiveRules round-trips through Jackson`() {
+        val json =
+            "{\"cashback_rules_count\": 0, \"bonus_tiers_count\": 0, \"wallet_credit_reward_rules_count\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetWalletOverviewResponseValue200ApplicationJsonPropertyDataPropertyActiveRules::class
+                    .java,
+            )
         val reserialized = mapper.writeValueAsString(parsed)
         val tree1 = mapper.readTree(json)
         val tree2 = mapper.readTree(reserialized)
@@ -6695,6 +8208,67 @@ class GeneratedModelRoundTripTest {
             "{\"percent_basis\": 1, \"maximum_cashback_cents\": null, \"is_active\": false, \"product_ids\": []}"
         val parsed =
             mapper.readValue(json, SdkReplaceCashbackRuleRequestApplicationJson::class.java)
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `CreateCourseResponseValue201ApplicationJsonPropertyDataPropertyPromoVideo round-trips through Jackson`() {
+        val json = "{\"mux_playback_id\": null, \"mux_status\": null, \"duration_seconds\": null}"
+        val parsed =
+            mapper.readValue(
+                json,
+                CreateCourseResponseValue201ApplicationJsonPropertyDataPropertyPromoVideo::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `CreateCourseResponseValue201ApplicationJsonPropertyDataPropertySectionsItemPropertyLessonsItemPropertyAttachmentsItem round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"title\": \"sample\", \"mime_type\": null, \"size_bytes\": null, \"sort_order\": 1}"
+        val parsed =
+            mapper.readValue(
+                json,
+                CreateCourseResponseValue201ApplicationJsonPropertyDataPropertySectionsItemPropertyLessonsItemPropertyAttachmentsItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `CreateCourseResponseValue201ApplicationJsonPropertyDataPropertySectionsItemPropertyLessonsItemPropertyAssignmentValuePropertyQuestionsItemPropertyAnswersItem round-trips through Jackson`() {
+        val json = "{\"id\": 0, \"answer\": \"sample\", \"is_correct\": false, \"sort_order\": 1}"
+        val parsed =
+            mapper.readValue(
+                json,
+                CreateCourseResponseValue201ApplicationJsonPropertyDataPropertySectionsItemPropertyLessonsItemPropertyAssignmentValuePropertyQuestionsItemPropertyAnswersItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `CreateCourseResponseValue201ApplicationJsonPropertyDataPropertySectionsItemPropertyLessonsItemPropertyQuestionsItemPropertyAnswersItem round-trips through Jackson`() {
+        val json = "{\"id\": 0, \"answer\": \"sample\", \"is_correct\": false, \"sort_order\": 1}"
+        val parsed =
+            mapper.readValue(
+                json,
+                CreateCourseResponseValue201ApplicationJsonPropertyDataPropertySectionsItemPropertyLessonsItemPropertyQuestionsItemPropertyAnswersItem::class
+                    .java,
+            )
         val reserialized = mapper.writeValueAsString(parsed)
         val tree1 = mapper.readTree(json)
         val tree2 = mapper.readTree(reserialized)
@@ -6876,6 +8450,146 @@ class GeneratedModelRoundTripTest {
                 json,
                 UpdateCourseResponseValue200ApplicationJsonPropertyDataPropertySectionsItemPropertyLessonsItemPropertyQuestionsItemPropertyAnswersItem::class
                     .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem round-trips through Jackson`() {
+        val json = "{\"day\": 1, \"enabled\": false, \"start\": \"sample\", \"end\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `CreateBookingProductResponseValue201ApplicationJsonPropertyDataPropertyImagesItemPropertyMetadata round-trips through Jackson`() {
+        val json =
+            "{\"size\": 0, \"filename\": \"sample\", \"extension\": \"sample\", \"mime_type\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                CreateBookingProductResponseValue201ApplicationJsonPropertyDataPropertyImagesItemPropertyMetadata::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `CreateBookingProductResponseValue201ApplicationJsonPropertyDataPropertyAdditionalInformationItem round-trips through Jackson`() {
+        val json =
+            "{\"required\": false, \"key\": \"sample\", \"type\": \"sample\", \"label\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                CreateBookingProductResponseValue201ApplicationJsonPropertyDataPropertyAdditionalInformationItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `CreateBookingProductResponseValue201ApplicationJsonPropertyDataPropertyVariantsItem round-trips through Jackson`() {
+        val json = "{\"id\": 0, \"title\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                CreateBookingProductResponseValue201ApplicationJsonPropertyDataPropertyVariantsItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetCourseStudentSummaryResponseValue200ApplicationJsonPropertyDataPropertyPeriod round-trips through Jackson`() {
+        val json =
+            "{\"start_date\": \"2024-01-01\", \"end_date\": \"2024-01-01\", \"timezone\": \"sample\", \"currency\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetCourseStudentSummaryResponseValue200ApplicationJsonPropertyDataPropertyPeriod::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetCourseStudentSummaryResponseValue200ApplicationJsonPropertyDataPropertySummary round-trips through Jackson`() {
+        val json =
+            "{\"students_count\": 0, \"multi_course_students_count\": null, \"course_purchases_count\": 0, \"course_units_count\": 0, " +
+                "\"course_orders_count\": 0, \"courses_sold_count\": null}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetCourseStudentSummaryResponseValue200ApplicationJsonPropertyDataPropertySummary::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetCourseStudentSummaryResponseValue200ApplicationJsonPropertyDataPropertyStudentsItemPropertyCoursesItem round-trips through Jackson`() {
+        val json = "{\"course_id\": 0, \"title\": \"sample\", \"purchases_count\": 1}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetCourseStudentSummaryResponseValue200ApplicationJsonPropertyDataPropertyStudentsItemPropertyCoursesItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetCourseStudentSummaryResponseValue200ApplicationJsonPropertyDataPropertyCoursesItem round-trips through Jackson`() {
+        val json =
+            "{\"course_id\": 0, \"title\": \"sample\", \"students_count\": 0, \"course_purchases_count\": 0, \"course_units_count\": 0, " +
+                "\"orders_count\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetCourseStudentSummaryResponseValue200ApplicationJsonPropertyDataPropertyCoursesItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkDuplicateCheckoutFieldTemplateRequestApplicationJson round-trips through Jackson`() {
+        val json = "{\"name\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                SdkDuplicateCheckoutFieldTemplateRequestApplicationJson::class.java,
             )
         val reserialized = mapper.writeValueAsString(parsed)
         val tree1 = mapper.readTree(json)
@@ -7660,6 +9374,433 @@ class GeneratedModelRoundTripTest {
     }
 
     @Test
+    fun `GetCheckoutSettingsResponseValue200ApplicationJsonPropertyDataPropertyCrypto round-trips through Jackson`() {
+        val json = "{\"underpaid_percentage\": 0, \"minimum_confirmations\": 1}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetCheckoutSettingsResponseValue200ApplicationJsonPropertyDataPropertyCrypto::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceCheckoutSettingsRequestApplicationJsonPropertyCrypto round-trips through Jackson`() {
+        val json = "{\"underpaid_percentage\": 0, \"minimum_confirmations\": 1}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceCheckoutSettingsRequestApplicationJsonPropertyCrypto::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceCheckoutSettingsResponseValue200ApplicationJsonPropertyDataPropertyCrypto round-trips through Jackson`() {
+        val json = "{\"underpaid_percentage\": 0, \"minimum_confirmations\": 1}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceCheckoutSettingsResponseValue200ApplicationJsonPropertyDataPropertyCrypto::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `UpdateCheckoutSettingsRequestApplicationJsonPropertyCrypto round-trips through Jackson`() {
+        val json = "{\"underpaid_percentage\": 0, \"minimum_confirmations\": 1}"
+        val parsed =
+            mapper.readValue(
+                json,
+                UpdateCheckoutSettingsRequestApplicationJsonPropertyCrypto::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `UpdateCheckoutSettingsResponseValue200ApplicationJsonPropertyDataPropertyCrypto round-trips through Jackson`() {
+        val json = "{\"underpaid_percentage\": 0, \"minimum_confirmations\": 1}"
+        val parsed =
+            mapper.readValue(
+                json,
+                UpdateCheckoutSettingsResponseValue200ApplicationJsonPropertyDataPropertyCrypto::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetTaxSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"vat_enabled\": false, \"vat_inclusive_pricing\": false, \"collect_billing_details\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetTaxSettingsResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkReplaceTaxSettingsRequestApplicationJson round-trips through Jackson`() {
+        val json =
+            "{\"vat_enabled\": false, \"vat_inclusive_pricing\": false, \"collect_billing_details\": false}"
+        val parsed = mapper.readValue(json, SdkReplaceTaxSettingsRequestApplicationJson::class.java)
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceTaxSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"vat_enabled\": false, \"vat_inclusive_pricing\": false, \"collect_billing_details\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceTaxSettingsResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `UpdateTaxSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"vat_enabled\": false, \"vat_inclusive_pricing\": false, \"collect_billing_details\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                UpdateTaxSettingsResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetCustomerEmailSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json = "{\"send_delivery_email\": false, \"send_payment_failure_email\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetCustomerEmailSettingsResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkReplaceCustomerEmailSettingsRequestApplicationJson round-trips through Jackson`() {
+        val json = "{\"send_delivery_email\": false, \"send_payment_failure_email\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                SdkReplaceCustomerEmailSettingsRequestApplicationJson::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceCustomerEmailSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json = "{\"send_delivery_email\": false, \"send_payment_failure_email\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceCustomerEmailSettingsResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `UpdateCustomerEmailSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json = "{\"send_delivery_email\": false, \"send_payment_failure_email\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                UpdateCustomerEmailSettingsResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetStoreAlertSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json = "{\"sale_emails_enabled\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetStoreAlertSettingsResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkReplaceStoreAlertSettingsRequestApplicationJson round-trips through Jackson`() {
+        val json = "{\"sale_emails_enabled\": false}"
+        val parsed =
+            mapper.readValue(json, SdkReplaceStoreAlertSettingsRequestApplicationJson::class.java)
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceStoreAlertSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json = "{\"sale_emails_enabled\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceStoreAlertSettingsResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `UpdateStoreAlertSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json = "{\"sale_emails_enabled\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                UpdateStoreAlertSettingsResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetPersonalizationSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"support_email\": null, \"trustpilot_email\": null, \"sender_name\": null, \"sender_email\": null, \"store_address\": null, " +
+                "\"store_city\": null, \"store_state\": null, \"store_zip\": null, \"store_country\": null, \"store_tax\": null, " +
+                "\"back_link_label\": null, \"back_link_url\": null}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetPersonalizationSettingsResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplacePersonalizationSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"support_email\": null, \"trustpilot_email\": null, \"sender_name\": null, \"sender_email\": null, \"store_address\": null, " +
+                "\"store_city\": null, \"store_state\": null, \"store_zip\": null, \"store_country\": null, \"store_tax\": null, " +
+                "\"back_link_label\": null, \"back_link_url\": null}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplacePersonalizationSettingsResponseValue200ApplicationJsonPropertyData::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `UpdatePersonalizationSettingsResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json =
+            "{\"support_email\": null, \"trustpilot_email\": null, \"sender_name\": null, \"sender_email\": null, \"store_address\": null, " +
+                "\"store_city\": null, \"store_state\": null, \"store_zip\": null, \"store_country\": null, \"store_tax\": null, " +
+                "\"back_link_label\": null, \"back_link_url\": null}"
+        val parsed =
+            mapper.readValue(
+                json,
+                UpdatePersonalizationSettingsResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkReplaceCryptoCheckoutSettingsRequestApplicationJson round-trips through Jackson`() {
+        val json = "{\"underpaid_percentage\": 0, \"minimum_confirmations\": 1}"
+        val parsed =
+            mapper.readValue(
+                json,
+                SdkReplaceCryptoCheckoutSettingsRequestApplicationJson::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ReplaceCryptoCheckoutSettingsResponseValue200ApplicationJsonPropertyDataPropertyCrypto round-trips through Jackson`() {
+        val json = "{\"underpaid_percentage\": 0, \"minimum_confirmations\": 1}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ReplaceCryptoCheckoutSettingsResponseValue200ApplicationJsonPropertyDataPropertyCrypto::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `UpdateCryptoCheckoutSettingsResponseValue200ApplicationJsonPropertyDataPropertyCrypto round-trips through Jackson`() {
+        val json = "{\"underpaid_percentage\": 0, \"minimum_confirmations\": 1}"
+        val parsed =
+            mapper.readValue(
+                json,
+                UpdateCryptoCheckoutSettingsResponseValue200ApplicationJsonPropertyDataPropertyCrypto::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkSetSenderEmailRequestApplicationJson round-trips through Jackson`() {
+        val json = "{\"email\": \"sample\"}"
+        val parsed = mapper.readValue(json, SdkSetSenderEmailRequestApplicationJson::class.java)
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkSendSenderEmailVerificationRequestApplicationJson round-trips through Jackson`() {
+        val json = "{\"email\": \"sample\"}"
+        val parsed =
+            mapper.readValue(json, SdkSendSenderEmailVerificationRequestApplicationJson::class.java)
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetStoreIntegrationsResponseValue200ApplicationJsonPropertyDataPropertyCrisp round-trips through Jackson`() {
+        val json = "{\"configured\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetStoreIntegrationsResponseValue200ApplicationJsonPropertyDataPropertyCrisp::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `DisconnectGoogleCalendarResponseValue200ApplicationJsonPropertyDataPropertyCrisp round-trips through Jackson`() {
+        val json = "{\"configured\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                DisconnectGoogleCalendarResponseValue200ApplicationJsonPropertyDataPropertyCrisp::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `DisconnectGoogleCalendarResponseValue200ApplicationJsonPropertyMeta round-trips through Jackson`() {
+        val json = "{\"products_without_video_link\": []}"
+        val parsed =
+            mapper.readValue(
+                json,
+                DisconnectGoogleCalendarResponseValue200ApplicationJsonPropertyMeta::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ListNotificationsResponseValue200ApplicationJsonPropertyMeta round-trips through Jackson`() {
+        val json = "{\"unseen_count\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ListNotificationsResponseValue200ApplicationJsonPropertyMeta::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `MarkNotificationsSeenResponseValue200ApplicationJsonPropertyMeta round-trips through Jackson`() {
+        val json = "{\"marked_seen\": 0, \"unseen_count\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                MarkNotificationsSeenResponseValue200ApplicationJsonPropertyMeta::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
     fun `CreateNotificationChannelRequestApplicationJsonPropertyChannelOneOfValue1 round-trips through Jackson`() {
         val json = "{\"type\": \"email\", \"email\": \"sample\", \"allowed_notifications\": []}"
         val parsed =
@@ -7959,6 +10100,17 @@ class GeneratedModelRoundTripTest {
                 UpdateAffiliateStatusResponseValue200ApplicationJsonPropertyDataPropertyBalances::class
                     .java,
             )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkMarkAffiliatePayoutsPaidRequestApplicationJson round-trips through Jackson`() {
+        val json = "{\"payout_ids\": [1], \"expected_total_usd_cents\": 1}"
+        val parsed =
+            mapper.readValue(json, SdkMarkAffiliatePayoutsPaidRequestApplicationJson::class.java)
         val reserialized = mapper.writeValueAsString(parsed)
         val tree1 = mapper.readTree(json)
         val tree2 = mapper.readTree(reserialized)
@@ -8688,6 +10840,20 @@ class GeneratedModelRoundTripTest {
     }
 
     @Test
+    fun `V2GetCouponUsageResponseValue200ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json = "{\"coupon_id\": 0, \"uses\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                V2GetCouponUsageResponseValue200ApplicationJsonPropertyData::class.java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
     fun `SdkDeactivateLicenseRequestApplicationJson round-trips through Jackson`() {
         val json = "{\"license_key\": \"sample\", \"instance_id\": \"sample\"}"
         val parsed = mapper.readValue(json, SdkDeactivateLicenseRequestApplicationJson::class.java)
@@ -8838,7 +11004,7 @@ class GeneratedModelRoundTripTest {
     fun `UpdateOrderStatusResponseValue200ApplicationJsonPropertyDataPropertyTotals round-trips through Jackson`() {
         val json =
             "{\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}"
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}"
         val parsed =
             mapper.readValue(
                 json,
@@ -8871,7 +11037,7 @@ class GeneratedModelRoundTripTest {
     fun `CreateOrderCheckoutResponseValue200ApplicationJsonPropertyDataPropertyTotals round-trips through Jackson`() {
         val json =
             "{\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}"
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}"
         val parsed =
             mapper.readValue(
                 json,
@@ -8904,7 +11070,7 @@ class GeneratedModelRoundTripTest {
     fun `CreateOrderCheckoutResponseValue201ApplicationJsonPropertyDataPropertyTotals round-trips through Jackson`() {
         val json =
             "{\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}"
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}"
         val parsed =
             mapper.readValue(
                 json,
@@ -8937,7 +11103,7 @@ class GeneratedModelRoundTripTest {
     fun `CreateOrderReplacementResponseValue200ApplicationJsonPropertyDataPropertyTotals round-trips through Jackson`() {
         val json =
             "{\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}"
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}"
         val parsed =
             mapper.readValue(
                 json,
@@ -8970,7 +11136,7 @@ class GeneratedModelRoundTripTest {
     fun `CreateOrderRefundResponseValue200ApplicationJsonPropertyDataPropertyOrderPropertyTotals round-trips through Jackson`() {
         val json =
             "{\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}"
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}"
         val parsed =
             mapper.readValue(
                 json,
@@ -9003,7 +11169,7 @@ class GeneratedModelRoundTripTest {
     fun `RetryOrderFulfillmentResponseValue200ApplicationJsonPropertyDataPropertyTotals round-trips through Jackson`() {
         val json =
             "{\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}"
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}"
         val parsed =
             mapper.readValue(
                 json,
@@ -9061,7 +11227,7 @@ class GeneratedModelRoundTripTest {
     fun `RetryOrderDynamicDeliveryResponseValue202ApplicationJsonPropertyDataPropertyTotals round-trips through Jackson`() {
         val json =
             "{\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}"
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}"
         val parsed =
             mapper.readValue(
                 json,
@@ -9108,7 +11274,7 @@ class GeneratedModelRoundTripTest {
     fun `SendOrderFulfillmentNotificationsResponseValue200ApplicationJsonPropertyDataPropertyTotals round-trips through Jackson`() {
         val json =
             "{\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}"
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}"
         val parsed =
             mapper.readValue(
                 json,
@@ -9129,6 +11295,20 @@ class GeneratedModelRoundTripTest {
                 json,
                 SendOrderFulfillmentNotificationsResponseValue200ApplicationJsonPropertyMeta::class
                     .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `RegenerateOrderTelegramInviteResponseValue201ApplicationJsonPropertyData round-trips through Jackson`() {
+        val json = "{\"order_id\": 0, \"variant_id\": 0, \"invite_link\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                RegenerateOrderTelegramInviteResponseValue201ApplicationJsonPropertyData::class.java,
             )
         val reserialized = mapper.writeValueAsString(parsed)
         val tree1 = mapper.readTree(json)
@@ -9209,6 +11389,237 @@ class GeneratedModelRoundTripTest {
     }
 
     @Test
+    fun `BatchUpdateTicketsResponseValue200ApplicationJsonPropertyDataItemPropertyTicketValuePropertyReadStatus round-trips through Jackson`() {
+        val json = "{\"customer\": false, \"store\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                BatchUpdateTicketsResponseValue200ApplicationJsonPropertyDataItemPropertyTicketValuePropertyReadStatus::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `V2GetTicketContextResponseValue200ApplicationJsonPropertyDataPropertyCustomer round-trips through Jackson`() {
+        val json =
+            "{\"email\": null, \"completed_orders\": 0, \"lifetime_spend_usd_cents\": 0, \"first_order_at\": null}"
+        val parsed =
+            mapper.readValue(
+                json,
+                V2GetTicketContextResponseValue200ApplicationJsonPropertyDataPropertyCustomer::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `V2GetTicketContextResponseValue200ApplicationJsonPropertyDataPropertyLinkedOrder round-trips through Jackson`() {
+        val json = "{\"id\": 0, \"product_title\": null, \"created_at\": \"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                V2GetTicketContextResponseValue200ApplicationJsonPropertyDataPropertyLinkedOrder::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `V2GetTicketContextResponseValue200ApplicationJsonPropertyDataPropertyRefundOptionsItem round-trips through Jackson`() {
+        val json =
+            "{\"invoice_id\": 0, \"order_id\": 0, \"product_id\": null, \"product_title\": null, \"currency\": \"USD\", \"paid_cents\": 0, " +
+                "\"active_support_refunds_cents\": 0, \"refundable_cents\": null}"
+        val parsed =
+            mapper.readValue(
+                json,
+                V2GetTicketContextResponseValue200ApplicationJsonPropertyDataPropertyRefundOptionsItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `V2GetTicketContextResponseValue200ApplicationJsonPropertyDataPropertyActivityItemPropertyRule round-trips through Jackson`() {
+        val json = "{\"id\": 0, \"name\": \"sample\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                V2GetTicketContextResponseValue200ApplicationJsonPropertyDataPropertyActivityItemPropertyRule::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `V2GetTicketContextResponseValue200ApplicationJsonPropertyDataPropertyActivityItemPropertyWalletEntry round-trips through Jackson`() {
+        val json = "{\"id\": 0, \"amount_usd_cents\": 0, \"reversed\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                V2GetTicketContextResponseValue200ApplicationJsonPropertyDataPropertyActivityItemPropertyWalletEntry::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `V2ListTicketWalletRefundOptionsResponseValue200ApplicationJsonPropertyDataItem round-trips through Jackson`() {
+        val json =
+            "{\"invoice_id\": 0, \"order_id\": 0, \"product_id\": null, \"product_title\": null, \"currency\": \"USD\", \"paid_cents\": 0, " +
+                "\"active_support_refunds_cents\": 0, \"refundable_cents\": null}"
+        val parsed =
+            mapper.readValue(
+                json,
+                V2ListTicketWalletRefundOptionsResponseValue200ApplicationJsonPropertyDataItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `V2ListTicketWalletRefundsResponseValue200ApplicationJsonPropertyDataItemPropertyReversal round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"amount_cents\": 0, \"balance_after_cents\": 0, \"reason\": null, \"created_at\": \"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                V2ListTicketWalletRefundsResponseValue200ApplicationJsonPropertyDataItemPropertyReversal::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkV2RefundTicketToWalletRequestApplicationJson round-trips through Jackson`() {
+        val json =
+            "{\"invoice_id\": 1, \"amount_cents\": 1, \"expected_refundable_cents\": 0, \"customer_note\": \"sample\"}"
+        val parsed =
+            mapper.readValue(json, SdkV2RefundTicketToWalletRequestApplicationJson::class.java)
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `V2RefundTicketToWalletResponseValue201ApplicationJsonPropertyDataPropertyReversal round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"amount_cents\": 0, \"balance_after_cents\": 0, \"reason\": null, \"created_at\": \"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                V2RefundTicketToWalletResponseValue201ApplicationJsonPropertyDataPropertyReversal::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `SdkV2ReverseTicketWalletRefundRequestApplicationJson round-trips through Jackson`() {
+        val json = "{\"reason\": \"sample\"}"
+        val parsed =
+            mapper.readValue(json, SdkV2ReverseTicketWalletRefundRequestApplicationJson::class.java)
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `V2ReverseTicketWalletRefundResponseValue200ApplicationJsonPropertyDataPropertyReversal round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"amount_cents\": 0, \"balance_after_cents\": 0, \"reason\": null, \"created_at\": \"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                V2ReverseTicketWalletRefundResponseValue200ApplicationJsonPropertyDataPropertyReversal::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportAnalyticsResponseValue200ApplicationJsonPropertyDataPropertySummary round-trips through Jackson`() {
+        val json =
+            "{\"tickets_received\": 0, \"tickets_resolved\": 0, \"auto_closures\": 0, \"manual_closures\": 0, " +
+                "\"support_wallet_credit_cents\": 0, \"auto_wallet_credit_cents\": 0, \"warning_count\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportAnalyticsResponseValue200ApplicationJsonPropertyDataPropertySummary::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportAnalyticsResponseValue200ApplicationJsonPropertyDataPropertyRulesItem round-trips through Jackson`() {
+        val json =
+            "{\"rule_id\": 0, \"rule_name\": \"sample\", \"matches\": 0, \"closures\": 0, \"wallet_credit_cents\": 0, \"warning_count\": 0}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportAnalyticsResponseValue200ApplicationJsonPropertyDataPropertyRulesItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `GetSupportAnalyticsResponseValue200ApplicationJsonPropertyDataPropertyRecentActivityItem round-trips through Jackson`() {
+        val json =
+            "{\"id\": 0, \"event\": \"sample\", \"ticket_id\": 0, \"rule_id\": null, \"actor_type\": \"sample\", \"wallet_credit_cents\": " +
+                "null, \"wallet_credit_reversed\": false, \"reason\": null, \"created_at\": \"2024-01-01T00:00:00Z\"}"
+        val parsed =
+            mapper.readValue(
+                json,
+                GetSupportAnalyticsResponseValue200ApplicationJsonPropertyDataPropertyRecentActivityItem::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
     fun `CreateWalletOrderRequestApplicationJsonPropertyExtra round-trips through Jackson`() {
         val json = "{\"amount\": 0, \"currency\": \"sample\"}"
         val parsed =
@@ -9239,7 +11650,7 @@ class GeneratedModelRoundTripTest {
     fun `CreateWalletOrderResponseValue201ApplicationJsonPropertyDataPropertyTotals round-trips through Jackson`() {
         val json =
             "{\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}"
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}"
         val parsed =
             mapper.readValue(
                 json,
@@ -9272,7 +11683,7 @@ class GeneratedModelRoundTripTest {
     fun `PayOrderFromWalletResponseValue200ApplicationJsonPropertyDataPropertyTotals round-trips through Jackson`() {
         val json =
             "{\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}"
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}"
         val parsed =
             mapper.readValue(
                 json,
@@ -9384,6 +11795,21 @@ class GeneratedModelRoundTripTest {
     }
 
     @Test
+    fun `ListStoreWalletTransactionsResponseValue200ApplicationJsonPropertyMetaLink round-trips through Jackson`() {
+        val json = "{\"url\": null, \"label\": \"sample\", \"active\": false}"
+        val parsed =
+            mapper.readValue(
+                json,
+                ListStoreWalletTransactionsResponseValue200ApplicationJsonPropertyMetaLink::class
+                    .java,
+            )
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
     fun `PaginationMetaLink round-trips through Jackson`() {
         val json = "{\"url\": null, \"label\": \"sample\", \"active\": false}"
         val parsed = mapper.readValue(json, PaginationMetaLink::class.java)
@@ -9397,6 +11823,16 @@ class GeneratedModelRoundTripTest {
     fun `CursorExpiredErrorFallback round-trips through Jackson`() {
         val json = "{\"transport\": \"cursor_polling\", \"url\": \"sample\"}"
         val parsed = mapper.readValue(json, CursorExpiredErrorFallback::class.java)
+        val reserialized = mapper.writeValueAsString(parsed)
+        val tree1 = mapper.readTree(json)
+        val tree2 = mapper.readTree(reserialized)
+        assertEquals(tree1, tree2)
+    }
+
+    @Test
+    fun `ErrorEnvelopeFallback round-trips through Jackson`() {
+        val json = "{\"transport\": \"cursor_polling\", \"url\": \"sample\"}"
+        val parsed = mapper.readValue(json, ErrorEnvelopeFallback::class.java)
         val reserialized = mapper.writeValueAsString(parsed)
         val tree1 = mapper.readTree(json)
         val tree2 = mapper.readTree(reserialized)

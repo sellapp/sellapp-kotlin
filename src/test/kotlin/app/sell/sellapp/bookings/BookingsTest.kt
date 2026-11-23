@@ -9,6 +9,7 @@ import app.sell.sellapp.common.exceptions.UnauthorizedException
 import app.sell.sellapp.test.TestBase
 import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
 import com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -95,6 +96,27 @@ class BookingsTest : TestBase() {
         wireMockRule.verify(
             patchRequestedFor(urlPathMatching("/v2/bookings/sample-arg/status"))
                 .withRequestBody(matchingJsonPath("\$.status"))
+        )
+    }
+
+    @Test
+    fun `create returns a typed response`() {
+        stubResponse(
+            "POST",
+            "/v2/booking-products",
+            200,
+            "{\"data\": {\"id\": 0, \"title\": \"sample\", \"slug\": \"sample\", \"description\": \"sample\", \"images\": [], \"order\": " +
+                "null, \"visibility\": \"sample\", \"delivery_text\": null, \"additional_information\": [], \"other_settings\": {\"faq\": [], " +
+                "\"video_url\": \"sample\", \"redirect_url\": \"sample\", \"product_title\": \"sample\", \"product_description\": \"sample\"}, " +
+                "\"deleted_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, " +
+                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\"}}",
+        )
+        val result = api().create(title = "sample-arg", priceCents = 0)
+        assertNotNull(result)
+        wireMockRule.verify(
+            postRequestedFor(urlPathMatching("/v2/booking-products"))
+                .withRequestBody(matchingJsonPath("\$.title"))
+                .withRequestBody(matchingJsonPath("\$.price_cents"))
         )
     }
 

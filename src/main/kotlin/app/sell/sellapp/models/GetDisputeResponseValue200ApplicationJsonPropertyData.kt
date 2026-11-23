@@ -3,7 +3,7 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
-import app.sell.sellapp.types.GetDisputeResponseValue200ApplicationJsonPropertyDataStatus
+import app.sell.sellapp.types.DisputesStatus
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -29,7 +29,7 @@ data class GetDisputeResponseValue200ApplicationJsonPropertyData(
     @JsonProperty("currency") val currency: String,
 
     /** The status. */
-    @JsonProperty("status") val status: GetDisputeResponseValue200ApplicationJsonPropertyDataStatus,
+    @JsonProperty("status") val status: DisputesStatus,
 
     /** The provider dispute id. */
     @JsonProperty("provider_dispute_id")

@@ -3,6 +3,7 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.types.SdkUpdateTicketRequestApplicationJsonOutcome
 import app.sell.sellapp.types.SdkUpdateTicketRequestApplicationJsonStatus
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -21,6 +22,14 @@ data class SdkUpdateTicketRequestApplicationJson(
     @JsonProperty("archived")
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
     val archived: Boolean? = null,
+
+    /**
+     * Why the ticket was closed: `refunded`, `refunded_partial` (partly refunded), `delivered`,
+     * `no_action`, `duplicate` or `other`. Only with `status` `CLOSED`.
+     */
+    @JsonProperty("outcome")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val outcome: SdkUpdateTicketRequestApplicationJsonOutcome? = null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -33,7 +42,7 @@ data class SdkUpdateTicketRequestApplicationJson(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"SdkUpdateTicketRequestApplicationJson\",\"properties\":{\"status\":{\"kind\":\"enum\",\"values\":[\"OPEN\",\"CLOSED\"]},\"archived\":{\"kind\":\"primitive\",\"type\":\"boolean\"}},\"required\":[],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"SdkUpdateTicketRequestApplicationJson\",\"properties\":{\"status\":{\"kind\":\"enum\",\"values\":[\"OPEN\",\"CLOSED\"]},\"archived\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"outcome\":{\"kind\":\"enum\",\"values\":[\"refunded\",\"refunded_partial\",\"delivered\",\"no_action\",\"duplicate\",\"other\"]}},\"required\":[],\"additionalProperties\":true}"
             )
     }
 }

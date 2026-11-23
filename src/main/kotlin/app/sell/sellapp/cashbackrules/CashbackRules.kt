@@ -13,6 +13,7 @@ import app.sell.sellapp.common.http.patchBodyOf
 import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.models.SdkCreateCashbackRuleResponseValue201ApplicationJson
 import app.sell.sellapp.models.SdkListCashbackRulesResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkQuoteCashbackRuleResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkReplaceCashbackRuleResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkRestoreCashbackRuleResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkUpdateCashbackRuleResponseValue200ApplicationJson
@@ -29,9 +30,9 @@ class CashbackRules(internal val sellapp: SellApp) {
     /**
      * List cashback rules
      *
-     * List current and archived store records. Requires the `wallet` or `wallet:write` API ability.
-     * OAuth callers use the admin grant and select a store with X-STORE. Current membership and
-     * role permissions apply to every request.
+     * List current and archived store records. Requires the `wallet` or `wallet:write` API-key
+     * ability. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * membership and role permissions apply to every request.
      *
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkListCashbackRulesResponseValue200ApplicationJson
@@ -103,8 +104,8 @@ class CashbackRules(internal val sellapp: SellApp) {
     /**
      * Create a cashback rule
      *
-     * Create a cashback rule. Requires the `wallet:write` API ability and the store wallet
-     * permission. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * Create a cashback rule. Requires the `wallet:write` API-key ability and the wallet permission
+     * in your team role. OAuth callers use the admin grant and select a store with X-STORE. Current
      * membership and role permissions apply to every request.
      *
      * @param percentBasis the percent basis of the request.
@@ -218,8 +219,8 @@ class CashbackRules(internal val sellapp: SellApp) {
     /**
      * Update a cashback rule
      *
-     * Update a cashback rule. Requires the `wallet:write` API ability and the store wallet
-     * permission. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * Update a cashback rule. Requires the `wallet:write` API-key ability and the wallet permission
+     * in your team role. OAuth callers use the admin grant and select a store with X-STORE. Current
      * membership and role permissions apply to every request.
      *
      * @param cashbackRule The cashbackRule path parameter.
@@ -353,8 +354,8 @@ class CashbackRules(internal val sellapp: SellApp) {
     /**
      * Update a cashback rule
      *
-     * Update a cashback rule. Requires the `wallet:write` API ability and the store wallet
-     * permission. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * Update a cashback rule. Requires the `wallet:write` API-key ability and the wallet permission
+     * in your team role. OAuth callers use the admin grant and select a store with X-STORE. Current
      * membership and role permissions apply to every request.
      *
      * @param cashbackRule The cashbackRule path parameter.
@@ -484,9 +485,9 @@ class CashbackRules(internal val sellapp: SellApp) {
     /**
      * Archive a cashback rule
      *
-     * Archive a cashback rule. Requires the `wallet:write` API ability and the store wallet
-     * permission. OAuth callers use the admin grant and select a store with X-STORE. Current
-     * membership and role permissions apply to every request.
+     * Archive a cashback rule. Requires the `wallet:write` API-key ability and the wallet
+     * permission in your team role. OAuth callers use the admin grant and select a store with
+     * X-STORE. Current membership and role permissions apply to every request.
      *
      * @param cashbackRule The cashbackRule path parameter.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
@@ -558,9 +559,9 @@ class CashbackRules(internal val sellapp: SellApp) {
     /**
      * Restore a cashback rule
      *
-     * Restore a cashback rule. Requires the `wallet:write` API ability and the store wallet
-     * permission. OAuth callers use the admin grant and select a store with X-STORE. Current
-     * membership and role permissions apply to every request.
+     * Restore a cashback rule. Requires the `wallet:write` API-key ability and the wallet
+     * permission in your team role. OAuth callers use the admin grant and select a store with
+     * X-STORE. Current membership and role permissions apply to every request.
      *
      * @param cashbackRule The cashbackRule path parameter.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
@@ -634,5 +635,98 @@ class CashbackRules(internal val sellapp: SellApp) {
     ): RawResponse<SdkRestoreCashbackRuleResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
             restoreWithResponse(cashbackRule, requestOptions)
+        }
+
+    /**
+     * Quote a cashback rule
+     *
+     * See which cashback rule a purchase would earn right now, and how much it would add to the
+     * customer's wallet, without creating anything. Send `product_id` to check one product (a rule
+     * naming the product wins over the store-wide rule); leave it out to check only the store-wide
+     * rule. Add `purchase_cents` to get the cashback amount. Amounts are integer USD cents:
+     * `purchase_cents=10000` asks about a $100.00 purchase. Requires the `wallet` or `wallet:write`
+     * API-key ability and the wallet permission in your team role. A product that is not in your
+     * store returns `422` on `product_id`. OAuth callers use the admin grant and select a store
+     * with X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param productId The product to quote. Leave it out to quote the store-wide rule.
+     * @param purchaseCents The purchase amount to quote, in integer USD cents.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkQuoteCashbackRuleResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun quote(
+        productId: Long? = null,
+        purchaseCents: Long? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkQuoteCashbackRuleResponseValue200ApplicationJson {
+        val params = mutableListOf<Pair<String, String>>()
+        productId?.let { params += "product_id" to it.toString() }
+        purchaseCents?.let { params += "purchase_cents" to it.toString() }
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/cashback-rules/quote",
+                queryParams = params,
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models.SdkQuoteCashbackRuleResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "quoteCashbackRule",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkQuoteCashbackRuleResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun quoteWithResponse(
+        productId: Long? = null,
+        purchaseCents: Long? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkQuoteCashbackRuleResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        quote(productId, purchaseCents, capturingOptions)
+        return captured as? RawResponse<SdkQuoteCashbackRuleResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [quote]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [quote] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("quoteSuspend")
+    suspend fun quoteSuspend(
+        productId: Long? = null,
+        purchaseCents: Long? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkQuoteCashbackRuleResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            quote(productId, purchaseCents, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [quoteWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [quoteWithResponse] under `withContext(Dispatchers.IO)`, so this is
+     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("quoteWithResponseSuspend")
+    suspend fun quoteWithResponseSuspend(
+        productId: Long? = null,
+        purchaseCents: Long? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkQuoteCashbackRuleResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            quoteWithResponse(productId, purchaseCents, requestOptions)
         }
 }

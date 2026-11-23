@@ -2,5 +2,5 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SdkUpdateCouponRequestApplicationJson]. */
-typealias SdkV2ReplaceCouponRequestApplicationJson = SdkUpdateCouponRequestApplicationJson
+/** Alias for [SdkV2UpdateCouponRequestApplicationJson]. */
+typealias SdkV2ReplaceCouponRequestApplicationJson = SdkV2UpdateCouponRequestApplicationJson

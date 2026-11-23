@@ -2,6 +2,6 @@
 
 package app.sell.sellapp.types
 
-/** Alias for [SdkUpdateCourseRequestApplicationJsonLevel]. */
+/** Alias for [SdkCreateCourseRequestApplicationJsonLevel]. */
 typealias ReplaceCourseResponseValue200ApplicationJsonPropertyDataLevel =
-    SdkUpdateCourseRequestApplicationJsonLevel
+    SdkCreateCourseRequestApplicationJsonLevel

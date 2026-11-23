@@ -766,6 +766,8 @@ Search sections
 
 ```kotlin
 fun v2SearchSections(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchSectionsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchSectionsRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchSectionsRequestApplicationJsonPropertySearch? = null,
@@ -776,6 +778,8 @@ fun v2SearchSections(
 
 | Argument | Native type | Required |
 | --- | --- | --- |
+| limit | `Long?` | No |
+| page | `Long?` | No |
 | filters | `List<V2SearchSectionsRequestApplicationJsonPropertyFiltersItem>?` | No |
 | sort | `List<V2SearchSectionsRequestApplicationJsonPropertySortItem>?` | No |
 | search | `V2SearchSectionsRequestApplicationJsonPropertySearch?` | No |

@@ -3,7 +3,7 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
-import app.sell.sellapp.types.GetRefundResponseValue200ApplicationJsonPropertyDataPropertyRefundableType
+import app.sell.sellapp.types.RefundsRefundableType
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -12,8 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode
 /** GetRefundResponseValue200ApplicationJsonPropertyDataPropertyRefundable model. */
 data class GetRefundResponseValue200ApplicationJsonPropertyDataPropertyRefundable(
     /** The type. */
-    @JsonProperty("type")
-    val type: GetRefundResponseValue200ApplicationJsonPropertyDataPropertyRefundableType,
+    @JsonProperty("type") val type: RefundsRefundableType,
 
     /** The id. */
     @JsonProperty("id") val id: Long,

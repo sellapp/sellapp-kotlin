@@ -2,6 +2,6 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SdkDetachBundleItemsRequestApplicationJson]. */
+/** Alias for [SdkReplaceSectionOrderRequestApplicationJson]. */
 typealias SdkV2ReplaceSectionProductsRequestApplicationJson =
-    SdkDetachBundleItemsRequestApplicationJson
+    SdkReplaceSectionOrderRequestApplicationJson

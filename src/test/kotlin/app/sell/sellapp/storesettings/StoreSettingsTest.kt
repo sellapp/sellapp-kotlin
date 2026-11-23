@@ -103,6 +103,314 @@ class StoreSettingsTest : TestBase() {
     }
 
     @Test
+    fun `getCheckout returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/store/settings/checkout",
+            200,
+            "{\"data\": {\"shopping_cart_enabled\": false, \"customer_email_required\": false, \"allow_vpn_purchases\": false, " +
+                "\"blacklist_on_dispute\": false, \"minimum_spend\": null, \"billing_descriptor\": null, \"attempts_per_customer\": 1, " +
+                "\"attempts_per_ip\": null, \"attempts_per_email\": null, \"attempts_per_fingerprint\": null, \"rate_limit_window_seconds\": 60, " +
+                "\"crypto\": null}}",
+        )
+        val result = api().getCheckout()
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `replaceCheckout returns a typed response`() {
+        stubResponse(
+            "PUT",
+            "/v2/store/settings/checkout",
+            200,
+            "{\"data\": {\"shopping_cart_enabled\": false, \"customer_email_required\": false, \"allow_vpn_purchases\": false, " +
+                "\"blacklist_on_dispute\": false, \"minimum_spend\": null, \"billing_descriptor\": null, \"attempts_per_customer\": 1, " +
+                "\"attempts_per_ip\": null, \"attempts_per_email\": null, \"attempts_per_fingerprint\": null, \"rate_limit_window_seconds\": 60, " +
+                "\"crypto\": null}}",
+        )
+        val result =
+            api()
+                .replaceCheckout(
+                    shoppingCartEnabled = false,
+                    customerEmailRequired = false,
+                    allowVpnPurchases = false,
+                    blacklistOnDispute = false,
+                    minimumSpend = null,
+                    billingDescriptor = null,
+                    attemptsPerCustomer = 1,
+                    attemptsPerIp = null,
+                    attemptsPerEmail = null,
+                    attemptsPerFingerprint = null,
+                    rateLimitWindowSeconds = 60,
+                )
+        assertNotNull(result)
+        wireMockRule.verify(
+            putRequestedFor(urlPathMatching("/v2/store/settings/checkout"))
+                .withRequestBody(matchingJsonPath("\$.shopping_cart_enabled"))
+                .withRequestBody(matchingJsonPath("\$.customer_email_required"))
+                .withRequestBody(matchingJsonPath("\$.allow_vpn_purchases"))
+                .withRequestBody(matchingJsonPath("\$.blacklist_on_dispute"))
+                .withRequestBody(matchingJsonPath("\$[?(@.minimum_spend == null)]"))
+                .withRequestBody(matchingJsonPath("\$[?(@.billing_descriptor == null)]"))
+                .withRequestBody(matchingJsonPath("\$.attempts_per_customer"))
+                .withRequestBody(matchingJsonPath("\$[?(@.attempts_per_ip == null)]"))
+                .withRequestBody(matchingJsonPath("\$[?(@.attempts_per_email == null)]"))
+                .withRequestBody(matchingJsonPath("\$[?(@.attempts_per_fingerprint == null)]"))
+                .withRequestBody(matchingJsonPath("\$.rate_limit_window_seconds"))
+        )
+    }
+
+    @Test
+    fun `updateCheckout returns a typed response`() {
+        stubResponse(
+            "PATCH",
+            "/v2/store/settings/checkout",
+            200,
+            "{\"data\": {\"shopping_cart_enabled\": false, \"customer_email_required\": false, \"allow_vpn_purchases\": false, " +
+                "\"blacklist_on_dispute\": false, \"minimum_spend\": null, \"billing_descriptor\": null, \"attempts_per_customer\": 1, " +
+                "\"attempts_per_ip\": null, \"attempts_per_email\": null, \"attempts_per_fingerprint\": null, \"rate_limit_window_seconds\": 60, " +
+                "\"crypto\": null}}",
+        )
+        val result = api().updateCheckout()
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `getTaxes returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/store/settings/taxes",
+            200,
+            "{\"data\": {\"vat_enabled\": false, \"vat_inclusive_pricing\": false, \"collect_billing_details\": false}}",
+        )
+        val result = api().getTaxes()
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `replaceTaxes returns a typed response`() {
+        stubResponse(
+            "PUT",
+            "/v2/store/settings/taxes",
+            200,
+            "{\"data\": {\"vat_enabled\": false, \"vat_inclusive_pricing\": false, \"collect_billing_details\": false}}",
+        )
+        val result =
+            api()
+                .replaceTaxes(
+                    vatEnabled = false,
+                    vatInclusivePricing = false,
+                    collectBillingDetails = false,
+                )
+        assertNotNull(result)
+        wireMockRule.verify(
+            putRequestedFor(urlPathMatching("/v2/store/settings/taxes"))
+                .withRequestBody(matchingJsonPath("\$.vat_enabled"))
+                .withRequestBody(matchingJsonPath("\$.vat_inclusive_pricing"))
+                .withRequestBody(matchingJsonPath("\$.collect_billing_details"))
+        )
+    }
+
+    @Test
+    fun `updateTaxes returns a typed response`() {
+        stubResponse(
+            "PATCH",
+            "/v2/store/settings/taxes",
+            200,
+            "{\"data\": {\"vat_enabled\": false, \"vat_inclusive_pricing\": false, \"collect_billing_details\": false}}",
+        )
+        val result = api().updateTaxes()
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `getCustomerEmails returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/store/settings/customer-emails",
+            200,
+            "{\"data\": {\"send_delivery_email\": false, \"send_payment_failure_email\": false}}",
+        )
+        val result = api().getCustomerEmails()
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `replaceCustomerEmails returns a typed response`() {
+        stubResponse(
+            "PUT",
+            "/v2/store/settings/customer-emails",
+            200,
+            "{\"data\": {\"send_delivery_email\": false, \"send_payment_failure_email\": false}}",
+        )
+        val result =
+            api().replaceCustomerEmails(sendDeliveryEmail = false, sendPaymentFailureEmail = false)
+        assertNotNull(result)
+        wireMockRule.verify(
+            putRequestedFor(urlPathMatching("/v2/store/settings/customer-emails"))
+                .withRequestBody(matchingJsonPath("\$.send_delivery_email"))
+                .withRequestBody(matchingJsonPath("\$.send_payment_failure_email"))
+        )
+    }
+
+    @Test
+    fun `updateCustomerEmails returns a typed response`() {
+        stubResponse(
+            "PATCH",
+            "/v2/store/settings/customer-emails",
+            200,
+            "{\"data\": {\"send_delivery_email\": false, \"send_payment_failure_email\": false}}",
+        )
+        val result = api().updateCustomerEmails()
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `getAlerts returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/store/settings/store-alerts",
+            200,
+            "{\"data\": {\"sale_emails_enabled\": false}}",
+        )
+        val result = api().getAlerts()
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `replaceAlerts returns a typed response`() {
+        stubResponse(
+            "PUT",
+            "/v2/store/settings/store-alerts",
+            200,
+            "{\"data\": {\"sale_emails_enabled\": false}}",
+        )
+        val result = api().replaceAlerts(saleEmailsEnabled = false)
+        assertNotNull(result)
+        wireMockRule.verify(
+            putRequestedFor(urlPathMatching("/v2/store/settings/store-alerts"))
+                .withRequestBody(matchingJsonPath("\$.sale_emails_enabled"))
+        )
+    }
+
+    @Test
+    fun `updateAlerts returns a typed response`() {
+        stubResponse(
+            "PATCH",
+            "/v2/store/settings/store-alerts",
+            200,
+            "{\"data\": {\"sale_emails_enabled\": false}}",
+        )
+        val result = api().updateAlerts()
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `getPersonalization returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/store/settings/personalization",
+            200,
+            "{\"data\": {\"support_email\": null, \"trustpilot_email\": null, \"sender_name\": null, \"sender_email\": null, " +
+                "\"store_address\": null, \"store_city\": null, \"store_state\": null, \"store_zip\": null, \"store_country\": null, " +
+                "\"store_tax\": null, \"back_link_label\": null, \"back_link_url\": null}}",
+        )
+        val result = api().getPersonalization()
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `replacePersonalization returns a typed response`() {
+        stubResponse(
+            "PUT",
+            "/v2/store/settings/personalization",
+            200,
+            "{\"data\": {\"support_email\": null, \"trustpilot_email\": null, \"sender_name\": null, \"sender_email\": null, " +
+                "\"store_address\": null, \"store_city\": null, \"store_state\": null, \"store_zip\": null, \"store_country\": null, " +
+                "\"store_tax\": null, \"back_link_label\": null, \"back_link_url\": null}}",
+        )
+        val result =
+            api()
+                .replacePersonalization(
+                    supportEmail = null,
+                    trustpilotEmail = null,
+                    senderName = null,
+                    storeAddress = null,
+                    storeCity = null,
+                    storeState = null,
+                    storeZip = null,
+                    storeCountry = null,
+                    storeTax = null,
+                    backLinkLabel = null,
+                    backLinkUrl = null,
+                )
+        assertNotNull(result)
+        wireMockRule.verify(
+            putRequestedFor(urlPathMatching("/v2/store/settings/personalization"))
+                .withRequestBody(matchingJsonPath("\$[?(@.support_email == null)]"))
+                .withRequestBody(matchingJsonPath("\$[?(@.trustpilot_email == null)]"))
+                .withRequestBody(matchingJsonPath("\$[?(@.sender_name == null)]"))
+                .withRequestBody(matchingJsonPath("\$[?(@.store_address == null)]"))
+                .withRequestBody(matchingJsonPath("\$[?(@.store_city == null)]"))
+                .withRequestBody(matchingJsonPath("\$[?(@.store_state == null)]"))
+                .withRequestBody(matchingJsonPath("\$[?(@.store_zip == null)]"))
+                .withRequestBody(matchingJsonPath("\$[?(@.store_country == null)]"))
+                .withRequestBody(matchingJsonPath("\$[?(@.store_tax == null)]"))
+                .withRequestBody(matchingJsonPath("\$[?(@.back_link_label == null)]"))
+                .withRequestBody(matchingJsonPath("\$[?(@.back_link_url == null)]"))
+        )
+    }
+
+    @Test
+    fun `updatePersonalization returns a typed response`() {
+        stubResponse(
+            "PATCH",
+            "/v2/store/settings/personalization",
+            200,
+            "{\"data\": {\"support_email\": null, \"trustpilot_email\": null, \"sender_name\": null, \"sender_email\": null, " +
+                "\"store_address\": null, \"store_city\": null, \"store_state\": null, \"store_zip\": null, \"store_country\": null, " +
+                "\"store_tax\": null, \"back_link_label\": null, \"back_link_url\": null}}",
+        )
+        val result = api().updatePersonalization()
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `replaceCryptoCheckout returns a typed response`() {
+        stubResponse(
+            "PUT",
+            "/v2/store/settings/checkout/crypto",
+            200,
+            "{\"data\": {\"shopping_cart_enabled\": false, \"customer_email_required\": false, \"allow_vpn_purchases\": false, " +
+                "\"blacklist_on_dispute\": false, \"minimum_spend\": null, \"billing_descriptor\": null, \"attempts_per_customer\": 1, " +
+                "\"attempts_per_ip\": null, \"attempts_per_email\": null, \"attempts_per_fingerprint\": null, \"rate_limit_window_seconds\": 60, " +
+                "\"crypto\": null}}",
+        )
+        val result = api().replaceCryptoCheckout(underpaidPercentage = 0, minimumConfirmations = 1)
+        assertNotNull(result)
+        wireMockRule.verify(
+            putRequestedFor(urlPathMatching("/v2/store/settings/checkout/crypto"))
+                .withRequestBody(matchingJsonPath("\$.underpaid_percentage"))
+                .withRequestBody(matchingJsonPath("\$.minimum_confirmations"))
+        )
+    }
+
+    @Test
+    fun `updateCryptoCheckout returns a typed response`() {
+        stubResponse(
+            "PATCH",
+            "/v2/store/settings/checkout/crypto",
+            200,
+            "{\"data\": {\"shopping_cart_enabled\": false, \"customer_email_required\": false, \"allow_vpn_purchases\": false, " +
+                "\"blacklist_on_dispute\": false, \"minimum_spend\": null, \"billing_descriptor\": null, \"attempts_per_customer\": 1, " +
+                "\"attempts_per_ip\": null, \"attempts_per_email\": null, \"attempts_per_fingerprint\": null, \"rate_limit_window_seconds\": 60, " +
+                "\"crypto\": null}}",
+        )
+        val result = api().updateCryptoCheckout()
+        assertNotNull(result)
+    }
+
+    @Test
     fun `get translates 401 to UnauthorizedException`() {
         stubResponse("GET", "/v2/store/settings", 401)
         assertThrows(UnauthorizedException::class.java) {

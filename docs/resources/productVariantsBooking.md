@@ -261,12 +261,11 @@ fun replace(
             List<ReplaceBookingConfigurationRequestApplicationJsonPropertyAvailabilityItem>? =
             null,
         providerConnectionIds: List<Long>? = null,
-        videoProvider: SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider? = null,
+        videoProvider: SdkCreateBookingProductRequestApplicationJsonVideoProvider? = null,
         videoProviderConnectionId: Long? = null,
         remindersEnabled: Boolean? = null,
         reminderOffsetValue: Long? = null,
-        reminderOffsetUnit: SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit? =
-            null,
+        reminderOffsetUnit: SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit? = null,
         meta: ReplaceBookingConfigurationRequestApplicationJsonPropertyMeta? = null,
         requestOptions: RequestOptions? = null,
     ): SdkReplaceBookingConfigurationResponseValue200ApplicationJson
@@ -287,11 +286,11 @@ fun replace(
 | bufferAfterMinutes | `Long?` | No |
 | availability | `List<ReplaceBookingConfigurationRequestApplicationJsonPropertyAvailabilityItem>?` | No |
 | providerConnectionIds | `List<Long>?` | No |
-| videoProvider | `SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider?` | No |
+| videoProvider | `SdkCreateBookingProductRequestApplicationJsonVideoProvider?` | No |
 | videoProviderConnectionId | `Long?` | No |
 | remindersEnabled | `Boolean?` | No |
 | reminderOffsetValue | `Long?` | No |
-| reminderOffsetUnit | `SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit?` | No |
+| reminderOffsetUnit | `SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit?` | No |
 | meta | `ReplaceBookingConfigurationRequestApplicationJsonPropertyMeta?` | No |
 | requestOptions | `RequestOptions?` | No |
 
@@ -357,14 +356,13 @@ fun update(
             > =
             PatchField.Absent,
         providerConnectionIds: PatchField<List<Long>> = PatchField.Absent,
-        videoProvider:
-            PatchField<SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider> =
+        videoProvider: PatchField<SdkCreateBookingProductRequestApplicationJsonVideoProvider> =
             PatchField.Absent,
         videoProviderConnectionId: PatchField<Long?> = PatchField.Absent,
         remindersEnabled: PatchField<Boolean> = PatchField.Absent,
         reminderOffsetValue: PatchField<Long> = PatchField.Absent,
         reminderOffsetUnit:
-            PatchField<SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit> =
+            PatchField<SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit> =
             PatchField.Absent,
         meta: PatchField<UpdateBookingConfigurationRequestApplicationJsonPropertyMeta> =
             PatchField.Absent,
@@ -389,11 +387,11 @@ fun update(
                 List<UpdateBookingConfigurationRequestApplicationJsonPropertyAvailabilityItem>
             >` | No |
 | providerConnectionIds | `PatchField<List<Long>>` | No |
-| videoProvider | `PatchField<SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider>` | No |
+| videoProvider | `PatchField<SdkCreateBookingProductRequestApplicationJsonVideoProvider>` | No |
 | videoProviderConnectionId | `PatchField<Long?>` | No |
 | remindersEnabled | `PatchField<Boolean>` | No |
 | reminderOffsetValue | `PatchField<Long>` | No |
-| reminderOffsetUnit | `PatchField<SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit>` | No |
+| reminderOffsetUnit | `PatchField<SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit>` | No |
 | meta | `PatchField<UpdateBookingConfigurationRequestApplicationJsonPropertyMeta>` | No |
 | requestOptions | `RequestOptions?` | No |
 

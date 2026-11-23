@@ -42,6 +42,14 @@
   {
     "language": "kotlin",
     "fileExtension": "kt",
+    "operationId": "getChargeSummary",
+    "mountTarget": "Charges",
+    "methodName": "get_summary",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.charges.getSummary()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
     "operationId": "listGroups",
     "mountTarget": "Groups",
     "methodName": "list",
@@ -205,7 +213,7 @@
     "operationId": "issueReplacementForCompletedInvoice",
     "mountTarget": "Invoices",
     "methodName": "issue_replacement",
-    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.invoices.issueReplacement(invoice = \"1\", productVariants = ObjectMapperFactory.read(\"[117214]\", app.sell.sellapp.models.IssueReplacementForCompletedInvoiceRequestApplicationJsonPropertyProductVariants::class.java))\n    println(result)\n}\n"
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.invoices.issueReplacement(invoice = \"1\", productVariants = listOf(117214))\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -221,7 +229,7 @@
     "operationId": "createInvoiceRefund",
     "mountTarget": "Invoices",
     "methodName": "create_refund",
-    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.invoices.createRefund(invoice = \"1\", amount = \"12.50\")\n    println(result)\n}\n"
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.invoices.createRefund(invoice = \"1\", amount = \"12.50\", expectedRefundedTotalCents = 0L)\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -373,7 +381,7 @@
     "operationId": "searchProducts",
     "mountTarget": "Products",
     "methodName": "search",
-    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.products.search(filters = listOf(ObjectMapperFactory.read(\"{\\\"field\\\":\\\"id\\\",\\\"operator\\\":\\\"=\\\",\\\"value\\\":1}\", app.sell.sellapp.models.SearchProductsRequestApplicationJsonPropertyFiltersItem::class.java)), sort = listOf(ObjectMapperFactory.read(\"{\\\"field\\\":\\\"created_at\\\",\\\"direction\\\":\\\"desc\\\"}\", app.sell.sellapp.models.SearchProductsRequestApplicationJsonPropertySortItem::class.java)))\n    println(result)\n}\n"
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.products.search(search = ObjectMapperFactory.read(\"{\\\"value\\\":\\\"launch\\\"}\", app.sell.sellapp.models.SearchProductsRequestApplicationJsonPropertySearch::class.java), maxPrice = 2500L, stock = app.sell.sellapp.types.Stock(\"in_stock\"), visibility = listOf(app.sell.sellapp.types.CatalogVisibility(\"PUBLIC\")), hasSales = true)\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -398,6 +406,62 @@
     "mountTarget": "Products",
     "methodName": "batch_delete",
     "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.products.batchDelete(resources = listOf(1L, 2L))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "publishProduct",
+    "mountTarget": "Products",
+    "methodName": "publish",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.products.publish(product = \"1\", variantIds = listOf(2L))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "duplicateProduct",
+    "mountTarget": "Products",
+    "methodName": "duplicate",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.products.duplicate(product = \"1\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "moveProduct",
+    "mountTarget": "Products",
+    "methodName": "move",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.products.move(product = \"1\", position = 1L, expectedPosition = 3L)\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getProductFeaturedVariant",
+    "mountTarget": "ProductsFeaturedVariant",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.productsFeaturedVariant.get(product = \"1\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceProductFeaturedVariant",
+    "mountTarget": "ProductsFeaturedVariant",
+    "methodName": "replace",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.productsFeaturedVariant.replace(product = \"1\", variantId = 2L, highlightLabel = app.sell.sellapp.types.HighlightLabel(\"best_value\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "listProductSimilarProducts",
+    "mountTarget": "ProductsSimilarProducts",
+    "methodName": "list",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.productsSimilarProducts.list(product = \"30\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceProductSimilarProducts",
+    "mountTarget": "ProductsSimilarProducts",
+    "methodName": "replace",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.productsSimilarProducts.replace(product = \"30\", variantIds = listOf(31L, 41L))\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -518,6 +582,54 @@
     "mountTarget": "ProductVariants",
     "methodName": "batch_delete",
     "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.productVariants.batchDelete(product = \"1\", resources = listOf(1L, 2L))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "publishProductVariant",
+    "mountTarget": "ProductVariants",
+    "methodName": "publish",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.productVariants.publish(product = \"11\", variant = \"12\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "duplicateProductVariant",
+    "mountTarget": "ProductVariants",
+    "methodName": "duplicate",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.productVariants.duplicate(product = \"1\", variant = \"2\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "reorderProductVariants",
+    "mountTarget": "ProductVariants",
+    "methodName": "reorder",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.productVariants.reorder(product = \"1\", variantIds = listOf(2L, 1L))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getVariantSubscriptionSettings",
+    "mountTarget": "ProductVariantsSubscriptionSettings",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.productVariantsSubscriptionSettings.get(product = \"1\", variant = \"4\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "updateVariantSubscriptionSettings",
+    "mountTarget": "ProductVariantsSubscriptionSettings",
+    "methodName": "update",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.productVariantsSubscriptionSettings.update(product = \"1\", variant = \"4\", pausePolicy = app.sell.sellapp.common.http.PatchField.Present(ObjectMapperFactory.read(\"{\\\"max_pause_days\\\":30}\", app.sell.sellapp.models.UpdateVariantSubscriptionSettingsRequestApplicationJsonPropertyPausePolicy::class.java)), renewalPolicy = app.sell.sellapp.common.http.PatchField.Present(ObjectMapperFactory.read(\"{\\\"redeliver_on_renewal\\\":false}\", app.sell.sellapp.models.UpdateVariantSubscriptionSettingsRequestApplicationJsonPropertyRenewalPolicy::class.java)), expectedState = app.sell.sellapp.common.http.PatchField.Present(\"3f9a1c0e7b2d4a6f8e1c5b9d0a7f3e2c4b6d8a0f1e3c5a7b9d2f4e6a8c0b1d3e\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceVariantCommunityAccess",
+    "mountTarget": "ProductVariantsCommunityAccess",
+    "methodName": "replace",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.productVariantsCommunityAccess.replace(product = \"1\", variant = \"2\", community = ObjectMapperFactory.read(\"{\\\"platform\\\":\\\"discord\\\",\\\"server_id\\\":\\\"1187040134912155648\\\",\\\"role_ids\\\":[\\\"1187040299781210112\\\"],\\\"required\\\":true,\\\"remove_on_expire\\\":true}\", app.sell.sellapp.models.ReplaceVariantCommunityAccessRequestApplicationJsonPropertyCommunity::class.java), expectedUpdatedAt = java.time.OffsetDateTime.parse(\"2024-01-10T18:47:22.000000Z\"))\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -746,6 +858,14 @@
   {
     "language": "kotlin",
     "fileExtension": "kt",
+    "operationId": "createBookingProduct",
+    "mountTarget": "Bookings",
+    "methodName": "create",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.bookings.create(title = \"Strategy consultation\", description = \"<p>A private strategy session for your next launch.</p>\", variantTitle = \"60 minute session\", priceCents = 2500L, currency = app.sell.sellapp.types.SdkCreateBookingProductRequestApplicationJsonCurrency(\"USD\"), paymentMethods = listOf(app.sell.sellapp.types.PaymentMethod(\"STRIPE\")), timezone = \"Europe/London\", durationMinutes = 60L, availability = listOf(ObjectMapperFactory.read(\"{\\\"day\\\":1,\\\"enabled\\\":true,\\\"start\\\":\\\"09:00\\\",\\\"end\\\":\\\"12:00\\\"}\", app.sell.sellapp.models.CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem::class.java), ObjectMapperFactory.read(\"{\\\"day\\\":3,\\\"enabled\\\":true,\\\"start\\\":\\\"13:00\\\",\\\"end\\\":\\\"17:00\\\"}\", app.sell.sellapp.models.CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem::class.java)))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
     "operationId": "getBundleItem",
     "mountTarget": "BundleItems",
     "methodName": "get",
@@ -774,6 +894,38 @@
     "mountTarget": "BundleItems",
     "methodName": "detach",
     "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.bundleItems.detach(bundle = \"1\", resources = listOf(1L))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "previewVariantBuyerNotification",
+    "mountTarget": "VariantDeliverables",
+    "methodName": "preview",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.variantDeliverables.preview(product = \"1\", variant = \"2\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "notifyVariantBuyers",
+    "mountTarget": "VariantDeliverables",
+    "methodName": "notify",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.variantDeliverables.notify(product = \"1\", variant = \"2\", requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = \"example-mutation-001\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getVariantDeliverableConfiguration",
+    "mountTarget": "VariantDeliverables",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.variantDeliverables.get(product = \"string_example\", variant = \"1\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceVariantDeliverableConfiguration",
+    "mountTarget": "VariantDeliverables",
+    "methodName": "replace",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.variantDeliverables.replace(product = \"string_example\", variant = \"1\", types = listOf(app.sell.sellapp.types.CreateProductVariantRequestApplicationJsonPropertyDeliverableTypes(\"MANUAL\")), data = ObjectMapperFactory.read(\"{\\\"comment\\\":\\\"Delivery is arranged by Launch Lab.\\\"}\", app.sell.sellapp.models.ReplaceVariantDeliverableConfigurationRequestApplicationJsonPropertyData::class.java))\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -854,6 +1006,14 @@
     "mountTarget": "PromotionsPhases",
     "methodName": "replace",
     "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.promotionsPhases.replace(promotion = \"1\", phases = listOf(ObjectMapperFactory.read(\"{\\\"discount_type\\\":\\\"percentage\\\",\\\"discount_value\\\":\\\"20\\\",\\\"ends_at\\\":\\\"2026-08-04T00:00:00Z\\\",\\\"max_redemptions\\\":200,\\\"minimum_amount\\\":\\\"10\\\"}\", app.sell.sellapp.models.ReplacePromotionPhasesRequestApplicationJsonPropertyPhasesItem::class.java), ObjectMapperFactory.read(\"{\\\"discount_type\\\":\\\"fixed\\\",\\\"discount_value\\\":\\\"5\\\",\\\"ends_at\\\":null,\\\"max_redemptions\\\":null,\\\"minimum_amount\\\":\\\"25\\\"}\", app.sell.sellapp.models.ReplacePromotionPhasesRequestApplicationJsonPropertyPhasesItem::class.java)))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getPromotionUsage",
+    "mountTarget": "Promotions",
+    "methodName": "get_usage",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.promotions.getUsage(promotion = \"30\")\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -1138,6 +1298,222 @@
   {
     "language": "kotlin",
     "fileExtension": "kt",
+    "operationId": "listSupportReplyTemplates",
+    "mountTarget": "SupportReplyTemplates",
+    "methodName": "list",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReplyTemplates.list()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "createSupportReplyTemplate",
+    "mountTarget": "SupportReplyTemplates",
+    "methodName": "create",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReplyTemplates.create(label = \"Refund credited\", body = \"Hi {customer_email}, we credited {refund_amount} to your {store_name} wallet for {product_title}. Your wallet balance is now {wallet_balance}.\", supportsAutoRespond = true)\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getSupportReplyTemplate",
+    "mountTarget": "SupportReplyTemplates",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReplyTemplates.get(supportReplyTemplate = \"32\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceSupportReplyTemplate",
+    "mountTarget": "SupportReplyTemplates",
+    "methodName": "replace",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReplyTemplates.replace(supportReplyTemplate = \"31\", isActive = false, expectedUpdatedAt = java.time.OffsetDateTime.parse(\"2026-07-03T09:12:00.000000Z\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "updateSupportReplyTemplate",
+    "mountTarget": "SupportReplyTemplates",
+    "methodName": "update",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReplyTemplates.update(supportReplyTemplate = \"31\", isActive = app.sell.sellapp.common.http.PatchField.Present(false), expectedUpdatedAt = app.sell.sellapp.common.http.PatchField.Present(java.time.OffsetDateTime.parse(\"2026-07-03T09:12:00.000000Z\")))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "deleteSupportReplyTemplate",
+    "mountTarget": "SupportReplyTemplates",
+    "methodName": "delete",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReplyTemplates.delete(supportReplyTemplate = \"33\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "renderSupportReplyTemplate",
+    "mountTarget": "SupportReplyTemplates",
+    "methodName": "render",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReplyTemplates.render(supportReplyTemplate = \"1\", ticketId = 4821L, invoiceId = 7001L, refundAmountCents = 999L)\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "reorderSupportReplyTemplates",
+    "mountTarget": "SupportReplyTemplates",
+    "methodName": "reorder",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReplyTemplates.reorder(orderedTemplateIds = listOf(32L, 31L))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getSupportReplyTemplateOptions",
+    "mountTarget": "SupportReplyTemplates",
+    "methodName": "get_options",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReplyTemplates.getOptions()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "listSupportReasons",
+    "mountTarget": "SupportReasons",
+    "methodName": "list",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReasons.list()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "createSupportReason",
+    "mountTarget": "SupportReasons",
+    "methodName": "create",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReasons.create(label = \"Download link expired\", description = \"The download link in the order email no longer works.\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getSupportReason",
+    "mountTarget": "SupportReasons",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReasons.get(supportReason = \"14\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceSupportReason",
+    "mountTarget": "SupportReasons",
+    "methodName": "replace",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReasons.replace(supportReason = \"14\", description = \"The download link in the order email no longer opens.\", expectedUpdatedAt = java.time.OffsetDateTime.parse(\"2026-07-03T09:10:00.000000Z\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "updateSupportReason",
+    "mountTarget": "SupportReasons",
+    "methodName": "update",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReasons.update(supportReason = \"14\", description = app.sell.sellapp.common.http.PatchField.Present(\"The download link in the order email no longer opens.\"), expectedUpdatedAt = app.sell.sellapp.common.http.PatchField.Present(java.time.OffsetDateTime.parse(\"2026-07-03T09:10:00.000000Z\")))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "deleteSupportReason",
+    "mountTarget": "SupportReasons",
+    "methodName": "delete",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReasons.delete(supportReason = \"15\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getSupportReasonOptions",
+    "mountTarget": "SupportReasons",
+    "methodName": "get_options",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportReasons.getOptions()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "listSupportAutomationRules",
+    "mountTarget": "SupportAutomationRules",
+    "methodName": "list",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportAutomationRules.list()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "createSupportAutomationRule",
+    "mountTarget": "SupportAutomationRules",
+    "methodName": "create",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportAutomationRules.create(name = \"Expired download links\", matchReasonSource = app.sell.sellapp.types.MatchReasonSource(\"store\"), matchReasonCode = \"download-link-expired\", matchProductIds = listOf(120L), matchMaxOrderTotalCents = 5000L, maxPriorSupportRefundCount = 0L, responseTemplateId = 32L, actionRefundKind = app.sell.sellapp.types.ActionRefundKind(\"partial\"), actionRefundPercentBasis = 5000L, actionRefundCapCents = 1000L, actionCloseOutcome = app.sell.sellapp.types.Outcome(\"refunded_partial\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getSupportAutomationRule",
+    "mountTarget": "SupportAutomationRules",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportAutomationRules.get(supportAutomationRule = \"7\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceSupportAutomationRule",
+    "mountTarget": "SupportAutomationRules",
+    "methodName": "replace",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportAutomationRules.replace(supportAutomationRule = \"7\", name = \"Expired download links, first refund only\", clear = listOf(app.sell.sellapp.types.SdkUpdateSupportAutomationRuleRequestApplicationJsonClear(\"match_max_order_total_cents\")), expectedUpdatedAt = java.time.OffsetDateTime.parse(\"2026-07-03T09:20:00.000000Z\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "updateSupportAutomationRule",
+    "mountTarget": "SupportAutomationRules",
+    "methodName": "update",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportAutomationRules.update(supportAutomationRule = \"7\", name = app.sell.sellapp.common.http.PatchField.Present(\"Expired download links, first refund only\"), clear = app.sell.sellapp.common.http.PatchField.Present(listOf(app.sell.sellapp.types.SdkUpdateSupportAutomationRuleRequestApplicationJsonClear(\"match_max_order_total_cents\"))), expectedUpdatedAt = app.sell.sellapp.common.http.PatchField.Present(java.time.OffsetDateTime.parse(\"2026-07-03T09:20:00.000000Z\")))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "updateSupportAutomationRuleState",
+    "mountTarget": "SupportAutomationRules",
+    "methodName": "update_state",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportAutomationRules.updateState(supportAutomationRule = \"1\", state = app.sell.sellapp.types.SdkUpdateSupportAutomationRuleStateRequestApplicationJsonState(\"active\"), expectedUpdatedAt = app.sell.sellapp.common.http.PatchField.Present(java.time.OffsetDateTime.parse(\"2026-07-03T09:20:00.000000Z\")))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "reorderSupportAutomationRules",
+    "mountTarget": "SupportAutomationRules",
+    "methodName": "reorder",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportAutomationRules.reorder(orderedRuleIds = listOf(7L))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "dryRunSupportAutomationRules",
+    "mountTarget": "SupportAutomationRules",
+    "methodName": "dry_run",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportAutomationRules.dryRun(ticketId = 4821L)\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getSupportAutomationSettings",
+    "mountTarget": "SupportAutomationSettings",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportAutomationSettings.get()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceSupportAutomationSettings",
+    "mountTarget": "SupportAutomationSettings",
+    "methodName": "replace",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportAutomationSettings.replace(automationEnabled = true, dailyRefundCapCents = 5000L, expectedAutomationEnabled = false, expectedDailyRefundCapCents = null)\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "updateSupportAutomationSettings",
+    "mountTarget": "SupportAutomationSettings",
+    "methodName": "update",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.supportAutomationSettings.update(automationEnabled = app.sell.sellapp.common.http.PatchField.Present(true), dailyRefundCapCents = app.sell.sellapp.common.http.PatchField.Present(5000L), expectedAutomationEnabled = app.sell.sellapp.common.http.PatchField.Present(false), expectedDailyRefundCapCents = app.sell.sellapp.common.http.PatchField.Present(null))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
     "operationId": "listCustomers",
     "mountTarget": "Customers",
     "methodName": "list",
@@ -1221,7 +1597,7 @@
     "operationId": "searchOrders",
     "mountTarget": "Orders",
     "methodName": "search",
-    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.orders.search(filters = listOf(ObjectMapperFactory.read(\"{\\\"field\\\":\\\"transaction_id\\\",\\\"operator\\\":\\\"contains\\\",\\\"value\\\":\\\"pi_3Example\\\"}\", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyFiltersItem::class.java), ObjectMapperFactory.read(\"{\\\"field\\\":\\\"status\\\",\\\"operator\\\":\\\"in\\\",\\\"value\\\":[\\\"COMPLETED\\\"]}\", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyFiltersItem::class.java)), sort = listOf(ObjectMapperFactory.read(\"{\\\"field\\\":\\\"created_at\\\",\\\"direction\\\":\\\"desc\\\"}\", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertySortItem::class.java)), pagination = ObjectMapperFactory.read(\"{\\\"page\\\":1,\\\"limit\\\":25}\", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyPagination::class.java))\n    println(result)\n}\n"
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.orders.search(filters = listOf(ObjectMapperFactory.read(\"{\\\"field\\\":\\\"created_at\\\",\\\"operator\\\":\\\"gte\\\",\\\"value\\\":\\\"2026-07-01T00:00:00Z\\\"}\", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyFiltersItem::class.java), ObjectMapperFactory.read(\"{\\\"field\\\":\\\"created_at\\\",\\\"operator\\\":\\\"lte\\\",\\\"value\\\":\\\"2026-07-31T23:59:59Z\\\"}\", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyFiltersItem::class.java), ObjectMapperFactory.read(\"{\\\"field\\\":\\\"total\\\",\\\"operator\\\":\\\"gte\\\",\\\"value\\\":1000}\", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyFiltersItem::class.java), ObjectMapperFactory.read(\"{\\\"field\\\":\\\"currency\\\",\\\"operator\\\":\\\"eq\\\",\\\"value\\\":\\\"USD\\\"}\", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyFiltersItem::class.java), ObjectMapperFactory.read(\"{\\\"field\\\":\\\"status\\\",\\\"operator\\\":\\\"in\\\",\\\"value\\\":[\\\"COMPLETED\\\"]}\", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyFiltersItem::class.java)), sort = listOf(ObjectMapperFactory.read(\"{\\\"field\\\":\\\"created_at\\\",\\\"direction\\\":\\\"desc\\\"}\", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertySortItem::class.java)), pagination = ObjectMapperFactory.read(\"{\\\"page\\\":1,\\\"limit\\\":25}\", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyPagination::class.java))\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -1253,7 +1629,7 @@
     "operationId": "createOrderReplacement",
     "mountTarget": "Orders",
     "methodName": "create_replacement",
-    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.orders.createReplacement(order = \"9001\", productVariants = ObjectMapperFactory.read(\"[4321]\", app.sell.sellapp.models.CreateOrderReplacementRequestApplicationJsonPropertyProductVariants::class.java), requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = \"example-mutation-001\"))\n    println(result)\n}\n"
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.orders.createReplacement(order = \"9001\", productVariants = listOf(4321), requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = \"example-mutation-001\"))\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -1261,7 +1637,7 @@
     "operationId": "createOrderRefund",
     "mountTarget": "Orders",
     "methodName": "create_refund",
-    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.orders.createRefund(order = \"9001\", amount = \"5.00\", requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = \"example-mutation-001\"))\n    println(result)\n}\n"
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.orders.createRefund(order = \"9001\", amount = \"5.00\", expectedRefundedTotalCents = 0L, requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = \"example-mutation-001\"))\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -1286,6 +1662,14 @@
     "mountTarget": "Orders",
     "methodName": "send_fulfillment_notifications",
     "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.orders.sendFulfillmentNotifications(order = \"9001\", email = \"maya@example.com\", productVariantIds = listOf(4321L), requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = \"example-mutation-001\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "regenerateOrderTelegramInvite",
+    "mountTarget": "Orders",
+    "methodName": "regenerate_telegram_invite",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.orders.regenerateTelegramInvite(order = \"9001\", variantId = 4321L, requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = \"example-mutation-001\"))\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -1358,22 +1742,6 @@
     "mountTarget": "OrdersLineItems",
     "methodName": "get",
     "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.ordersLineItems.get(order = \"4001\", lineItem = \"9001\")\n    println(result)\n}\n"
-  },
-  {
-    "language": "kotlin",
-    "fileExtension": "kt",
-    "operationId": "getVariantDeliverableConfiguration",
-    "mountTarget": "VariantDeliverables",
-    "methodName": "get",
-    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.variantDeliverables.get(product = \"string_example\", variant = \"1\")\n    println(result)\n}\n"
-  },
-  {
-    "language": "kotlin",
-    "fileExtension": "kt",
-    "operationId": "replaceVariantDeliverableConfiguration",
-    "mountTarget": "VariantDeliverables",
-    "methodName": "replace",
-    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.variantDeliverables.replace(product = \"string_example\", variant = \"1\", types = listOf(app.sell.sellapp.types.CreateProductVariantRequestApplicationJsonPropertyDeliverableTypes(\"MANUAL\")), data = ObjectMapperFactory.read(\"{\\\"comment\\\":\\\"Delivery is arranged by Launch Lab.\\\"}\", app.sell.sellapp.models.ReplaceVariantDeliverableConfigurationRequestApplicationJsonPropertyData::class.java))\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -1542,6 +1910,14 @@
     "mountTarget": "AffiliateProgram",
     "methodName": "invite",
     "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.affiliateProgram.invite(email = \"alex.morgan@example.com\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "resendAffiliateInvitation",
+    "mountTarget": "AffiliateProgram",
+    "methodName": "resend",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.affiliateProgram.resend(invitation = \"77\")\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -1730,6 +2106,14 @@
   {
     "language": "kotlin",
     "fileExtension": "kt",
+    "operationId": "getUpsellOfferPerformance",
+    "mountTarget": "UpsellOffers",
+    "methodName": "get_performance",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.upsellOffers.getPerformance(upsellOffer = \"71\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
     "operationId": "listCommunityConnections",
     "mountTarget": "CommunityConnections",
     "methodName": "list",
@@ -1778,6 +2162,62 @@
   {
     "language": "kotlin",
     "fileExtension": "kt",
+    "operationId": "listCommunityFailedGrantReasons",
+    "mountTarget": "CommunityConnections",
+    "methodName": "list_failed_grant_reasons",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.communityConnections.listFailedGrantReasons()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getCommunityServer",
+    "mountTarget": "CommunityConnectionsServers",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.communityConnectionsServers.get(platform = \"discord\", server = \"server_ship_room\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "removeCommunityServer",
+    "mountTarget": "CommunityConnectionsServers",
+    "methodName": "remove",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.communityConnectionsServers.remove(platform = \"discord\", server = \"server_ship_room\", affectedVariantIds = listOf(902L))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "syncDiscordRoles",
+    "mountTarget": "CommunityConnections",
+    "methodName": "sync_discord_roles",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.communityConnections.syncDiscordRoles()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "listSlackAvailableChannels",
+    "mountTarget": "CommunityConnectionsSlack",
+    "methodName": "list_channels",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.communityConnectionsSlack.listChannels()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "addSlackChannel",
+    "mountTarget": "CommunityConnectionsSlack",
+    "methodName": "add_channel",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.communityConnectionsSlack.addChannel(channelId = \"C07LAUNCHVIP\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceSlackWorkspaceInviteLink",
+    "mountTarget": "CommunityConnectionsSlack",
+    "methodName": "replace_invite_link",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.communityConnectionsSlack.replaceInviteLink(inviteLink = \"https://join.slack.com/t/launch-lab/shared_invite/zt-2abc123\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
     "operationId": "getWalletSettings",
     "mountTarget": "WalletSettings",
     "methodName": "get",
@@ -1813,7 +2253,7 @@
     "operationId": "adjustCustomerWallet",
     "mountTarget": "Wallet",
     "methodName": "adjust",
-    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.wallet.adjust(customer = \"1\", amountCents = 2500L, idempotencyKey = \"wallet-adjustment-01992a65\", note = \"Launch-day account credit\")\n    println(result)\n}\n"
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.wallet.adjust(customer = \"1\", amountCents = 2500L, idempotencyKey = \"wallet-adjustment-01992a65\", note = \"Launch-day account credit\", expectedBalanceCents = 0L)\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -1822,6 +2262,30 @@
     "mountTarget": "Wallet",
     "methodName": "update_status",
     "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.wallet.updateStatus(customer = \"1\", status = app.sell.sellapp.types.SdkUpdateCustomerWalletStatusRequestApplicationJsonStatus(\"frozen\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "reverseWalletTransaction",
+    "mountTarget": "WalletTransactions",
+    "methodName": "reverse",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.walletTransactions.reverse(customer = \"42\", transaction = \"501\", note = \"Credit went to the wrong customer\", expectedBalanceCents = 2500L)\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "listStoreWalletTransactions",
+    "mountTarget": "WalletLedger",
+    "methodName": "list",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.walletLedger.list()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getWalletOverview",
+    "mountTarget": "WalletOverview",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.walletOverview.get()\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -1890,6 +2354,14 @@
   {
     "language": "kotlin",
     "fileExtension": "kt",
+    "operationId": "quoteCashbackRule",
+    "mountTarget": "CashbackRules",
+    "methodName": "quote",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.cashbackRules.quote()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
     "operationId": "listWalletBonusTiers",
     "mountTarget": "WalletBonusTiers",
     "methodName": "list",
@@ -1938,10 +2410,26 @@
   {
     "language": "kotlin",
     "fileExtension": "kt",
+    "operationId": "quoteWalletBonusTier",
+    "mountTarget": "WalletBonusTiers",
+    "methodName": "quote",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.walletBonusTiers.quote(topUpCents = 20000L)\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
     "operationId": "listCourses",
     "mountTarget": "Courses",
     "methodName": "list",
     "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.courses.list()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "createCourse",
+    "mountTarget": "Courses",
+    "methodName": "create",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.courses.create(category = app.sell.sellapp.types.Category(\"design\"), level = app.sell.sellapp.types.SdkCreateCourseRequestApplicationJsonLevel(\"beginner\"), language = \"English\", whatYouLearn = listOf(\"Sketch a logo concept.\", \"Choose a color palette.\"), certificateEnabled = true, deliveryText = \"Open your course from the link in your receipt.\", title = \"Brand identity basics\", description = \"<p>Design a logo, color palette, and type system for your next project.</p>\")\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -1965,7 +2453,7 @@
     "operationId": "replaceCourse",
     "mountTarget": "Courses",
     "methodName": "replace",
-    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.courses.replace(course = \"string_example\", level = app.sell.sellapp.types.SdkUpdateCourseRequestApplicationJsonLevel(\"beginner\"), visibility = app.sell.sellapp.types.CatalogVisibility(\"HIDDEN\"))\n    println(result)\n}\n"
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.courses.replace(course = \"string_example\", level = app.sell.sellapp.types.SdkCreateCourseRequestApplicationJsonLevel(\"beginner\"), visibility = app.sell.sellapp.types.CatalogVisibility(\"HIDDEN\"))\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -1973,7 +2461,15 @@
     "operationId": "updateCourse",
     "mountTarget": "Courses",
     "methodName": "update",
-    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.courses.update(course = \"string_example\", level = app.sell.sellapp.common.http.PatchField.Present(app.sell.sellapp.types.SdkUpdateCourseRequestApplicationJsonLevel(\"beginner\")), visibility = app.sell.sellapp.common.http.PatchField.Present(app.sell.sellapp.types.CatalogVisibility(\"HIDDEN\")))\n    println(result)\n}\n"
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.courses.update(course = \"string_example\", level = app.sell.sellapp.common.http.PatchField.Present(app.sell.sellapp.types.SdkCreateCourseRequestApplicationJsonLevel(\"beginner\")), visibility = app.sell.sellapp.common.http.PatchField.Present(app.sell.sellapp.types.CatalogVisibility(\"HIDDEN\")))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getCourseStudentSummary",
+    "mountTarget": "Courses",
+    "methodName": "get_student_summary",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.courses.getStudentSummary(startDate = \"2026-08-01\", endDate = \"2026-08-31\")\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -2058,6 +2554,62 @@
   {
     "language": "kotlin",
     "fileExtension": "kt",
+    "operationId": "listCheckoutFieldTemplates",
+    "mountTarget": "CheckoutFieldTemplates",
+    "methodName": "list",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.checkoutFieldTemplates.list()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "createCheckoutFieldTemplate",
+    "mountTarget": "CheckoutFieldTemplates",
+    "methodName": "create",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.checkoutFieldTemplates.create(name = \"Discord access\", fields = listOf(ObjectMapperFactory.read(\"{\\\"type\\\":\\\"text\\\",\\\"label\\\":\\\"Discord username\\\",\\\"key\\\":\\\"discord_username\\\",\\\"required\\\":true,\\\"placeholder\\\":\\\"name#0001\\\",\\\"description\\\":\\\"We add this account to the community after purchase.\\\"}\", app.sell.sellapp.models.CreateCheckoutFieldTemplateRequestApplicationJsonPropertyFieldsItem::class.java), ObjectMapperFactory.read(\"{\\\"type\\\":\\\"radio\\\",\\\"label\\\":\\\"Experience level\\\",\\\"key\\\":\\\"experience_level\\\",\\\"required\\\":false,\\\"options\\\":[\\\"Beginner\\\",\\\"Intermediate\\\",\\\"Advanced\\\"],\\\"variant\\\":\\\"cards\\\",\\\"variant_options\\\":{\\\"vertical\\\":true,\\\"indicator\\\":true}}\", app.sell.sellapp.models.CreateCheckoutFieldTemplateRequestApplicationJsonPropertyFieldsItem::class.java)))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getCheckoutFieldTemplate",
+    "mountTarget": "CheckoutFieldTemplates",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.checkoutFieldTemplates.get(checkoutFieldTemplate = \"14\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceCheckoutFieldTemplate",
+    "mountTarget": "CheckoutFieldTemplates",
+    "methodName": "replace",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.checkoutFieldTemplates.replace(checkoutFieldTemplate = \"14\", name = \"Discord onboarding\", expectedUpdatedAt = java.time.OffsetDateTime.parse(\"2026-09-04T09:00:00.000000Z\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "updateCheckoutFieldTemplate",
+    "mountTarget": "CheckoutFieldTemplates",
+    "methodName": "update",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.checkoutFieldTemplates.update(checkoutFieldTemplate = \"14\", name = app.sell.sellapp.common.http.PatchField.Present(\"Discord onboarding\"), expectedUpdatedAt = app.sell.sellapp.common.http.PatchField.Present(java.time.OffsetDateTime.parse(\"2026-09-04T09:00:00.000000Z\")))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "deleteCheckoutFieldTemplate",
+    "mountTarget": "CheckoutFieldTemplates",
+    "methodName": "delete",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.checkoutFieldTemplates.delete(checkoutFieldTemplate = \"14\", expectedUpdatedAt = java.time.OffsetDateTime.parse(\"2026-09-04T09:00:00.000000Z\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "duplicateCheckoutFieldTemplate",
+    "mountTarget": "CheckoutFieldTemplates",
+    "methodName": "duplicate",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.checkoutFieldTemplates.duplicate(checkoutFieldTemplate = \"14\", name = \"Discord access for courses\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
     "operationId": "listPaymentMethods",
     "mountTarget": "PaymentMethods",
     "methodName": "list",
@@ -2094,6 +2646,22 @@
     "mountTarget": "PaymentMethods",
     "methodName": "validate",
     "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.paymentMethods.validate(paymentMethod = \"NMI\", requestBody = mapOf(\"merchant_secure_key\" to \"replace-with-nmi-secure-key\", \"merchant_tokenization_key\" to \"replace-with-nmi-tokenization-key\", \"signing_key\" to \"replace-with-nmi-signing-key\", \"currencies\" to listOf(\"USD\")))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getPaymentMethodModifier",
+    "mountTarget": "PaymentMethodsModifier",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.paymentMethodsModifier.get(paymentMethod = \"STRIPE\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replacePaymentMethodModifier",
+    "mountTarget": "PaymentMethodsModifier",
+    "methodName": "replace",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.paymentMethodsModifier.replace(paymentMethod = \"STRIPE\", kind = app.sell.sellapp.types.SdkReplacePaymentMethodModifierRequestApplicationJsonKind(\"fee\"), percentage = \"3.00\", fixedAmount = \"0.30\", condition = app.sell.sellapp.types.Condition(\"below\"), threshold = \"20.00\")\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -2202,6 +2770,190 @@
   {
     "language": "kotlin",
     "fileExtension": "kt",
+    "operationId": "getCheckoutSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "get_checkout",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.getCheckout()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceCheckoutSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "replace_checkout",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.replaceCheckout(shoppingCartEnabled = true, customerEmailRequired = true, allowVpnPurchases = true, blacklistOnDispute = true, minimumSpend = \"5.00\", billingDescriptor = \"LAUNCH LAB\", attemptsPerCustomer = 5L, attemptsPerIp = 20L, attemptsPerEmail = null, attemptsPerFingerprint = null, rateLimitWindowSeconds = 3600L, crypto = ObjectMapperFactory.read(\"{\\\"underpaid_percentage\\\":2,\\\"minimum_confirmations\\\":2}\", app.sell.sellapp.models.ReplaceCheckoutSettingsRequestApplicationJsonPropertyCrypto::class.java))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "updateCheckoutSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "update_checkout",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.updateCheckout(minimumSpend = app.sell.sellapp.common.http.PatchField.Present(\"10.00\"), attemptsPerEmail = app.sell.sellapp.common.http.PatchField.Present(10L))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getTaxSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "get_taxes",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.getTaxes()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceTaxSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "replace_taxes",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.replaceTaxes(vatEnabled = true, vatInclusivePricing = true, collectBillingDetails = false)\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "updateTaxSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "update_taxes",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.updateTaxes(vatInclusivePricing = app.sell.sellapp.common.http.PatchField.Present(true))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getCustomerEmailSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "get_customer_emails",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.getCustomerEmails()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceCustomerEmailSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "replace_customer_emails",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.replaceCustomerEmails(sendDeliveryEmail = true, sendPaymentFailureEmail = false)\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "updateCustomerEmailSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "update_customer_emails",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.updateCustomerEmails(sendPaymentFailureEmail = app.sell.sellapp.common.http.PatchField.Present(false))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getStoreAlertSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "get_store_alerts",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.getAlerts()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceStoreAlertSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "replace_store_alerts",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.replaceAlerts(saleEmailsEnabled = false)\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "updateStoreAlertSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "update_store_alerts",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.updateAlerts(saleEmailsEnabled = app.sell.sellapp.common.http.PatchField.Present(false))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getPersonalizationSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "get_personalization",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.getPersonalization()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replacePersonalizationSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "replace_personalization",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.replacePersonalization(supportEmail = \"support@launch-lab.example.com\", trustpilotEmail = null, senderName = \"Launch Lab\", senderEmail = \"orders@launch-lab.example.com\", storeAddress = \"651 N Broad St, Suite 206\", storeCity = \"Middletown\", storeState = \"Delaware\", storeZip = \"19709\", storeCountry = \"United States\", storeTax = \"EIN 98-7654321\", backLinkLabel = \"Back to Launch Lab\", backLinkUrl = \"https://launch-lab.example.com\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "updatePersonalizationSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "update_personalization",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.updatePersonalization(backLinkLabel = app.sell.sellapp.common.http.PatchField.Present(\"Return to the shop\"), backLinkUrl = app.sell.sellapp.common.http.PatchField.Present(\"https://launch-lab.example.com/shop\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "replaceCryptoCheckoutSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "replace_crypto_checkout",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.replaceCryptoCheckout(underpaidPercentage = 1L, minimumConfirmations = 3L)\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "updateCryptoCheckoutSettings",
+    "mountTarget": "StoreSettings",
+    "methodName": "update_crypto_checkout",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSettings.updateCryptoCheckout(minimumConfirmations = app.sell.sellapp.common.http.PatchField.Present(3L))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getSenderEmail",
+    "mountTarget": "StoreSenderEmail",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSenderEmail.get()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "setSenderEmail",
+    "mountTarget": "StoreSenderEmail",
+    "methodName": "set",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSenderEmail.set(email = \"orders@launch-lab.example.com\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "deleteSenderEmail",
+    "mountTarget": "StoreSenderEmail",
+    "methodName": "delete",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSenderEmail.delete()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "sendSenderEmailVerification",
+    "mountTarget": "StoreSenderEmail",
+    "methodName": "send_verification",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeSenderEmail.sendVerification(email = \"orders@launch-lab.example.com\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getStoreIntegrations",
+    "mountTarget": "StoreIntegrations",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeIntegrations.get()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "disconnectGoogleCalendar",
+    "mountTarget": "StoreIntegrations",
+    "methodName": "disconnect_google_calendar",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeIntegrations.disconnectGoogleCalendar(connectionId = 7L)\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
     "operationId": "listNotificationChannels",
     "mountTarget": "StoreNotificationChannels",
     "methodName": "list",
@@ -2286,6 +3038,22 @@
     "mountTarget": "StoreCustomDomains",
     "methodName": "refresh",
     "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.storeCustomDomains.refresh(customDomain = \"1\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "listNotifications",
+    "mountTarget": "Notifications",
+    "methodName": "list",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.notifications.list()\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "markNotificationsSeen",
+    "mountTarget": "Notifications",
+    "methodName": "mark",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.notifications.mark(notificationIds = listOf(9182L))\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -2402,6 +3170,46 @@
   {
     "language": "kotlin",
     "fileExtension": "kt",
+    "operationId": "getAffiliateProducts",
+    "mountTarget": "AffiliatesProducts",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.affiliatesProducts.get(affiliate = \"88\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "updateAffiliateProducts",
+    "mountTarget": "AffiliatesProducts",
+    "methodName": "update",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.affiliatesProducts.update(affiliate = \"88\", enableSpecificProducts = app.sell.sellapp.common.http.PatchField.Present(true), products = app.sell.sellapp.common.http.PatchField.Present(listOf(ObjectMapperFactory.read(\"{\\\"id\\\":42,\\\"enabled\\\":true,\\\"commission\\\":{\\\"type\\\":\\\"percentage\\\",\\\"percentage\\\":\\\"25\\\"}}\", app.sell.sellapp.models.UpdateAffiliateProductsRequestApplicationJsonPropertyProductsItem::class.java), ObjectMapperFactory.read(\"{\\\"id\\\":43,\\\"enabled\\\":true,\\\"commission\\\":{\\\"type\\\":\\\"fixed\\\",\\\"amount_usd_cents\\\":550}}\", app.sell.sellapp.models.UpdateAffiliateProductsRequestApplicationJsonPropertyProductsItem::class.java))), replaceProducts = app.sell.sellapp.common.http.PatchField.Present(true))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getAffiliateCoupon",
+    "mountTarget": "AffiliatesCoupon",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.affiliatesCoupon.get(affiliate = \"88\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "saveAffiliateCoupon",
+    "mountTarget": "AffiliatesCoupon",
+    "methodName": "save",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.affiliatesCoupon.save(affiliate = \"88\", code = app.sell.sellapp.common.http.PatchField.Present(\"ALEX15\"), type = app.sell.sellapp.common.http.PatchField.Present(app.sell.sellapp.types.SdkCreateCouponRequestApplicationJsonType(\"PERCENTAGE\")), discount = app.sell.sellapp.common.http.PatchField.Present(\"15\"), storeWide = app.sell.sellapp.common.http.PatchField.Present(true), maximumDiscountAmount = app.sell.sellapp.common.http.PatchField.Present(\"20\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "disableAffiliateCoupon",
+    "mountTarget": "AffiliatesCoupon",
+    "methodName": "disable",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.affiliatesCoupon.disable(affiliate = \"88\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
     "operationId": "listAffiliateReferrals",
     "mountTarget": "AffiliateReferrals",
     "methodName": "list",
@@ -2470,6 +3278,14 @@
     "mountTarget": "AffiliatePayouts",
     "methodName": "update",
     "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.affiliatePayouts.update(payout = \"1\", status = app.sell.sellapp.types.AffiliatePayoutsStatus(\"paid\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "markAffiliatePayoutsPaid",
+    "mountTarget": "AffiliatePayouts",
+    "methodName": "mark_paid",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.affiliatePayouts.markPaid(payoutIds = listOf(91L, 92L), expectedTotalUsdCents = 4250L)\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -3250,6 +4066,14 @@
   {
     "language": "kotlin",
     "fileExtension": "kt",
+    "operationId": "v2GetCouponUsage",
+    "mountTarget": "Coupons",
+    "methodName": "v2_get_coupon_usage",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.coupons.v2GetCouponUsage(coupon = \"1\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
     "operationId": "v2ListFeedback",
     "mountTarget": "Feedback",
     "methodName": "v2_list_feedback",
@@ -3421,7 +4245,7 @@
     "operationId": "updateTicket",
     "mountTarget": "Tickets",
     "methodName": "update",
-    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.tickets.update(ticket = \"42\", status = app.sell.sellapp.common.http.PatchField.Present(app.sell.sellapp.types.SdkUpdateTicketRequestApplicationJsonStatus(\"CLOSED\")), archived = app.sell.sellapp.common.http.PatchField.Present(true))\n    println(result)\n}\n"
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.tickets.update(ticket = \"42\", status = app.sell.sellapp.common.http.PatchField.Present(app.sell.sellapp.types.SdkUpdateTicketRequestApplicationJsonStatus(\"CLOSED\")), archived = app.sell.sellapp.common.http.PatchField.Present(true), outcome = app.sell.sellapp.common.http.PatchField.Present(app.sell.sellapp.types.SdkUpdateTicketRequestApplicationJsonOutcome(\"delivered\")))\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",
@@ -3454,6 +4278,62 @@
     "mountTarget": "TicketsMessages",
     "methodName": "v2_get_ticket_message",
     "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.ticketsMessages.v2GetTicketMessage(ticket = \"1\", message = \"2\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "batchUpdateTickets",
+    "mountTarget": "Tickets",
+    "methodName": "batch_update",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.tickets.batchUpdate(action = app.sell.sellapp.types.SdkBatchUpdateTicketsRequestApplicationJsonAction(\"close\"), outcome = app.sell.sellapp.common.http.PatchField.Present(app.sell.sellapp.types.SdkUpdateTicketRequestApplicationJsonOutcome(\"delivered\")), resources = listOf(311L, 313L))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "v2GetTicketContext",
+    "mountTarget": "Tickets",
+    "methodName": "get_context",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.tickets.getContext(ticket = \"312\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "v2ListTicketWalletRefundOptions",
+    "mountTarget": "TicketsWalletRefunds",
+    "methodName": "list_options",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.ticketsWalletRefunds.listOptions(ticket = \"312\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "v2ListTicketWalletRefunds",
+    "mountTarget": "TicketsWalletRefunds",
+    "methodName": "list",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.ticketsWalletRefunds.list(ticket = \"312\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "v2RefundTicketToWallet",
+    "mountTarget": "TicketsWalletRefunds",
+    "methodName": "create",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.ticketsWalletRefunds.create(ticket = \"312\", invoiceId = 5120L, amountCents = 500L, expectedRefundableCents = 1999L, customerNote = \"We added \\$5.00 to your store wallet for the trouble with your download link.\", requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = \"example-mutation-001\"))\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "v2ReverseTicketWalletRefund",
+    "mountTarget": "TicketsWalletRefunds",
+    "methodName": "reverse",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.ticketsWalletRefunds.reverse(ticket = \"312\", walletRefund = \"7001\", reason = \"Issued on the wrong ticket.\")\n    println(result)\n}\n"
+  },
+  {
+    "language": "kotlin",
+    "fileExtension": "kt",
+    "operationId": "getSupportAnalytics",
+    "mountTarget": "TicketsAnalytics",
+    "methodName": "get",
+    "content": "import app.sell.sellapp.SellApp\nimport app.sell.sellapp.common.json.ObjectMapperFactory\n\nfun main() {\n    val client = SellApp(baseUrl = System.getenv(\"SELLAPP_API_BASE_URL\"), apiKey = System.getenv(\"SELLAPP_API_KEY\"), store = System.getenv(\"SELLAPP_STORE\"))\n    val result = client.ticketsAnalytics.get()\n    println(result)\n}\n"
   },
   {
     "language": "kotlin",

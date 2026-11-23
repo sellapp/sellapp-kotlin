@@ -12,6 +12,10 @@ List all charges
 fun list(
         limit: Int? = null,
         page: Long? = null,
+        status: ChargesStatus? = null,
+        customerEmail: String? = null,
+        createdAfter: String? = null,
+        createdBefore: String? = null,
         requestOptions: RequestOptions? = null,
     ): Page<ListChargesResponseValue200ApplicationJsonPropertyDataItem>
 ```
@@ -20,6 +24,10 @@ fun list(
 | --- | --- | --- |
 | limit | `Int?` | No |
 | page | `Long?` | No |
+| status | `ChargesStatus?` | No |
+| customerEmail | `String?` | No |
+| createdAfter | `String?` | No |
+| createdBefore | `String?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<ListChargesResponseValue200ApplicationJsonPropertyDataItem>`.
@@ -296,6 +304,63 @@ Supported credential alternatives (each object is one alternative):
 ```
 
 Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## getSummary
+
+Retrieve the charge summary
+
+[API reference](https://sell.app/docs/api/charges/retrieve-the-charge-summary) · Effect: **read**
+
+```kotlin
+fun getSummary(
+        preset: ChargesPreset? = null,
+        startDate: String? = null,
+        endDate: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkGetChargeSummaryResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| preset | `ChargesPreset?` | No |
+| startDate | `String?` | No |
+| endDate | `String?` | No |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkGetChargeSummaryResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.charges.getSummary()
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 422, 429, 500. See the API reference for field-level validation and consequences.
 
 [Response access, transport controls, pagination, and typed errors](../usage.md)
 

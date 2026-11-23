@@ -664,6 +664,7 @@ fun v2CreateCoupon(
         minimumAmount: Any? = null,
         appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
         subscriptionPayments: Long? = null,
+        maximumDiscountAmount: Any? = null,
         requestOptions: RequestOptions? = null,
     ): SdkV2CreateCouponResponseValue201ApplicationJson
 ```
@@ -681,6 +682,7 @@ fun v2CreateCoupon(
 | minimumAmount | `Any?` | No |
 | appliesTo | `SdkCreateCouponRequestApplicationJsonAppliesTo?` | No |
 | subscriptionPayments | `Long?` | No |
+| maximumDiscountAmount | `Any?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkV2CreateCouponResponseValue201ApplicationJson`.
@@ -726,6 +728,8 @@ Search coupons
 
 ```kotlin
 fun v2SearchCoupons(
+        limit: Long? = null,
+        page: Long? = null,
         withTrashed: Boolean? = null,
         onlyTrashed: Boolean? = null,
         filters: List<V2SearchCouponsRequestApplicationJsonPropertyFiltersItem>? = null,
@@ -738,6 +742,8 @@ fun v2SearchCoupons(
 
 | Argument | Native type | Required |
 | --- | --- | --- |
+| limit | `Long?` | No |
+| page | `Long?` | No |
 | withTrashed | `Boolean?` | No |
 | onlyTrashed | `Boolean?` | No |
 | filters | `List<V2SearchCouponsRequestApplicationJsonPropertyFiltersItem>?` | No |
@@ -860,6 +866,7 @@ fun v2ReplaceCoupon(
         minimumAmount: Any? = null,
         appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
         subscriptionPayments: Long? = null,
+        maximumDiscountAmount: Any? = null,
         requestOptions: RequestOptions? = null,
     ): SdkV2ReplaceCouponResponseValue200ApplicationJson
 ```
@@ -880,6 +887,7 @@ fun v2ReplaceCoupon(
 | minimumAmount | `Any?` | No |
 | appliesTo | `SdkCreateCouponRequestApplicationJsonAppliesTo?` | No |
 | subscriptionPayments | `Long?` | No |
+| maximumDiscountAmount | `Any?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkV2ReplaceCouponResponseValue200ApplicationJson`.
@@ -939,6 +947,7 @@ fun v2UpdateCoupon(
         minimumAmount: PatchField<Any?> = PatchField.Absent,
         appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
         subscriptionPayments: PatchField<Long?> = PatchField.Absent,
+        maximumDiscountAmount: PatchField<Any?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkV2UpdateCouponResponseValue200ApplicationJson
 ```
@@ -959,6 +968,7 @@ fun v2UpdateCoupon(
 | minimumAmount | `PatchField<Any?>` | No |
 | appliesTo | `PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo>` | No |
 | subscriptionPayments | `PatchField<Long?>` | No |
+| maximumDiscountAmount | `PatchField<Any?>` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkV2UpdateCouponResponseValue200ApplicationJson`.
@@ -1217,6 +1227,59 @@ Supported credential alternatives (each object is one alternative):
 ```
 
 Documented HTTP responses: 200, 400, 401, 403, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## v2GetCouponUsage
+
+Retrieve coupon usage
+
+[API reference](https://sell.app/docs/api/coupons/retrieve-coupon-usage) · Effect: **read**
+
+```kotlin
+fun v2GetCouponUsage(
+        coupon: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkV2GetCouponUsageResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| coupon | `String` | Yes |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkV2GetCouponUsageResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.coupons.v2GetCouponUsage(coupon = "1")
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
 
 [Response access, transport controls, pagination, and typed errors](../usage.md)
 

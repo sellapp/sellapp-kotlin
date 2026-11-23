@@ -16,9 +16,7 @@ data class ListOrderDeliverablesResponseValue200ApplicationJsonPropertyDataItemP
     @JsonProperty("types") val types: List<String>,
 
     /** The data. */
-    @JsonProperty("data")
-    val data:
-        ListOrderDeliverablesResponseValue200ApplicationJsonPropertyDataItemPropertyDeliverablePropertyData,
+    @JsonProperty("data") val data: Any,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -31,7 +29,7 @@ data class ListOrderDeliverablesResponseValue200ApplicationJsonPropertyDataItemP
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"ListOrderDeliverablesResponseValue200ApplicationJsonPropertyDataItemPropertyDeliverable\",\"properties\":{\"types\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"data\":{\"kind\":\"object\",\"modelName\":\"ListOrderDeliverablesResponseValue200ApplicationJsonPropertyDataItemPropertyDeliverablePropertyData\",\"properties\":{},\"required\":[],\"additionalProperties\":true}},\"required\":[\"types\",\"data\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"ListOrderDeliverablesResponseValue200ApplicationJsonPropertyDataItemPropertyDeliverable\",\"properties\":{\"types\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"data\":{\"kind\":\"union\",\"variants\":[{\"kind\":\"object\",\"modelName\":\"ListOrderDeliverablesResponseValue200ApplicationJsonPropertyDataItemPropertyDeliverablePropertyDataAnyOfValue1\",\"properties\":{\"serials\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"delivered_files\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"dynamic\":{\"kind\":\"primitive\",\"type\":\"string\"},\"manual\":{\"kind\":\"primitive\",\"type\":\"string\"},\"license_keys\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"credits_granted\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"required\":[],\"additionalProperties\":true},{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"unknown\"},\"constraints\":{\"maxItems\":0}}],\"composition\":\"anyOf\"}},\"required\":[\"types\",\"data\"],\"additionalProperties\":true}"
             )
     }
 }

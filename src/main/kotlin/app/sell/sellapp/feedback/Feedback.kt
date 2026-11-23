@@ -28,6 +28,8 @@ import app.sell.sellapp.models.V2SearchFeedbackRequestApplicationJsonPropertyInc
 import app.sell.sellapp.models.V2SearchFeedbackRequestApplicationJsonPropertySearch
 import app.sell.sellapp.models.V2SearchFeedbackRequestApplicationJsonPropertySortItem
 import app.sell.sellapp.models.V2SearchFeedbackResponseValue200ApplicationJsonPropertyDataItem
+import app.sell.sellapp.types.FeedbackReplyState
+import app.sell.sellapp.types.ReplyState
 import com.fasterxml.jackson.core.type.TypeReference
 
 /**
@@ -388,11 +390,14 @@ class Feedback(internal val sellapp: SellApp) {
      * List all feedback
      *
      * List customer feedback for your store, 15 entries per page by default. This v2 route is
-     * store-scoped. OAuth callers use the admin grant and select a store with X-STORE. Current
-     * membership and role permissions apply to every request.
+     * store-scoped. Use `reply_state` to list only feedback you have or have not replied to. OAuth
+     * callers use the admin grant and select a store with X-STORE. Current membership and role
+     * permissions apply to every request.
      *
      * @param limit Number of items to return per page.
      * @param page Page number to return.
+     * @param replyState `replied`: feedback with a non-empty seller reply. `unreplied`: feedback
+     *   without one. `all` (default): both. Any other value returns `422`.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return a [app.sell.sellapp.common.http.Page] of results
      */
@@ -400,6 +405,7 @@ class Feedback(internal val sellapp: SellApp) {
     fun v2ListFeedback(
         limit: Long? = null,
         page: Long? = null,
+        replyState: FeedbackReplyState? = null,
         requestOptions: RequestOptions? = null,
     ): Page<V2ListFeedbackResponseValue200ApplicationJsonPropertyDataItem> {
         val itemType =
@@ -421,6 +427,7 @@ class Feedback(internal val sellapp: SellApp) {
         ) {
             limit?.let { add("limit" to it.toString()) }
             page?.let { add("page" to it.toString()) }
+            replyState?.let { add("reply_state" to it.value) }
         }
     }
 
@@ -428,6 +435,7 @@ class Feedback(internal val sellapp: SellApp) {
     fun v2ListFeedbackWithResponse(
         limit: Long? = null,
         page: Long? = null,
+        replyState: FeedbackReplyState? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<V2ListFeedbackResponseValue200ApplicationJsonPropertyDataItem>> {
         var captured: RawResponse<Any?>? = null
@@ -435,7 +443,7 @@ class Feedback(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        v2ListFeedback(limit, page, capturingOptions)
+        v2ListFeedback(limit, page, replyState, capturingOptions)
         return captured
             as? RawResponse<Page<V2ListFeedbackResponseValue200ApplicationJsonPropertyDataItem>>
             ?: error("Response metadata was not captured")
@@ -452,10 +460,11 @@ class Feedback(internal val sellapp: SellApp) {
     suspend fun v2ListFeedbackSuspend(
         limit: Long? = null,
         page: Long? = null,
+        replyState: FeedbackReplyState? = null,
         requestOptions: RequestOptions? = null,
     ): Page<V2ListFeedbackResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            v2ListFeedback(limit, page, requestOptions)
+            v2ListFeedback(limit, page, replyState, requestOptions)
         }
 
     /**
@@ -469,32 +478,42 @@ class Feedback(internal val sellapp: SellApp) {
     suspend fun v2ListFeedbackWithResponseSuspend(
         limit: Long? = null,
         page: Long? = null,
+        replyState: FeedbackReplyState? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<V2ListFeedbackResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            v2ListFeedbackWithResponse(limit, page, requestOptions)
+            v2ListFeedbackWithResponse(limit, page, replyState, requestOptions)
         }
 
     /**
      * Search feedback
      *
      * Search feedback using JSON body filters, search terms, includes, and sort instructions. This
-     * v2 route is store-scoped. OAuth callers use the admin grant and select a store with X-STORE.
-     * Current membership and role permissions apply to every request.
+     * v2 route is store-scoped. Use `reply_state` to find only feedback you have or have not
+     * replied to. Page through results with `limit` (1 to 100, default 15; a larger value returns
+     * `422`) and `page`. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * membership and role permissions apply to every request.
      *
+     * @param limit Number of items to return per page.
+     * @param page Page number to return.
      * @param filters the filters of the request.
      * @param sort the sort of the request.
      * @param search the search of the request.
      * @param includes the includes of the request.
+     * @param replyState `replied`: feedback with a non-empty seller reply. `unreplied`: feedback
+     *   without one. `all` (default): both. Any other value returns `422`.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return a [app.sell.sellapp.common.http.Page] of results
      */
     @JvmOverloads
     fun v2SearchFeedback(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchFeedbackRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchFeedbackRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchFeedbackRequestApplicationJsonPropertySearch? = null,
         includes: List<V2SearchFeedbackRequestApplicationJsonPropertyIncludesItem>? = null,
+        replyState: ReplyState? = null,
         requestOptions: RequestOptions? = null,
     ): Page<V2SearchFeedbackResponseValue200ApplicationJsonPropertyDataItem> {
         val itemType =
@@ -513,15 +532,21 @@ class Feedback(internal val sellapp: SellApp) {
                     .runtimeSchema,
             before = null,
             after = null,
-        ) {}
+        ) {
+            limit?.let { add("limit" to it.toString()) }
+            page?.let { add("page" to it.toString()) }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun v2SearchFeedbackWithResponse(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchFeedbackRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchFeedbackRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchFeedbackRequestApplicationJsonPropertySearch? = null,
         includes: List<V2SearchFeedbackRequestApplicationJsonPropertyIncludesItem>? = null,
+        replyState: ReplyState? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<V2SearchFeedbackResponseValue200ApplicationJsonPropertyDataItem>> {
         var captured: RawResponse<Any?>? = null
@@ -529,7 +554,7 @@ class Feedback(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        v2SearchFeedback(filters, sort, search, includes, capturingOptions)
+        v2SearchFeedback(limit, page, filters, sort, search, includes, replyState, capturingOptions)
         return captured
             as? RawResponse<Page<V2SearchFeedbackResponseValue200ApplicationJsonPropertyDataItem>>
             ?: error("Response metadata was not captured")
@@ -544,14 +569,26 @@ class Feedback(internal val sellapp: SellApp) {
      */
     @JvmName("v2SearchFeedbackSuspend")
     suspend fun v2SearchFeedbackSuspend(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchFeedbackRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchFeedbackRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchFeedbackRequestApplicationJsonPropertySearch? = null,
         includes: List<V2SearchFeedbackRequestApplicationJsonPropertyIncludesItem>? = null,
+        replyState: ReplyState? = null,
         requestOptions: RequestOptions? = null,
     ): Page<V2SearchFeedbackResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            v2SearchFeedback(filters, sort, search, includes, requestOptions)
+            v2SearchFeedback(
+                limit,
+                page,
+                filters,
+                sort,
+                search,
+                includes,
+                replyState,
+                requestOptions,
+            )
         }
 
     /**
@@ -563,14 +600,26 @@ class Feedback(internal val sellapp: SellApp) {
      */
     @JvmName("v2SearchFeedbackWithResponseSuspend")
     suspend fun v2SearchFeedbackWithResponseSuspend(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchFeedbackRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchFeedbackRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchFeedbackRequestApplicationJsonPropertySearch? = null,
         includes: List<V2SearchFeedbackRequestApplicationJsonPropertyIncludesItem>? = null,
+        replyState: ReplyState? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<V2SearchFeedbackResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            v2SearchFeedbackWithResponse(filters, sort, search, includes, requestOptions)
+            v2SearchFeedbackWithResponse(
+                limit,
+                page,
+                filters,
+                sort,
+                search,
+                includes,
+                replyState,
+                requestOptions,
+            )
         }
 
     /**

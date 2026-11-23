@@ -14,6 +14,7 @@ import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.models.ListAffiliatesResponseValue200ApplicationJsonPropertyDataItem
 import app.sell.sellapp.models.SdkGetAffiliateResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkUpdateAffiliateStatusResponseValue200ApplicationJson
+import app.sell.sellapp.types.AffiliatesPayoutMethod
 import app.sell.sellapp.types.AffiliatesStatus
 import app.sell.sellapp.types.SdkUpdateAffiliateStatusRequestApplicationJsonStatus
 import com.fasterxml.jackson.core.type.TypeReference
@@ -31,11 +32,23 @@ class Affiliates(internal val sellapp: SellApp) {
      * List affiliates
      *
      * List store affiliate memberships, approved profile details, referral counts, and integer
-     * USD-cent balances. Requires the `affiliate` ability. OAuth callers use the admin grant and
-     * select a store with X-STORE. Current membership and role permissions apply to every request.
+     * USD-cent balances, newest first, 15 per page by default. Requires the `affiliate` ability.
+     * Filter by `status`, `search`, `custom_rates_only`, and `payout_method`, and send
+     * `sort=-earnings` to list the top earners first. A `status`, `custom_rates_only`, or
+     * `payout_method` value the API does not know returns `422`; an unknown `sort` value is
+     * ignored. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * membership and role permissions apply to every request.
      *
      * @param status Filter by affiliate program status.
      * @param search Search affiliate email addresses and profile identifiers.
+     * @param customRatesOnly Send `true` to list only affiliates with custom per-product commission
+     *   rates (see `GET /v2/affiliates/{affiliate}/products`). `false` lists everyone. Accepts
+     *   `true`, `false`, `1`, or `0`.
+     * @param payoutMethod List only affiliates who chose this payout method. Uppercase, as returned
+     *   in `payout_method`.
+     * @param sort Send `-earnings` to list the affiliates who earned the most first: available,
+     *   pending, and paid balances added together, largest first. Without it, or with any other
+     *   value, the newest affiliates come first.
      * @param limit Number of items to return per page.
      * @param page Page number to return.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
@@ -45,6 +58,9 @@ class Affiliates(internal val sellapp: SellApp) {
     fun list(
         status: AffiliatesStatus? = null,
         search: String? = null,
+        customRatesOnly: Boolean? = null,
+        payoutMethod: AffiliatesPayoutMethod? = null,
+        sort: String? = null,
         limit: Int? = null,
         page: Long? = null,
         requestOptions: RequestOptions? = null,
@@ -68,6 +84,9 @@ class Affiliates(internal val sellapp: SellApp) {
         ) {
             status?.let { add("status" to it.value) }
             addIfNotNull("search", search)
+            customRatesOnly?.let { add("custom_rates_only" to it.toString()) }
+            payoutMethod?.let { add("payout_method" to it.value) }
+            sort?.let { add("sort" to it.toString()) }
             limit?.let { add("limit" to it.toString()) }
             page?.let { add("page" to it.toString()) }
         }
@@ -77,6 +96,9 @@ class Affiliates(internal val sellapp: SellApp) {
     fun listWithResponse(
         status: AffiliatesStatus? = null,
         search: String? = null,
+        customRatesOnly: Boolean? = null,
+        payoutMethod: AffiliatesPayoutMethod? = null,
+        sort: String? = null,
         limit: Int? = null,
         page: Long? = null,
         requestOptions: RequestOptions? = null,
@@ -86,7 +108,7 @@ class Affiliates(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        list(status, search, limit, page, capturingOptions)
+        list(status, search, customRatesOnly, payoutMethod, sort, limit, page, capturingOptions)
         return captured
             as? RawResponse<Page<ListAffiliatesResponseValue200ApplicationJsonPropertyDataItem>>
             ?: error("Response metadata was not captured")
@@ -102,12 +124,15 @@ class Affiliates(internal val sellapp: SellApp) {
     suspend fun listSuspend(
         status: AffiliatesStatus? = null,
         search: String? = null,
+        customRatesOnly: Boolean? = null,
+        payoutMethod: AffiliatesPayoutMethod? = null,
+        sort: String? = null,
         limit: Int? = null,
         page: Long? = null,
         requestOptions: RequestOptions? = null,
     ): Page<ListAffiliatesResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            list(status, search, limit, page, requestOptions)
+            list(status, search, customRatesOnly, payoutMethod, sort, limit, page, requestOptions)
         }
 
     /**
@@ -121,12 +146,24 @@ class Affiliates(internal val sellapp: SellApp) {
     suspend fun listWithResponseSuspend(
         status: AffiliatesStatus? = null,
         search: String? = null,
+        customRatesOnly: Boolean? = null,
+        payoutMethod: AffiliatesPayoutMethod? = null,
+        sort: String? = null,
         limit: Int? = null,
         page: Long? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<ListAffiliatesResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            listWithResponse(status, search, limit, page, requestOptions)
+            listWithResponse(
+                status,
+                search,
+                customRatesOnly,
+                payoutMethod,
+                sort,
+                limit,
+                page,
+                requestOptions,
+            )
         }
 
     /**

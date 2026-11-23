@@ -11,9 +11,8 @@ import com.fasterxml.jackson.databind.JsonNode
 /** SdkRetryOrderDynamicDeliveryRequestApplicationJson model. */
 data class SdkRetryOrderDynamicDeliveryRequestApplicationJson(
     /**
-     * Delivered product record ID, not a catalog product or order line-item ID. The public
-     * order-deliverables response does not currently expose this ID; obtain it from an authorized
-     * integration context before requesting a retry.
+     * Delivered product record ID, not a catalog product or order line-item ID. Read it from
+     * `delivered_product_id` in `GET /v2/orders/{order}/deliverables`.
      */
     @JsonProperty("delivered_product_id") val deliveredProductId: Long
 ) {

@@ -98,6 +98,25 @@ class CommunityConnectionsTest : TestBase() {
     }
 
     @Test
+    fun `listFailedGrantReasons returns a typed response`() {
+        stubResponse("GET", "/v2/community-connections/failed-grant-reasons", 200, "{\"data\": []}")
+        val result = api().listFailedGrantReasons()
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `syncDiscordRoles returns a typed response`() {
+        stubResponse(
+            "POST",
+            "/v2/community-connections/discord/sync-roles",
+            200,
+            "{\"data\": {\"platform\": \"discord\", \"synced_servers\": [], \"failed_count\": 0}}",
+        )
+        val result = api().syncDiscordRoles()
+        assertNotNull(result)
+    }
+
+    @Test
     fun `list translates 401 to UnauthorizedException`() {
         stubResponse("GET", "/v2/community-connections", 401)
         assertThrows(UnauthorizedException::class.java) {

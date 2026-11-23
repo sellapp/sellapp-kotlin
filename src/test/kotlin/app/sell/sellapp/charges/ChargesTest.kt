@@ -76,6 +76,22 @@ class ChargesTest : TestBase() {
     }
 
     @Test
+    fun `getSummary returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/charges/summary",
+            200,
+            "{\"data\": {\"period\": {\"preset\": \"sample\", \"start_date\": \"2024-01-01\", \"end_date\": \"2024-01-01\", \"timezone\": " +
+                "\"sample\", \"currency\": \"sample\"}, \"compared_with\": {\"start_date\": \"2024-01-01\", \"end_date\": \"2024-01-01\"}, " +
+                "\"revenue\": {\"currency\": \"sample\", \"total_cents\": 0, \"previous_total_cents\": 0, \"formatted\": \"sample\", " +
+                "\"previous_formatted\": \"sample\", \"trend\": \"sample\", \"trend_up\": false}, \"completed_charges\": {\"count\": 0, " +
+                "\"previous_count\": 0, \"trend\": \"sample\", \"trend_up\": false}}}",
+        )
+        val result = api().getSummary()
+        assertNotNull(result)
+    }
+
+    @Test
     fun `list translates 401 to UnauthorizedException`() {
         stubResponse("GET", "/v2/charges", 401)
         assertThrows(UnauthorizedException::class.java) {

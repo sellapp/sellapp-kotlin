@@ -8,6 +8,7 @@ import app.sell.sellapp.common.http.PatchField
 import app.sell.sellapp.common.http.RawResponse
 import app.sell.sellapp.common.http.RequestConfig
 import app.sell.sellapp.common.http.RequestOptions
+import app.sell.sellapp.common.http.addIfNotNull
 import app.sell.sellapp.common.http.bodyOf
 import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.http.patchBodyOf
@@ -442,14 +443,28 @@ class Blacklists(internal val sellapp: SellApp) {
     /**
      * List blacklist rules
      *
-     * List store-scoped blacklist rules. OAuth callers use the admin grant and select a store with
-     * X-STORE. Current membership and role permissions apply to every request.
+     * List your store's blacklist rules, oldest first, 15 per page by default. Narrow the list with
+     * `type` and with `search`, which matches part of the blocked value or of the description. An
+     * unknown `type`, a `search` longer than 255 characters or a `limit` over 100 returns `422`. An
+     * empty `data` array means no rule matches. OAuth callers use the admin grant and select a
+     * store with X-STORE. Current membership and role permissions apply to every request.
      *
+     * @param limit Number of items to return per page.
+     * @param page Page number to return.
+     * @param search Text to look for in the blocked value or the description, matched literally and
+     *   anywhere in the text, up to 255 characters.
+     * @param type Return only rules of this type.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return a [app.sell.sellapp.common.http.Page] of results
      */
     @JvmOverloads
-    fun v2ListBlacklists(requestOptions: RequestOptions? = null): Page<Blacklist> {
+    fun v2ListBlacklists(
+        limit: Long? = null,
+        page: Long? = null,
+        search: String? = null,
+        type: BlacklistType? = null,
+        requestOptions: RequestOptions? = null,
+    ): Page<Blacklist> {
         val itemType = object : TypeReference<Blacklist>() {}
         return sellapp.baseClient.requestPage(
             method = "GET",
@@ -461,19 +476,28 @@ class Blacklists(internal val sellapp: SellApp) {
             itemSchema = app.sell.sellapp.models.Blacklist.runtimeSchema,
             before = null,
             after = null,
-        ) {}
+        ) {
+            limit?.let { add("limit" to it.toString()) }
+            page?.let { add("page" to it.toString()) }
+            addIfNotNull("search", search)
+            type?.let { add("type" to it.value) }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun v2ListBlacklistsWithResponse(
-        requestOptions: RequestOptions? = null
+        limit: Long? = null,
+        page: Long? = null,
+        search: String? = null,
+        type: BlacklistType? = null,
+        requestOptions: RequestOptions? = null,
     ): RawResponse<Page<Blacklist>> {
         var captured: RawResponse<Any?>? = null
         val capturingOptions =
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        v2ListBlacklists(capturingOptions)
+        v2ListBlacklists(limit, page, search, type, capturingOptions)
         return captured as? RawResponse<Page<Blacklist>>
             ?: error("Response metadata was not captured")
     }
@@ -486,9 +510,15 @@ class Blacklists(internal val sellapp: SellApp) {
      * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
      */
     @JvmName("v2ListBlacklistsSuspend")
-    suspend fun v2ListBlacklistsSuspend(requestOptions: RequestOptions? = null): Page<Blacklist> =
+    suspend fun v2ListBlacklistsSuspend(
+        limit: Long? = null,
+        page: Long? = null,
+        search: String? = null,
+        type: BlacklistType? = null,
+        requestOptions: RequestOptions? = null,
+    ): Page<Blacklist> =
         sellapp.baseClient.runCancellable {
-            v2ListBlacklists(requestOptions)
+            v2ListBlacklists(limit, page, search, type, requestOptions)
         }
 
     /**
@@ -500,10 +530,14 @@ class Blacklists(internal val sellapp: SellApp) {
      */
     @JvmName("v2ListBlacklistsWithResponseSuspend")
     suspend fun v2ListBlacklistsWithResponseSuspend(
-        requestOptions: RequestOptions? = null
+        limit: Long? = null,
+        page: Long? = null,
+        search: String? = null,
+        type: BlacklistType? = null,
+        requestOptions: RequestOptions? = null,
     ): RawResponse<Page<Blacklist>> =
         sellapp.baseClient.runCancellable {
-            v2ListBlacklistsWithResponse(requestOptions)
+            v2ListBlacklistsWithResponse(limit, page, search, type, requestOptions)
         }
 
     /**

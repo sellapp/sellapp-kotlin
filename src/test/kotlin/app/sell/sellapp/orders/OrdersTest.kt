@@ -54,8 +54,8 @@ class OrdersTest : TestBase() {
                 "null, \"location\": null, \"proxied\": null}, \"payment\": {\"method\": null, \"transaction_id\": null, \"payment_id\": null, " +
                 "\"payment_capture_id\": null, \"blockchain_txid\": null, \"settlement_gateway\": null, \"has_checkout_url\": false}, " +
                 "\"totals\": {\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}, \"coupon_id\": null, \"line_items\": [], \"created_at\": null, " +
-                "\"updated_at\": null}}",
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}, " +
+                "\"coupon_id\": null, \"line_items\": [], \"created_at\": null, \"updated_at\": null}}",
         )
         val result = api().get("sample-arg")
         assertNotNull(result)
@@ -71,8 +71,8 @@ class OrdersTest : TestBase() {
                 "null, \"location\": null, \"proxied\": null}, \"payment\": {\"method\": null, \"transaction_id\": null, \"payment_id\": null, " +
                 "\"payment_capture_id\": null, \"blockchain_txid\": null, \"settlement_gateway\": null, \"has_checkout_url\": false}, " +
                 "\"totals\": {\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}, \"coupon_id\": null, \"line_items\": [], \"created_at\": null, " +
-                "\"updated_at\": null}}",
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}, " +
+                "\"coupon_id\": null, \"line_items\": [], \"created_at\": null, \"updated_at\": null}}",
         )
         val result =
             api()
@@ -100,8 +100,9 @@ class OrdersTest : TestBase() {
                 "null, \"location\": null, \"proxied\": null}, \"payment\": {\"method\": null, \"transaction_id\": null, \"payment_id\": null, " +
                 "\"payment_capture_id\": null, \"blockchain_txid\": null, \"settlement_gateway\": null, \"has_checkout_url\": false, " +
                 "\"checkout_url\": null}, \"totals\": {\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, " +
-                "\"total_cents\": 0, \"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}, \"coupon_id\": null, \"line_items\": [], " +
-                "\"created_at\": null, \"updated_at\": null}, \"message\": \"sample\"}",
+                "\"total_cents\": 0, \"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, " +
+                "\"refunded_total_cents\": 0}, \"coupon_id\": null, \"line_items\": [], \"created_at\": null, \"updated_at\": null}, " +
+                "\"message\": \"sample\"}",
         )
         val result = api().createCheckout("sample-arg")
         assertNotNull(result)
@@ -118,9 +119,9 @@ class OrdersTest : TestBase() {
                 "\"country\": null, \"location\": null, \"proxied\": null}, \"payment\": {\"method\": null, \"transaction_id\": null, " +
                 "\"payment_id\": null, \"payment_capture_id\": null, \"blockchain_txid\": null, \"settlement_gateway\": null, " +
                 "\"has_checkout_url\": false}, \"totals\": {\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, " +
-                "\"total_cents\": 0, \"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}, \"coupon_id\": null, \"line_items\": [], " +
-                "\"created_at\": null, \"updated_at\": null}, \"refund\": {\"status\": \"pending\", \"provider\": null, \"provider_refund_id\": " +
-                "null, \"amount_cents\": null, \"currency\": null}}}",
+                "\"total_cents\": 0, \"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, " +
+                "\"refunded_total_cents\": 0}, \"coupon_id\": null, \"line_items\": [], \"created_at\": null, \"updated_at\": null}, \"refund\": " +
+                "{\"status\": \"pending\", \"provider\": null, \"provider_refund_id\": null, \"amount_cents\": null, \"currency\": null}}}",
         )
         val result = api().createRefund("sample-arg")
         assertNotNull(result)
@@ -136,8 +137,8 @@ class OrdersTest : TestBase() {
                 "null, \"location\": null, \"proxied\": null}, \"payment\": {\"method\": null, \"transaction_id\": null, \"payment_id\": null, " +
                 "\"payment_capture_id\": null, \"blockchain_txid\": null, \"settlement_gateway\": null, \"has_checkout_url\": false}, " +
                 "\"totals\": {\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}, \"coupon_id\": null, \"line_items\": [], \"created_at\": null, " +
-                "\"updated_at\": null}, \"meta\": {\"effects_reset\": 0}}",
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}, " +
+                "\"coupon_id\": null, \"line_items\": [], \"created_at\": null, \"updated_at\": null}, \"meta\": {\"effects_reset\": 0}}",
         )
         val result = api().retryFulfillment("sample-arg")
         assertNotNull(result)
@@ -153,8 +154,8 @@ class OrdersTest : TestBase() {
                 "null, \"location\": null, \"proxied\": null}, \"payment\": {\"method\": null, \"transaction_id\": null, \"payment_id\": null, " +
                 "\"payment_capture_id\": null, \"blockchain_txid\": null, \"settlement_gateway\": null, \"has_checkout_url\": false}, " +
                 "\"totals\": {\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}, \"coupon_id\": null, \"line_items\": [], \"created_at\": null, " +
-                "\"updated_at\": null}, \"meta\": {\"queued\": true}}",
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}, " +
+                "\"coupon_id\": null, \"line_items\": [], \"created_at\": null, \"updated_at\": null}, \"meta\": {\"queued\": true}}",
         )
         val result = api().retryDynamicDelivery("sample-arg", deliveredProductId = 1)
         assertNotNull(result)
@@ -174,10 +175,22 @@ class OrdersTest : TestBase() {
                 "null, \"location\": null, \"proxied\": null}, \"payment\": {\"method\": null, \"transaction_id\": null, \"payment_id\": null, " +
                 "\"payment_capture_id\": null, \"blockchain_txid\": null, \"settlement_gateway\": null, \"has_checkout_url\": false}, " +
                 "\"totals\": {\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}, \"coupon_id\": null, \"line_items\": [], \"created_at\": null, " +
-                "\"updated_at\": null}, \"meta\": {\"notifications_sent\": 0}}",
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}, " +
+                "\"coupon_id\": null, \"line_items\": [], \"created_at\": null, \"updated_at\": null}, \"meta\": {\"notifications_sent\": 0}}",
         )
         val result = api().sendFulfillmentNotifications("sample-arg")
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `regenerateTelegramInvite returns a typed response`() {
+        stubResponse(
+            "POST",
+            "/v2/orders/sample-arg/telegram-invites",
+            200,
+            "{\"data\": {\"order_id\": 0, \"variant_id\": 0, \"invite_link\": \"sample\"}}",
+        )
+        val result = api().regenerateTelegramInvite("sample-arg")
         assertNotNull(result)
     }
 
@@ -198,8 +211,8 @@ class OrdersTest : TestBase() {
                 "null, \"location\": null, \"proxied\": null}, \"payment\": {\"method\": null, \"transaction_id\": null, \"payment_id\": null, " +
                 "\"payment_capture_id\": null, \"blockchain_txid\": null, \"settlement_gateway\": null, \"has_checkout_url\": false}, " +
                 "\"totals\": {\"currency\": \"sample\", \"subtotal_cents\": 0, \"total_exclusive_cents\": 0, \"total_cents\": 0, " +
-                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null}, \"coupon_id\": null, \"line_items\": [], \"created_at\": null, " +
-                "\"updated_at\": null}}",
+                "\"total_exclusive_usd_cents\": null, \"total_usd_cents\": null, \"refund_currency\": null, \"refunded_total_cents\": 0}, " +
+                "\"coupon_id\": null, \"line_items\": [], \"created_at\": null, \"updated_at\": null}}",
         )
         val result = api().payFromWallet("sample-arg")
         assertNotNull(result)

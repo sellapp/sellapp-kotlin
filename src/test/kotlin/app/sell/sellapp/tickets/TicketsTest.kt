@@ -7,6 +7,10 @@ import app.sell.sellapp.common.exceptions.NotFoundException
 import app.sell.sellapp.common.exceptions.RateLimitException
 import app.sell.sellapp.common.exceptions.UnauthorizedException
 import app.sell.sellapp.test.TestBase
+import app.sell.sellapp.types.SdkBatchUpdateTicketsRequestApplicationJsonAction
+import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
+import com.github.tomakehurst.wiremock.client.WireMock.patchRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -101,6 +105,39 @@ class TicketsTest : TestBase() {
                 "\"read_status\": {\"customer\": false, \"store\": false}, \"order_id\": null, \"reason\": null, \"message_count\": 0}}",
         )
         val result = api().update("sample-arg")
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `batchUpdate returns a typed response`() {
+        stubResponse("PATCH", "/v2/tickets/batch", 200, "{\"data\": []}")
+        val result =
+            api()
+                .batchUpdate(
+                    action =
+                        SdkBatchUpdateTicketsRequestApplicationJsonAction.values().first {
+                            it != SdkBatchUpdateTicketsRequestApplicationJsonAction.Unknown
+                        },
+                    resources = listOf<Long>(1),
+                )
+        assertNotNull(result)
+        wireMockRule.verify(
+            patchRequestedFor(urlPathMatching("/v2/tickets/batch"))
+                .withRequestBody(matchingJsonPath("\$.action"))
+        )
+    }
+
+    @Test
+    fun `getContext returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/tickets/sample-arg/context",
+            200,
+            "{\"data\": {\"ticket_id\": 0, \"resolution\": {\"outcome\": null, \"resolved_at\": null, \"resolved_by_rule_id\": null}, " +
+                "\"customer\": {\"email\": null, \"completed_orders\": 0, \"lifetime_spend_usd_cents\": 0, \"first_order_at\": null}, " +
+                "\"linked_order\": null, \"refund_options\": [], \"activity\": []}}",
+        )
+        val result = api().getContext("sample-arg")
         assertNotNull(result)
     }
 

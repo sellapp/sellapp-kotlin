@@ -26,7 +26,10 @@ import app.sell.sellapp.models.ReplaceProductVariantWithPutRequestApplicationJso
 import app.sell.sellapp.models.SdkBatchCreateProductVariantsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkBatchUpdateProductVariantsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkCreateProductVariantResponseValue201ApplicationJson
+import app.sell.sellapp.models.SdkDuplicateProductVariantResponseValue201ApplicationJson
 import app.sell.sellapp.models.SdkGetProductVariantResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkPublishProductVariantResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkReorderProductVariantsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkReplaceProductVariantWithPutResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkUpdateProductVariantResponseValue200ApplicationJson
 import app.sell.sellapp.models.SearchProductVariantsRequestApplicationJsonPropertyFiltersItem
@@ -1049,11 +1052,16 @@ class ProductVariants(internal val sellapp: SellApp) {
      * Search product variants
      *
      * Search a product's variants using JSON body filters, search terms, includes, and sort
-     * instructions. Requires a token with the listing ability. OAuth callers use the admin grant
-     * and select a store with X-STORE. Current membership and role permissions apply to every
-     * request.
+     * instructions, 15 per page by default. Draft variants are left out unless you send
+     * `with_drafts` or `only_drafts`. Requires a token with the listing ability. OAuth callers use
+     * the admin grant and select a store with X-STORE. Current membership and role permissions
+     * apply to every request.
      *
      * @param product The product path parameter.
+     * @param limit Number of items to return per page.
+     * @param page Page number to return.
+     * @param withDrafts Include draft variants alongside published variants.
+     * @param onlyDrafts Return only draft variants.
      * @param filters the filters of the request.
      * @param sort the sort of the request.
      * @param search the search of the request.
@@ -1064,6 +1072,10 @@ class ProductVariants(internal val sellapp: SellApp) {
     @JvmOverloads
     fun search(
         product: String,
+        limit: Long? = null,
+        page: Long? = null,
+        withDrafts: Boolean? = null,
+        onlyDrafts: Boolean? = null,
         filters: List<SearchProductVariantsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchProductVariantsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchProductVariantsRequestApplicationJsonPropertySearch? = null,
@@ -1088,12 +1100,21 @@ class ProductVariants(internal val sellapp: SellApp) {
                     .runtimeSchema,
             before = null,
             after = null,
-        ) {}
+        ) {
+            limit?.let { add("limit" to it.toString()) }
+            page?.let { add("page" to it.toString()) }
+            withDrafts?.let { add("with_drafts" to it.toString()) }
+            onlyDrafts?.let { add("only_drafts" to it.toString()) }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun searchWithResponse(
         product: String,
+        limit: Long? = null,
+        page: Long? = null,
+        withDrafts: Boolean? = null,
+        onlyDrafts: Boolean? = null,
         filters: List<SearchProductVariantsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchProductVariantsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchProductVariantsRequestApplicationJsonPropertySearch? = null,
@@ -1105,7 +1126,18 @@ class ProductVariants(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        search(product, filters, sort, search, includes, capturingOptions)
+        search(
+            product,
+            limit,
+            page,
+            withDrafts,
+            onlyDrafts,
+            filters,
+            sort,
+            search,
+            includes,
+            capturingOptions,
+        )
         return captured
             as?
             RawResponse<Page<SearchProductVariantsResponseValue200ApplicationJsonPropertyDataItem>>
@@ -1121,6 +1153,10 @@ class ProductVariants(internal val sellapp: SellApp) {
     @JvmName("searchSuspend")
     suspend fun searchSuspend(
         product: String,
+        limit: Long? = null,
+        page: Long? = null,
+        withDrafts: Boolean? = null,
+        onlyDrafts: Boolean? = null,
         filters: List<SearchProductVariantsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchProductVariantsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchProductVariantsRequestApplicationJsonPropertySearch? = null,
@@ -1128,7 +1164,18 @@ class ProductVariants(internal val sellapp: SellApp) {
         requestOptions: RequestOptions? = null,
     ): Page<SearchProductVariantsResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            search(product, filters, sort, search, includes, requestOptions)
+            search(
+                product,
+                limit,
+                page,
+                withDrafts,
+                onlyDrafts,
+                filters,
+                sort,
+                search,
+                includes,
+                requestOptions,
+            )
         }
 
     /**
@@ -1141,6 +1188,10 @@ class ProductVariants(internal val sellapp: SellApp) {
     @JvmName("searchWithResponseSuspend")
     suspend fun searchWithResponseSuspend(
         product: String,
+        limit: Long? = null,
+        page: Long? = null,
+        withDrafts: Boolean? = null,
+        onlyDrafts: Boolean? = null,
         filters: List<SearchProductVariantsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchProductVariantsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchProductVariantsRequestApplicationJsonPropertySearch? = null,
@@ -1148,7 +1199,18 @@ class ProductVariants(internal val sellapp: SellApp) {
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<SearchProductVariantsResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            searchWithResponse(product, filters, sort, search, includes, requestOptions)
+            searchWithResponse(
+                product,
+                limit,
+                page,
+                withDrafts,
+                onlyDrafts,
+                filters,
+                sort,
+                search,
+                includes,
+                requestOptions,
+            )
         }
 
     /**
@@ -1422,5 +1484,298 @@ class ProductVariants(internal val sellapp: SellApp) {
     ): RawResponse<Unit> =
         sellapp.baseClient.runCancellable {
             batchDeleteWithResponse(product, resources, requestOptions)
+        }
+
+    /**
+     * Publish a product variant
+     *
+     * Publish one draft option of a booking product so customers can book it. It is checked the way
+     * the booking editor checks it: a title, a description of at least 5 characters, finished
+     * booking settings, a price, and payment methods enabled for the store that can take its
+     * currency. On a published booking product the option can be booked straight away; a draft
+     * booking product still needs `POST /v2/products/{product}/publish`, which needs at least one
+     * published option when the product has several. Only booking options are published one at a
+     * time. A variant of any other kind of product returns `422` on `variant`: its variants are
+     * published with the product through `POST /v2/products/{product}/publish`. Requires the
+     * `listing` API-key ability and the `listing` permission in your team role. Safe to repeat:
+     * once the option is published, another call changes nothing and returns `422` with `This
+     * booking option is already published.` on `variant`. Every other refusal is also `422` on
+     * `variant`, with one sentence per thing the option still needs. A variant of another product,
+     * or a product of another store, returns `404`. OAuth callers use the admin grant and select a
+     * store with X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param product The product path parameter.
+     * @param variant The variant path parameter.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkPublishProductVariantResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun publish(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkPublishProductVariantResponseValue200ApplicationJson {
+        val body = linkedMapOf<String, Any?>()
+        val config =
+            RequestConfig(
+                method = "POST",
+                path =
+                    "/v2/products/${encodePathSegment(product)}/variants/${encodePathSegment(variant)}/publish",
+                body = body,
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models.SdkPublishProductVariantResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "publishProductVariant",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkPublishProductVariantResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun publishWithResponse(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkPublishProductVariantResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        publish(product, variant, capturingOptions)
+        return captured as? RawResponse<SdkPublishProductVariantResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [publish]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [publish] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("publishSuspend")
+    suspend fun publishSuspend(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkPublishProductVariantResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            publish(product, variant, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [publishWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [publishWithResponse] under `withContext(Dispatchers.IO)`, so this
+     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("publishWithResponseSuspend")
+    suspend fun publishWithResponseSuspend(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkPublishProductVariantResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            publishWithResponse(product, variant, requestOptions)
+        }
+
+    /**
+     * Duplicate a product variant
+     *
+     * Copy a variant of a normal product onto the same product and return the copy. The copy keeps
+     * every setting, the title, and the draft state, so a copy of a published variant is on sale
+     * straight away. Downloadable files and their folders are copied too. Serial codes and issued
+     * licence keys are not copied: a copy that delivers serial codes gets a stock of `0`, so it
+     * shows as sold out until you add codes. Subscription variants cannot be duplicated. Requires
+     * the `listing` API-key ability and the `listing` permission in your team role. Not safe to
+     * retry blindly: every call creates another variant. If a response is lost, list the product's
+     * variants, with `with_drafts=true` for a draft, before trying again. A variant of a bundle,
+     * add-on, credits product, booking product, or course returns `422` on `product`. A
+     * subscription variant returns `422` on `variant`. A variant of another product returns `404`.
+     * OAuth callers use the admin grant and select a store with X-STORE. Current membership and
+     * role permissions apply to every request.
+     *
+     * @param product The product path parameter.
+     * @param variant The variant path parameter.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkDuplicateProductVariantResponseValue201ApplicationJson
+     */
+    @JvmOverloads
+    fun duplicate(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkDuplicateProductVariantResponseValue201ApplicationJson {
+        val body = linkedMapOf<String, Any?>()
+        val config =
+            RequestConfig(
+                method = "POST",
+                path =
+                    "/v2/products/${encodePathSegment(product)}/variants/${encodePathSegment(variant)}/duplicate",
+                body = body,
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkDuplicateProductVariantResponseValue201ApplicationJson
+                        .runtimeSchema,
+                operationId = "duplicateProductVariant",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkDuplicateProductVariantResponseValue201ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun duplicateWithResponse(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkDuplicateProductVariantResponseValue201ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        duplicate(product, variant, capturingOptions)
+        return captured as? RawResponse<SdkDuplicateProductVariantResponseValue201ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [duplicate]. Use this from a `suspend` function or coroutine
+     * scope.
+     *
+     * Delegates to the blocking [duplicate] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("duplicateSuspend")
+    suspend fun duplicateSuspend(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkDuplicateProductVariantResponseValue201ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            duplicate(product, variant, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [duplicateWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [duplicateWithResponse] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("duplicateWithResponseSuspend")
+    suspend fun duplicateWithResponseSuspend(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkDuplicateProductVariantResponseValue201ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            duplicateWithResponse(product, variant, requestOptions)
+        }
+
+    /**
+     * Reorder product variants
+     *
+     * Set the order buyers see a normal product's published variants in, first to last. Send every
+     * published variant ID exactly once; draft variants are not part of the order and are refused.
+     * The response lists the product's published variants in their new order, without pagination.
+     * Requires the `listing` API-key ability and the `listing` permission in your team role. Safe
+     * to repeat: the same list gives the same order. A list that leaves out a published variant, or
+     * names a draft or a variant of another product, returns `422` on `variant_ids`; read the
+     * variants again and send the full list. An ID sent twice returns `422` on `variant_ids.{i}`. A
+     * listing that is not a normal product returns `422` on `product`. OAuth callers use the admin
+     * grant and select a store with X-STORE. Current membership and role permissions apply to every
+     * request.
+     *
+     * @param product The product path parameter.
+     * @param variantIds Every published variant ID of the product, first to last.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkReorderProductVariantsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun reorder(
+        product: String,
+        variantIds: List<Long>,
+        requestOptions: RequestOptions? = null,
+    ): SdkReorderProductVariantsResponseValue200ApplicationJson {
+        val body = bodyOf("variant_ids" to variantIds)
+        body["variant_ids"] = variantIds
+        val config =
+            RequestConfig(
+                method = "PUT",
+                path = "/v2/products/${encodePathSegment(product)}/variants/order",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkReorderProductVariantsRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models.SdkReorderProductVariantsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "reorderProductVariants",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkReorderProductVariantsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun reorderWithResponse(
+        product: String,
+        variantIds: List<Long>,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkReorderProductVariantsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        reorder(product, variantIds, capturingOptions)
+        return captured as? RawResponse<SdkReorderProductVariantsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [reorder]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [reorder] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("reorderSuspend")
+    suspend fun reorderSuspend(
+        product: String,
+        variantIds: List<Long>,
+        requestOptions: RequestOptions? = null,
+    ): SdkReorderProductVariantsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            reorder(product, variantIds, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [reorderWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [reorderWithResponse] under `withContext(Dispatchers.IO)`, so this
+     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("reorderWithResponseSuspend")
+    suspend fun reorderWithResponseSuspend(
+        product: String,
+        variantIds: List<Long>,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkReorderProductVariantsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            reorderWithResponse(product, variantIds, requestOptions)
         }
 }

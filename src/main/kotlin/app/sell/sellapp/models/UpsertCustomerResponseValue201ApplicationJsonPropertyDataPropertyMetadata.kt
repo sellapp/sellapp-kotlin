@@ -20,7 +20,7 @@ class UpsertCustomerResponseValue201ApplicationJsonPropertyDataPropertyMetadata 
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"UpsertCustomerResponseValue201ApplicationJsonPropertyDataPropertyMetadata\",\"properties\":{},\"required\":[],\"additionalProperties\":{\"kind\":\"object\",\"modelName\":\"ScalarMetadataValue\",\"properties\":{},\"required\":[],\"additionalProperties\":true},\"constraints\":{\"maxProperties\":50}}"
+                "{\"kind\":\"object\",\"modelName\":\"UpsertCustomerResponseValue201ApplicationJsonPropertyDataPropertyMetadata\",\"properties\":{},\"required\":[],\"additionalProperties\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"union\",\"variants\":[{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":500}},{\"kind\":\"primitive\",\"type\":\"number\"},{\"kind\":\"primitive\",\"type\":\"boolean\"}],\"composition\":\"oneOf\"}},\"constraints\":{\"maxProperties\":50}}"
             )
     }
 }

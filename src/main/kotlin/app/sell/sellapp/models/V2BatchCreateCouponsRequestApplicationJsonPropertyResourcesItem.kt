@@ -2,6 +2,6 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SdkCreateCouponRequestApplicationJson]. */
+/** Alias for [SdkV2CreateCouponRequestApplicationJson]. */
 typealias V2BatchCreateCouponsRequestApplicationJsonPropertyResourcesItem =
-    SdkCreateCouponRequestApplicationJson
+    SdkV2CreateCouponRequestApplicationJson

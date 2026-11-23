@@ -331,6 +331,8 @@ Search ticket messages
 ```kotlin
 fun v2SearchTicketMessages(
         ticket: String,
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchTicketMessagesRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchTicketMessagesRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchTicketMessagesRequestApplicationJsonPropertySearch? = null,
@@ -342,6 +344,8 @@ fun v2SearchTicketMessages(
 | Argument | Native type | Required |
 | --- | --- | --- |
 | ticket | `String` | Yes |
+| limit | `Long?` | No |
+| page | `Long?` | No |
 | filters | `List<V2SearchTicketMessagesRequestApplicationJsonPropertyFiltersItem>?` | No |
 | sort | `List<V2SearchTicketMessagesRequestApplicationJsonPropertySortItem>?` | No |
 | search | `V2SearchTicketMessagesRequestApplicationJsonPropertySearch?` | No |

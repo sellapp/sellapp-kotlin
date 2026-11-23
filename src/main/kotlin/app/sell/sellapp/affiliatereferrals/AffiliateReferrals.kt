@@ -7,6 +7,7 @@ import app.sell.sellapp.common.http.Page
 import app.sell.sellapp.common.http.RawResponse
 import app.sell.sellapp.common.http.RequestConfig
 import app.sell.sellapp.common.http.RequestOptions
+import app.sell.sellapp.common.http.addIfNotNull
 import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.http.patchBodyOf
 import app.sell.sellapp.common.json.runtimeSchema
@@ -29,10 +30,15 @@ class AffiliateReferrals(internal val sellapp: SellApp) {
     /**
      * List affiliate referrals
      *
-     * List store referrals with their attributed order and purchase line item. Requires the
-     * `affiliate` credential ability. OAuth callers use the admin grant and select a store with
-     * X-STORE. Current membership and role permissions apply to every request.
+     * List store referrals with their attributed order and purchase line item, newest first, 15 per
+     * page by default. Requires the `affiliate` credential ability. Use `search` to find referrals
+     * by affiliate email, product or variant title, or an exact referral or order ID. OAuth callers
+     * use the admin grant and select a store with X-STORE. Current membership and role permissions
+     * apply to every request.
      *
+     * @param search Text to look for in the affiliate's email address and the product and variant
+     *   titles. A number also matches the referral ID or the order ID exactly. `%` and `_` match
+     *   themselves.
      * @param affiliateId Filter by store affiliate ID.
      * @param orderId Filter by attributed Order ID.
      * @param status Filter by referral status.
@@ -43,6 +49,7 @@ class AffiliateReferrals(internal val sellapp: SellApp) {
      */
     @JvmOverloads
     fun list(
+        search: String? = null,
         affiliateId: Long? = null,
         orderId: Long? = null,
         status: AffiliateReferralsStatus? = null,
@@ -69,6 +76,7 @@ class AffiliateReferrals(internal val sellapp: SellApp) {
             before = null,
             after = null,
         ) {
+            addIfNotNull("search", search)
             affiliateId?.let { add("affiliate_id" to it.toString()) }
             orderId?.let { add("order_id" to it.toString()) }
             status?.let { add("status" to it.value) }
@@ -79,6 +87,7 @@ class AffiliateReferrals(internal val sellapp: SellApp) {
 
     @Suppress("UNCHECKED_CAST")
     fun listWithResponse(
+        search: String? = null,
         affiliateId: Long? = null,
         orderId: Long? = null,
         status: AffiliateReferralsStatus? = null,
@@ -91,7 +100,7 @@ class AffiliateReferrals(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        list(affiliateId, orderId, status, limit, page, capturingOptions)
+        list(search, affiliateId, orderId, status, limit, page, capturingOptions)
         return captured
             as?
             RawResponse<Page<ListAffiliateReferralsResponseValue200ApplicationJsonPropertyDataItem>>
@@ -106,6 +115,7 @@ class AffiliateReferrals(internal val sellapp: SellApp) {
      */
     @JvmName("listSuspend")
     suspend fun listSuspend(
+        search: String? = null,
         affiliateId: Long? = null,
         orderId: Long? = null,
         status: AffiliateReferralsStatus? = null,
@@ -114,7 +124,7 @@ class AffiliateReferrals(internal val sellapp: SellApp) {
         requestOptions: RequestOptions? = null,
     ): Page<ListAffiliateReferralsResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            list(affiliateId, orderId, status, limit, page, requestOptions)
+            list(search, affiliateId, orderId, status, limit, page, requestOptions)
         }
 
     /**
@@ -126,6 +136,7 @@ class AffiliateReferrals(internal val sellapp: SellApp) {
      */
     @JvmName("listWithResponseSuspend")
     suspend fun listWithResponseSuspend(
+        search: String? = null,
         affiliateId: Long? = null,
         orderId: Long? = null,
         status: AffiliateReferralsStatus? = null,
@@ -134,7 +145,7 @@ class AffiliateReferrals(internal val sellapp: SellApp) {
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<ListAffiliateReferralsResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            listWithResponse(affiliateId, orderId, status, limit, page, requestOptions)
+            listWithResponse(search, affiliateId, orderId, status, limit, page, requestOptions)
         }
 
     /**

@@ -61,12 +61,20 @@ List webhook deliveries
 
 ```kotlin
 fun listDeliveries(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        limit: Int? = null,
+        eventType: String? = null,
+        status: WebhookPlatformStatus? = null,
+        requestOptions: RequestOptions? = null,
     ): Page<ListWebhookDeliveriesResponseValue200ApplicationJsonPropertyDataItem>
 ```
 
 | Argument | Native type | Required |
 | --- | --- | --- |
+| page | `Long?` | No |
+| limit | `Int?` | No |
+| eventType | `String?` | No |
+| status | `WebhookPlatformStatus?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<ListWebhookDeliveriesResponseValue200ApplicationJsonPropertyDataItem>`.

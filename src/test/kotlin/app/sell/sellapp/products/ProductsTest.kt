@@ -11,6 +11,7 @@ import app.sell.sellapp.test.TestBase
 import app.sell.sellapp.types.CatalogVisibility
 import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -147,6 +148,58 @@ class ProductsTest : TestBase() {
     fun `batchDelete completes without throwing`() {
         stubResponse("DELETE", "/v2/products/batch", 204, "{\"data\": []}")
         api().batchDelete(resources = listOf<Long>(0))
+    }
+
+    @Test
+    fun `publish returns a typed response`() {
+        stubResponse(
+            "POST",
+            "/v2/products/sample-arg/publish",
+            200,
+            "{\"data\": {\"id\": 0, \"title\": \"sample\", \"slug\": \"sample\", \"description\": \"sample\", \"images\": [], \"order\": " +
+                "null, \"visibility\": \"sample\", \"delivery_text\": null, \"additional_information\": [], \"other_settings\": {\"faq\": [], " +
+                "\"video_url\": \"sample\", \"redirect_url\": \"sample\", \"product_title\": \"sample\", \"product_description\": \"sample\"}, " +
+                "\"deleted_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, " +
+                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\"}}",
+        )
+        val result = api().publish("sample-arg")
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `duplicate returns a typed response`() {
+        stubResponse(
+            "POST",
+            "/v2/products/sample-arg/duplicate",
+            200,
+            "{\"data\": {\"id\": 0, \"title\": \"sample\", \"slug\": \"sample\", \"description\": \"sample\", \"images\": [], \"order\": " +
+                "null, \"visibility\": \"sample\", \"delivery_text\": null, \"additional_information\": [], \"other_settings\": {\"faq\": [], " +
+                "\"video_url\": \"sample\", \"redirect_url\": \"sample\", \"product_title\": \"sample\", \"product_description\": \"sample\"}, " +
+                "\"deleted_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, " +
+                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\"}}",
+        )
+        val result = api().duplicate("sample-arg")
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `move returns a typed response`() {
+        stubResponse(
+            "PUT",
+            "/v2/products/sample-arg/position",
+            200,
+            "{\"data\": {\"id\": 0, \"title\": \"sample\", \"slug\": \"sample\", \"description\": \"sample\", \"images\": [], \"order\": " +
+                "null, \"visibility\": \"sample\", \"delivery_text\": null, \"additional_information\": [], \"other_settings\": {\"faq\": [], " +
+                "\"video_url\": \"sample\", \"redirect_url\": \"sample\", \"product_title\": \"sample\", \"product_description\": \"sample\"}, " +
+                "\"deleted_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, " +
+                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\"}}",
+        )
+        val result = api().move("sample-arg", position = 1)
+        assertNotNull(result)
+        wireMockRule.verify(
+            putRequestedFor(urlPathMatching("/v2/products/sample-arg/position"))
+                .withRequestBody(matchingJsonPath("\$.position"))
+        )
     }
 
     @Test

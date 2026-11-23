@@ -92,6 +92,18 @@ class PromotionsTest : TestBase() {
     }
 
     @Test
+    fun `getUsage returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/promotions/sample-arg/usage",
+            200,
+            "{\"data\": {\"promotion_id\": 0, \"uses\": 0, \"recent_order_ids\": []}}",
+        )
+        val result = api().getUsage("sample-arg")
+        assertNotNull(result)
+    }
+
+    @Test
     fun `list translates 401 to UnauthorizedException`() {
         stubResponse("GET", "/v2/promotions", 401)
         assertThrows(UnauthorizedException::class.java) {

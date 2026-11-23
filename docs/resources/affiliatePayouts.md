@@ -12,6 +12,8 @@ List affiliate payouts
 fun list(
         affiliateId: Long? = null,
         status: AffiliatePayoutsStatus? = null,
+        payoutMethod: AffiliatesPayoutMethod? = null,
+        search: String? = null,
         limit: Int? = null,
         page: Long? = null,
         requestOptions: RequestOptions? = null,
@@ -22,6 +24,8 @@ fun list(
 | --- | --- | --- |
 | affiliateId | `Long?` | No |
 | status | `AffiliatePayoutsStatus?` | No |
+| payoutMethod | `AffiliatesPayoutMethod?` | No |
+| search | `String?` | No |
 | limit | `Int?` | No |
 | page | `Long?` | No |
 | requestOptions | `RequestOptions?` | No |
@@ -219,6 +223,61 @@ Supported credential alternatives (each object is one alternative):
 ```
 
 Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## markPaid
+
+Mark affiliate payouts paid
+
+[API reference](https://sell.app/docs/api/affiliates/mark-payouts-paid) · Effect: **consequential**
+
+```kotlin
+fun markPaid(
+        payoutIds: List<Long>,
+        expectedTotalUsdCents: Long,
+        requestOptions: RequestOptions? = null,
+    ): SdkMarkAffiliatePayoutsPaidResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| payoutIds | `List<Long>` | Yes |
+| expectedTotalUsdCents | `Long` | Yes |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkMarkAffiliatePayoutsPaidResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.affiliatePayouts.markPaid(payoutIds = listOf(91L, 92L), expectedTotalUsdCents = 4250L)
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 422, 429, 500. See the API reference for field-level validation and consequences.
 
 [Response access, transport controls, pagination, and typed errors](../usage.md)
 

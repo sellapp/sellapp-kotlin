@@ -545,3 +545,60 @@ Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API r
 
 [Response access, transport controls, pagination, and typed errors](../usage.md)
 
+## getUsage
+
+Retrieve promotion usage
+
+[API reference](https://sell.app/docs/api/promotions/retrieve-promotion-usage) · Effect: **read**
+
+```kotlin
+fun getUsage(
+        promotion: String,
+        withTrashed: Boolean? = null,
+        onlyTrashed: Boolean? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkGetPromotionUsageResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| promotion | `String` | Yes |
+| withTrashed | `Boolean?` | No |
+| onlyTrashed | `Boolean?` | No |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkGetPromotionUsageResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.promotions.getUsage(promotion = "30")
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+

@@ -3,6 +3,7 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.types.WaitingOn
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -30,6 +31,24 @@ data class SdkV2SearchTicketsRequestApplicationJson(
     @JsonProperty("includes")
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
     val includes: List<V2SearchTicketsRequestApplicationJsonPropertyIncludesItem>? = null,
+
+    /**
+     * `store`: the latest message is from the customer, so the ticket waits on you. `customer`: the
+     * latest message is yours. A ticket without messages matches neither.
+     */
+    @JsonProperty("waiting_on") val waitingOn: WaitingOn? = null,
+
+    /**
+     * A ticket reason by its label (as tickets show it in `reason`), its key such as
+     * `platform:refund_request`, or its code; case does not matter. A reason the store does not
+     * have returns `422` on `reason`, listing the store's reasons.
+     */
+    @JsonProperty("reason") val reason: String? = null,
+
+    /**
+     * Part of the customer's email, case-insensitive. `%` and `_` match those characters literally.
+     */
+    @JsonProperty("customer_email") val customerEmail: String? = null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -42,7 +61,7 @@ data class SdkV2SearchTicketsRequestApplicationJson(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"SdkV2SearchTicketsRequestApplicationJson\",\"properties\":{\"filters\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchTicketsRequestApplicationJsonPropertyFiltersItem\",\"properties\":{\"field\":{\"kind\":\"primitive\",\"type\":\"string\"},\"operator\":{\"kind\":\"primitive\",\"type\":\"string\"},\"value\":{\"kind\":\"primitive\",\"type\":\"unknown\"},\"type\":{\"kind\":\"enum\",\"values\":[\"and\",\"or\"]},\"nested\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchTicketsRequestApplicationJsonPropertyFiltersItemPropertyNestedItem\",\"properties\":{},\"required\":[],\"additionalProperties\":true}}},\"required\":[],\"additionalProperties\":true}},\"sort\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchTicketsRequestApplicationJsonPropertySortItem\",\"properties\":{\"field\":{\"kind\":\"primitive\",\"type\":\"string\"},\"direction\":{\"kind\":\"enum\",\"values\":[\"asc\",\"desc\"]}},\"required\":[\"field\"],\"additionalProperties\":true}},\"search\":{\"kind\":\"object\",\"modelName\":\"V2SearchTicketsRequestApplicationJsonPropertySearch\",\"properties\":{\"value\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"case_sensitive\":{\"kind\":\"primitive\",\"type\":\"boolean\"}},\"required\":[],\"additionalProperties\":true},\"includes\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchTicketsRequestApplicationJsonPropertyIncludesItem\",\"properties\":{\"relation\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"relation\"],\"additionalProperties\":true}}},\"required\":[],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"SdkV2SearchTicketsRequestApplicationJson\",\"properties\":{\"filters\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchTicketsRequestApplicationJsonPropertyFiltersItem\",\"properties\":{\"field\":{\"kind\":\"primitive\",\"type\":\"string\"},\"operator\":{\"kind\":\"primitive\",\"type\":\"string\"},\"value\":{\"kind\":\"primitive\",\"type\":\"unknown\"},\"type\":{\"kind\":\"enum\",\"values\":[\"and\",\"or\"]},\"nested\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchTicketsRequestApplicationJsonPropertyFiltersItemPropertyNestedItem\",\"properties\":{},\"required\":[],\"additionalProperties\":true}}},\"required\":[],\"additionalProperties\":true}},\"sort\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchTicketsRequestApplicationJsonPropertySortItem\",\"properties\":{\"field\":{\"kind\":\"primitive\",\"type\":\"string\"},\"direction\":{\"kind\":\"enum\",\"values\":[\"asc\",\"desc\"]}},\"required\":[\"field\"],\"additionalProperties\":true}},\"search\":{\"kind\":\"object\",\"modelName\":\"V2SearchTicketsRequestApplicationJsonPropertySearch\",\"properties\":{\"value\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"case_sensitive\":{\"kind\":\"primitive\",\"type\":\"boolean\"}},\"required\":[],\"additionalProperties\":true},\"includes\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchTicketsRequestApplicationJsonPropertyIncludesItem\",\"properties\":{\"relation\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"relation\"],\"additionalProperties\":true}},\"waiting_on\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"enum\",\"values\":[\"store\",\"customer\",\"null\"]}},\"reason\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":150}}},\"customer_email\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}}},\"required\":[],\"additionalProperties\":true}"
             )
     }
 }

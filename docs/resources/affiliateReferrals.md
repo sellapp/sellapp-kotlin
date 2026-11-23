@@ -10,6 +10,7 @@ List affiliate referrals
 
 ```kotlin
 fun list(
+        search: String? = null,
         affiliateId: Long? = null,
         orderId: Long? = null,
         status: AffiliateReferralsStatus? = null,
@@ -21,6 +22,7 @@ fun list(
 
 | Argument | Native type | Required |
 | --- | --- | --- |
+| search | `String?` | No |
 | affiliateId | `Long?` | No |
 | orderId | `Long?` | No |
 | status | `AffiliateReferralsStatus?` | No |

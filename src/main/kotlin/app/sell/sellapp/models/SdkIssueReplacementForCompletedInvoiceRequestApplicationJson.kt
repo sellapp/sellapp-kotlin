@@ -11,9 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode
 /** SdkIssueReplacementForCompletedInvoiceRequestApplicationJson model. */
 data class SdkIssueReplacementForCompletedInvoiceRequestApplicationJson(
     /** The product variants. */
-    @JsonProperty("product_variants")
-    val productVariants:
-        IssueReplacementForCompletedInvoiceRequestApplicationJsonPropertyProductVariants
+    @JsonProperty("product_variants") val productVariants: Any
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -26,7 +24,7 @@ data class SdkIssueReplacementForCompletedInvoiceRequestApplicationJson(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"SdkIssueReplacementForCompletedInvoiceRequestApplicationJson\",\"properties\":{\"product_variants\":{\"kind\":\"object\",\"modelName\":\"IssueReplacementForCompletedInvoiceRequestApplicationJsonPropertyProductVariants\",\"properties\":{},\"required\":[],\"additionalProperties\":true}},\"required\":[\"product_variants\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"SdkIssueReplacementForCompletedInvoiceRequestApplicationJson\",\"properties\":{\"product_variants\":{\"kind\":\"union\",\"variants\":[{\"kind\":\"primitive\",\"type\":\"integer\"},{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"integer\"}}],\"composition\":\"anyOf\"}},\"required\":[\"product_variants\"],\"additionalProperties\":true}"
             )
     }
 }

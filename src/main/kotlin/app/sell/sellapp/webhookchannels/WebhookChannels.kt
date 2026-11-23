@@ -36,9 +36,12 @@ class WebhookChannels(internal val sellapp: SellApp) {
     /**
      * List webhook channels
      *
-     * Retrieve the authenticated store's outbound developer webhook destinations. Signing secrets
-     * and delivery headers are never included. OAuth callers use the admin grant and select a store
-     * with X-STORE. Current membership and role permissions apply to every request.
+     * List your store's outbound webhook destinations, 15 per page by default. Each result includes
+     * `health`, which says whether deliveries to the destination are working, and `last_delivery`,
+     * the most recent delivery recorded for it; retrieving one channel does not include them.
+     * Signing secrets and delivery headers are never included. OAuth callers use the admin grant
+     * and select a store with X-STORE. Current membership and role permissions apply to every
+     * request.
      *
      * @param page Page number.
      * @param limit Number of webhook channels to return per page.
@@ -232,9 +235,10 @@ class WebhookChannels(internal val sellapp: SellApp) {
     /**
      * Search webhook channels
      *
-     * Search destinations by name or URL and optionally filter by a subscribed event. OAuth callers
-     * use the admin grant and select a store with X-STORE. Current membership and role permissions
-     * apply to every request.
+     * Search destinations by name or URL and optionally filter by a subscribed event. Each result
+     * includes the same `health` and `last_delivery` as the list. OAuth callers use the admin grant
+     * and select a store with X-STORE. Current membership and role permissions apply to every
+     * request.
      *
      * @param search the search of the request.
      * @param event Public event name delivered in webhook payloads. SellApp maps it to the

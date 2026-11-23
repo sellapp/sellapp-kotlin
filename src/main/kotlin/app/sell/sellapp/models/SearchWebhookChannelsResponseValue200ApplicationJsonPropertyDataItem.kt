@@ -2,6 +2,6 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [GetWebhookChannelResponseValue200ApplicationJsonPropertyData]. */
+/** Alias for [ListWebhookChannelsResponseValue200ApplicationJsonPropertyDataItem]. */
 typealias SearchWebhookChannelsResponseValue200ApplicationJsonPropertyDataItem =
-    GetWebhookChannelResponseValue200ApplicationJsonPropertyData
+    ListWebhookChannelsResponseValue200ApplicationJsonPropertyDataItem

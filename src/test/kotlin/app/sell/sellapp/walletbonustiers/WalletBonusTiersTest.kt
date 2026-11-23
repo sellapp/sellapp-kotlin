@@ -9,6 +9,8 @@ import app.sell.sellapp.common.exceptions.UnauthorizedException
 import app.sell.sellapp.test.TestBase
 import app.sell.sellapp.types.SdkCreateWalletBonusTierRequestApplicationJsonBonusKind
 import app.sell.sellapp.types.SdkReplaceWalletBonusTierRequestApplicationJsonBonusKind
+import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.matching
 import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor
@@ -135,6 +137,23 @@ class WalletBonusTiersTest : TestBase() {
         )
         val result = api().restore("sample-arg")
         assertNotNull(result)
+    }
+
+    @Test
+    fun `quote returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/wallet-bonus-tiers/quote",
+            200,
+            "{\"data\": {\"top_up_cents\": 0, \"within_top_up_limits\": false, \"eligible\": false, \"bonus_cents\": 0, \"reason\": " +
+                "\"sample\", \"minimum_top_up_cents\": null, \"maximum_top_up_cents\": null, \"matching_tier\": null}}",
+        )
+        val result = api().quote(1)
+        assertNotNull(result)
+        wireMockRule.verify(
+            getRequestedFor(urlPathMatching("/v2/wallet-bonus-tiers/quote"))
+                .withQueryParam("top_up_cents", matching("1"))
+        )
     }
 
     @Test

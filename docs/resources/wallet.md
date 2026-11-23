@@ -122,6 +122,7 @@ fun adjust(
         amountCents: Long,
         idempotencyKey: String,
         note: String,
+        expectedBalanceCents: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkAdjustCustomerWalletResponseValue200ApplicationJson
 ```
@@ -132,6 +133,7 @@ fun adjust(
 | amountCents | `Long` | Yes |
 | idempotencyKey | `String` | Yes |
 | note | `String` | Yes |
+| expectedBalanceCents | `Long?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkAdjustCustomerWalletResponseValue200ApplicationJson`.
@@ -142,7 +144,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
-    val result = client.wallet.adjust(customer = "1", amountCents = 2500L, idempotencyKey = "wallet-adjustment-01992a65", note = "Launch-day account credit")
+    val result = client.wallet.adjust(customer = "1", amountCents = 2500L, idempotencyKey = "wallet-adjustment-01992a65", note = "Launch-day account credit", expectedBalanceCents = 0L)
     println(result)
 }
 ```

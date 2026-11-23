@@ -4,6 +4,6 @@
 
 package app.sell.sellapp.types
 
-/** Alias for [SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit]. */
+/** Alias for [SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit]. */
 typealias SdkReplaceBookingConfigurationRequestApplicationJsonReminderOffsetUnit =
-    SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit
+    SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit

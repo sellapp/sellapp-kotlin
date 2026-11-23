@@ -17,9 +17,7 @@ data class GetVariantDeliverableConfigurationResponseValue200ApplicationJsonProp
     val types: List<CreateProductVariantRequestApplicationJsonPropertyDeliverableTypes>,
 
     /** The data. */
-    @JsonProperty("data")
-    val data:
-        GetVariantDeliverableConfigurationResponseValue200ApplicationJsonPropertyDataPropertyData,
+    @JsonProperty("data") val data: Any,
 
     /** Whether a dynamic delivery endpoint is configured. The endpoint itself is never returned. */
     @JsonProperty("webhook_configured") val webhookConfigured: Boolean,
@@ -41,7 +39,7 @@ data class GetVariantDeliverableConfigurationResponseValue200ApplicationJsonProp
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"GetVariantDeliverableConfigurationResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"types\":{\"kind\":\"array\",\"items\":{\"kind\":\"enum\",\"values\":[\"DOWNLOADABLE\",\"TEXT\",\"DYNAMIC\",\"MANUAL\",\"LICENSE_KEY\",\"BUNDLE\",\"BOOKING\",\"CREDITS\"]}},\"data\":{\"kind\":\"object\",\"modelName\":\"GetVariantDeliverableConfigurationResponseValue200ApplicationJsonPropertyDataPropertyData\",\"properties\":{},\"required\":[],\"additionalProperties\":true},\"webhook_configured\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"updated_at\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"required\":[\"types\",\"data\",\"webhook_configured\",\"updated_at\"],\"additionalProperties\":false}"
+                "{\"kind\":\"object\",\"modelName\":\"GetVariantDeliverableConfigurationResponseValue200ApplicationJsonPropertyData\",\"properties\":{\"types\":{\"kind\":\"array\",\"items\":{\"kind\":\"enum\",\"values\":[\"DOWNLOADABLE\",\"TEXT\",\"DYNAMIC\",\"MANUAL\",\"LICENSE_KEY\",\"BUNDLE\",\"BOOKING\",\"CREDITS\"]}},\"data\":{\"kind\":\"union\",\"variants\":[{\"kind\":\"object\",\"modelName\":\"GetVariantDeliverableConfigurationResponseValue200ApplicationJsonPropertyDataPropertyDataAnyOfValue1\",\"properties\":{\"comment\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":10000}}},\"licenseLength\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":1}}},\"licenseLengthUnit\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"enum\",\"values\":[\"DAY\",\"MONTH\",\"YEAR\",\"null\"]}},\"isLicenseLengthUnlimited\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"licenseLimit\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":1}}},\"isLicenseLimitUnlimited\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"licensePrefix\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}}},\"required\":[],\"additionalProperties\":false},{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"unknown\"},\"constraints\":{\"maxItems\":0}}],\"composition\":\"anyOf\"},\"webhook_configured\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"updated_at\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"required\":[\"types\",\"data\",\"webhook_configured\",\"updated_at\"],\"additionalProperties\":false}"
             )
     }
 }

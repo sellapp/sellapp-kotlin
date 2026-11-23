@@ -2,5 +2,37 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SdkUpdateOrderStatusRequestApplicationJson]. */
-typealias SdkUpdateInvoiceStatusRequestApplicationJson = SdkUpdateOrderStatusRequestApplicationJson
+import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.types.ExpectedStatus
+import app.sell.sellapp.types.SdkUpdateOrderStatusRequestApplicationJsonStatus
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
+
+/** SdkUpdateInvoiceStatusRequestApplicationJson model. */
+data class SdkUpdateInvoiceStatusRequestApplicationJson(
+    /** The status. */
+    @JsonProperty("status") val status: SdkUpdateOrderStatusRequestApplicationJsonStatus,
+
+    /**
+     * Optional optimistic-concurrency guard. The mutation fails when the current order status no
+     * longer matches this value.
+     */
+    @JsonProperty("expected_status") val expectedStatus: ExpectedStatus? = null,
+) {
+    /** Additive response fields retained verbatim for forward compatibility. */
+    @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
+
+    @JsonAnySetter
+    fun setAdditionalProperty(name: String, value: JsonNode) {
+        additionalProperties[name] = value
+    }
+
+    companion object {
+        internal val runtimeSchema =
+            runtimeSchema(
+                "{\"kind\":\"object\",\"modelName\":\"SdkUpdateInvoiceStatusRequestApplicationJson\",\"properties\":{\"status\":{\"kind\":\"enum\",\"values\":[\"COMPLETED\",\"VOIDED\",\"REVIEW\",\"DISPUTING\"]},\"expected_status\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"enum\",\"values\":[\"PENDING\",\"REVERSED\",\"PARTIAL\",\"VOIDED\",\"REFUNDED\",\"PAID\",\"COMPLETED\",\"DISPUTING\",\"REVIEW\",\"FAILED\",\"null\"]}}},\"required\":[\"status\"],\"additionalProperties\":true}"
+            )
+    }
+}

@@ -39,7 +39,7 @@ class ProductVariantsTest : TestBase() {
                 "\"minimum_purchase_quantity\": 0, \"maximum_purchase_quantity\": null, \"bulk_discount\": null, \"payment_methods\": [], " +
                 "\"other_settings\": {\"quantity_increments\": 0, \"discord_data_required\": false}, \"order\": null, \"created_at\": " +
                 "\"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"deleted_at\": null, \"product\": " +
-                "{\"additional_information\": []}}}",
+                "{\"additional_information\": []}, \"is_draft\": false}}",
         )
         val result = api().get("sample-arg", "sample-arg")
         assertNotNull(result)
@@ -57,7 +57,7 @@ class ProductVariantsTest : TestBase() {
                 "\"minimum_purchase_quantity\": 0, \"maximum_purchase_quantity\": null, \"bulk_discount\": null, \"payment_methods\": [], " +
                 "\"other_settings\": {\"quantity_increments\": 0, \"discord_data_required\": false}, \"order\": null, \"created_at\": " +
                 "\"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"deleted_at\": null, \"product\": " +
-                "{\"additional_information\": []}}}",
+                "{\"additional_information\": []}, \"is_draft\": false}}",
         )
         val result = api().replace("sample-arg", "sample-arg")
         assertNotNull(result)
@@ -75,7 +75,7 @@ class ProductVariantsTest : TestBase() {
                 "\"minimum_purchase_quantity\": 0, \"maximum_purchase_quantity\": null, \"bulk_discount\": null, \"payment_methods\": [], " +
                 "\"other_settings\": {\"quantity_increments\": 0, \"discord_data_required\": false}, \"order\": null, \"created_at\": " +
                 "\"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"deleted_at\": null, \"product\": " +
-                "{\"additional_information\": []}}}",
+                "{\"additional_information\": []}, \"is_draft\": false}}",
         )
         val result = api().update("sample-arg", "sample-arg")
         assertNotNull(result)
@@ -87,7 +87,7 @@ class ProductVariantsTest : TestBase() {
             "DELETE",
             "/v2/products/sample-arg/variants/sample-arg",
             204,
-            "{\"data\": {\"id\": 0, \"product_id\": 0, \"title\": \"sample\", \"description\": \"sample\", \"deliverable\": {\"data\": {\"removeDuplicate\": false, \"parsingMode\": \"sample\"}, \"types\": []}, \"pricing\": {\"humble\": false, \"frequency\": {\"value\": 0, \"interval\": \"sample\"}, \"type\": \"sample\", \"price\": {\"price\": \"sample\", \"currency\": \"sample\"}}, \"minimum_purchase_quantity\": 0, \"maximum_purchase_quantity\": null, \"bulk_discount\": null, \"payment_methods\": [], \"other_settings\": {\"quantity_increments\": 0, \"discord_data_required\": false}, \"order\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"deleted_at\": null, \"product\": {\"additional_information\": []}}}",
+            "{\"data\": {\"id\": 0, \"product_id\": 0, \"title\": \"sample\", \"description\": \"sample\", \"deliverable\": {\"data\": {\"removeDuplicate\": false, \"parsingMode\": \"sample\"}, \"types\": []}, \"pricing\": {\"humble\": false, \"frequency\": {\"value\": 0, \"interval\": \"sample\"}, \"type\": \"sample\", \"price\": {\"price\": \"sample\", \"currency\": \"sample\"}}, \"minimum_purchase_quantity\": 0, \"maximum_purchase_quantity\": null, \"bulk_discount\": null, \"payment_methods\": [], \"other_settings\": {\"quantity_increments\": 0, \"discord_data_required\": false}, \"order\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"deleted_at\": null, \"product\": {\"additional_information\": []}, \"is_draft\": false}}",
         )
         api().delete("sample-arg", "sample-arg")
     }
@@ -123,6 +123,49 @@ class ProductVariantsTest : TestBase() {
     fun `batchDelete completes without throwing`() {
         stubResponse("DELETE", "/v2/products/sample-arg/variants/batch", 204, "{\"data\": []}")
         api().batchDelete("sample-arg", resources = emptyList<Long>())
+    }
+
+    @Test
+    fun `publish returns a typed response`() {
+        stubResponse(
+            "POST",
+            "/v2/products/sample-arg/variants/sample-arg/publish",
+            200,
+            "{\"data\": {\"id\": 0, \"product_id\": 0, \"title\": \"sample\", \"description\": \"sample\", \"deliverable\": {\"data\": " +
+                "{\"removeDuplicate\": false, \"parsingMode\": \"sample\"}, \"types\": []}, \"pricing\": {\"humble\": false, \"frequency\": " +
+                "{\"value\": 0, \"interval\": \"sample\"}, \"type\": \"sample\", \"price\": {\"price\": \"sample\", \"currency\": \"sample\"}}, " +
+                "\"minimum_purchase_quantity\": 0, \"maximum_purchase_quantity\": null, \"bulk_discount\": null, \"payment_methods\": [], " +
+                "\"other_settings\": {\"quantity_increments\": 0, \"discord_data_required\": false}, \"order\": null, \"created_at\": " +
+                "\"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"deleted_at\": null, \"product\": " +
+                "{\"additional_information\": []}, \"is_draft\": false}}",
+        )
+        val result = api().publish("sample-arg", "sample-arg")
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `duplicate returns a typed response`() {
+        stubResponse(
+            "POST",
+            "/v2/products/sample-arg/variants/sample-arg/duplicate",
+            200,
+            "{\"data\": {\"id\": 0, \"product_id\": 0, \"title\": \"sample\", \"description\": \"sample\", \"deliverable\": {\"data\": " +
+                "{\"removeDuplicate\": false, \"parsingMode\": \"sample\"}, \"types\": []}, \"pricing\": {\"humble\": false, \"frequency\": " +
+                "{\"value\": 0, \"interval\": \"sample\"}, \"type\": \"sample\", \"price\": {\"price\": \"sample\", \"currency\": \"sample\"}}, " +
+                "\"minimum_purchase_quantity\": 0, \"maximum_purchase_quantity\": null, \"bulk_discount\": null, \"payment_methods\": [], " +
+                "\"other_settings\": {\"quantity_increments\": 0, \"discord_data_required\": false}, \"order\": null, \"created_at\": " +
+                "\"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"deleted_at\": null, \"product\": " +
+                "{\"additional_information\": []}, \"is_draft\": false}}",
+        )
+        val result = api().duplicate("sample-arg", "sample-arg")
+        assertNotNull(result)
+    }
+
+    @Test
+    fun `reorder returns a typed response`() {
+        stubResponse("PUT", "/v2/products/sample-arg/variants/order", 200, "{\"data\": []}")
+        val result = api().reorder("sample-arg", variantIds = listOf<Long>(1))
+        assertNotNull(result)
     }
 
     @Test

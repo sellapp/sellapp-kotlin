@@ -27,6 +27,21 @@ data class GetOrderResponseValue200ApplicationJsonPropertyDataPropertyTotals(
 
     /** The total usd cents. */
     @JsonProperty("total_usd_cents") val totalUsdCents: Long?,
+
+    /**
+     * The currency refunds on this order are made and counted in: the currency the payment was
+     * charged in, which can differ from the order currency. `null` when the payment method cannot
+     * be refunded through the API.
+     */
+    @JsonProperty("refund_currency") val refundCurrency: String?,
+
+    /**
+     * The amount already refunded on this order, in integer minor units of `refund_currency`: `500`
+     * means $5.00 in USD. It is the exact figure a refund request compares
+     * `expected_refunded_total_cents` with, so send it back unchanged when you refund. `0` when
+     * nothing has been refunded.
+     */
+    @JsonProperty("refunded_total_cents") val refundedTotalCents: Long,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -39,7 +54,7 @@ data class GetOrderResponseValue200ApplicationJsonPropertyDataPropertyTotals(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"GetOrderResponseValue200ApplicationJsonPropertyDataPropertyTotals\",\"properties\":{\"currency\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"minLength\":3,\"maxLength\":8}},\"subtotal_cents\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}},\"total_exclusive_cents\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}},\"total_cents\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}},\"total_exclusive_usd_cents\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}}},\"total_usd_cents\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}}}},\"required\":[\"currency\",\"subtotal_cents\",\"total_exclusive_cents\",\"total_cents\",\"total_exclusive_usd_cents\",\"total_usd_cents\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"GetOrderResponseValue200ApplicationJsonPropertyDataPropertyTotals\",\"properties\":{\"currency\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"minLength\":3,\"maxLength\":8}},\"subtotal_cents\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}},\"total_exclusive_cents\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}},\"total_cents\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}},\"total_exclusive_usd_cents\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}}},\"total_usd_cents\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}}},\"refund_currency\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"refunded_total_cents\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}}},\"required\":[\"currency\",\"subtotal_cents\",\"total_exclusive_cents\",\"total_cents\",\"total_exclusive_usd_cents\",\"total_usd_cents\",\"refund_currency\",\"refunded_total_cents\"],\"additionalProperties\":true}"
             )
     }
 }

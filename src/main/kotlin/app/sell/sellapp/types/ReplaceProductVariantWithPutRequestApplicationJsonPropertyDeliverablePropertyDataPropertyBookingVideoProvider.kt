@@ -4,6 +4,6 @@
 
 package app.sell.sellapp.types
 
-/** Alias for [SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider]. */
+/** Alias for [SdkCreateBookingProductRequestApplicationJsonVideoProvider]. */
 typealias ReplaceProductVariantWithPutRequestApplicationJsonPropertyDeliverablePropertyDataPropertyBookingVideoProvider =
-    SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider
+    SdkCreateBookingProductRequestApplicationJsonVideoProvider

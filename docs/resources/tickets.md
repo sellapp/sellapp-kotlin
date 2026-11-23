@@ -164,6 +164,9 @@ List all tickets
 fun v2ListTickets(
         limit: Long? = null,
         page: Long? = null,
+        waitingOn: TicketsWaitingOn? = null,
+        reason: String? = null,
+        customerEmail: String? = null,
         requestOptions: RequestOptions? = null,
     ): Page<V2ListTicketsResponseValue200ApplicationJsonPropertyDataItem>
 ```
@@ -172,6 +175,9 @@ fun v2ListTickets(
 | --- | --- | --- |
 | limit | `Long?` | No |
 | page | `Long?` | No |
+| waitingOn | `TicketsWaitingOn?` | No |
+| reason | `String?` | No |
+| customerEmail | `String?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<V2ListTicketsResponseValue200ApplicationJsonPropertyDataItem>`.
@@ -217,20 +223,30 @@ Search tickets
 
 ```kotlin
 fun v2SearchTickets(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchTicketsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchTicketsRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchTicketsRequestApplicationJsonPropertySearch? = null,
         includes: List<V2SearchTicketsRequestApplicationJsonPropertyIncludesItem>? = null,
+        waitingOn: WaitingOn? = null,
+        reason: String? = null,
+        customerEmail: String? = null,
         requestOptions: RequestOptions? = null,
     ): Page<V2SearchTicketsResponseValue200ApplicationJsonPropertyDataItem>
 ```
 
 | Argument | Native type | Required |
 | --- | --- | --- |
+| limit | `Long?` | No |
+| page | `Long?` | No |
 | filters | `List<V2SearchTicketsRequestApplicationJsonPropertyFiltersItem>?` | No |
 | sort | `List<V2SearchTicketsRequestApplicationJsonPropertySortItem>?` | No |
 | search | `V2SearchTicketsRequestApplicationJsonPropertySearch?` | No |
 | includes | `List<V2SearchTicketsRequestApplicationJsonPropertyIncludesItem>?` | No |
+| waitingOn | `WaitingOn?` | No |
+| reason | `String?` | No |
+| customerEmail | `String?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<V2SearchTicketsResponseValue200ApplicationJsonPropertyDataItem>`.
@@ -332,6 +348,7 @@ fun update(
         ticket: String,
         status: PatchField<SdkUpdateTicketRequestApplicationJsonStatus> = PatchField.Absent,
         archived: PatchField<Boolean> = PatchField.Absent,
+        outcome: PatchField<SdkUpdateTicketRequestApplicationJsonOutcome> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateTicketResponseValue200ApplicationJson
 ```
@@ -341,6 +358,7 @@ fun update(
 | ticket | `String` | Yes |
 | status | `PatchField<SdkUpdateTicketRequestApplicationJsonStatus>` | No |
 | archived | `PatchField<Boolean>` | No |
+| outcome | `PatchField<SdkUpdateTicketRequestApplicationJsonOutcome>` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkUpdateTicketResponseValue200ApplicationJson`.
@@ -351,7 +369,117 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
-    val result = client.tickets.update(ticket = "42", status = app.sell.sellapp.common.http.PatchField.Present(app.sell.sellapp.types.SdkUpdateTicketRequestApplicationJsonStatus("CLOSED")), archived = app.sell.sellapp.common.http.PatchField.Present(true))
+    val result = client.tickets.update(ticket = "42", status = app.sell.sellapp.common.http.PatchField.Present(app.sell.sellapp.types.SdkUpdateTicketRequestApplicationJsonStatus("CLOSED")), archived = app.sell.sellapp.common.http.PatchField.Present(true), outcome = app.sell.sellapp.common.http.PatchField.Present(app.sell.sellapp.types.SdkUpdateTicketRequestApplicationJsonOutcome("delivered")))
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## batchUpdate
+
+Update several tickets
+
+[API reference](https://sell.app/docs/api/tickets/update-several-tickets) · Effect: **consequential**
+
+```kotlin
+fun batchUpdate(
+        action: SdkBatchUpdateTicketsRequestApplicationJsonAction,
+        resources: List<Long>,
+        outcome: PatchField<SdkUpdateTicketRequestApplicationJsonOutcome> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkBatchUpdateTicketsResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| action | `SdkBatchUpdateTicketsRequestApplicationJsonAction` | Yes |
+| resources | `List<Long>` | Yes |
+| outcome | `PatchField<SdkUpdateTicketRequestApplicationJsonOutcome>` | No |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkBatchUpdateTicketsResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.tickets.batchUpdate(action = app.sell.sellapp.types.SdkBatchUpdateTicketsRequestApplicationJsonAction("close"), outcome = app.sell.sellapp.common.http.PatchField.Present(app.sell.sellapp.types.SdkUpdateTicketRequestApplicationJsonOutcome("delivered")), resources = listOf(311L, 313L))
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 404, 409, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## getContext
+
+Retrieve a ticket's customer and refund context
+
+[API reference](https://sell.app/docs/api/tickets/retrieve-ticket-context) · Effect: **read**
+
+```kotlin
+fun getContext(
+        ticket: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkV2GetTicketContextResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| ticket | `String` | Yes |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkV2GetTicketContextResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.tickets.getContext(ticket = "312")
     println(result)
 }
 ```

@@ -515,8 +515,7 @@ Issue replacement for completed invoice
 ```kotlin
 fun issueReplacement(
         invoice: String,
-        productVariants:
-            IssueReplacementForCompletedInvoiceRequestApplicationJsonPropertyProductVariants,
+        productVariants: Any,
         requestOptions: RequestOptions? = null,
     ): SdkIssueReplacementForCompletedInvoiceResponseValue200ApplicationJson
 ```
@@ -524,7 +523,7 @@ fun issueReplacement(
 | Argument | Native type | Required |
 | --- | --- | --- |
 | invoice | `String` | Yes |
-| productVariants | `IssueReplacementForCompletedInvoiceRequestApplicationJsonPropertyProductVariants` | Yes |
+| productVariants | `Any` | Yes |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkIssueReplacementForCompletedInvoiceResponseValue200ApplicationJson`.
@@ -535,7 +534,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
-    val result = client.invoices.issueReplacement(invoice = "1", productVariants = ObjectMapperFactory.read("[117214]", app.sell.sellapp.models.IssueReplacementForCompletedInvoiceRequestApplicationJsonPropertyProductVariants::class.java))
+    val result = client.invoices.issueReplacement(invoice = "1", productVariants = listOf(117214))
     println(result)
 }
 ```
@@ -629,6 +628,7 @@ Create invoice refund
 fun createRefund(
         invoice: String,
         amount: String? = null,
+        expectedRefundedTotalCents: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCreateInvoiceRefundResponseValue200ApplicationJson
 ```
@@ -637,6 +637,7 @@ fun createRefund(
 | --- | --- | --- |
 | invoice | `String` | Yes |
 | amount | `String?` | No |
+| expectedRefundedTotalCents | `Long?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkCreateInvoiceRefundResponseValue200ApplicationJson`.
@@ -647,7 +648,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
-    val result = client.invoices.createRefund(invoice = "1", amount = "12.50")
+    val result = client.invoices.createRefund(invoice = "1", amount = "12.50", expectedRefundedTotalCents = 0L)
     println(result)
 }
 ```

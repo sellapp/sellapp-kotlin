@@ -56,12 +56,12 @@ class InvoicesTest : TestBase() {
                 "\"inclusive\": \"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": \"sample\", \"currency\": " +
                 "\"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"original_amount\": " +
                 "{\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", " +
-                "\"inclusive\": \"sample\"}}}, \"status\": {\"history\": [], \"status\": {\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": " +
-                "\"sample\", \"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": null, \"created_at\": " +
-                "\"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, \"subscription_id\": " +
-                "null, \"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": \"sample\", \"ip\": " +
-                "\"sample\", \"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, \"billing_details\": {}}, " +
-                "\"product_variants\": []}}",
+                "\"inclusive\": \"sample\"}}, \"refund_currency\": null, \"refunded_total_cents\": 0}, \"status\": {\"history\": [], \"status\": " +
+                "{\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": \"sample\", \"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], " +
+                "\"feedback\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, " +
+                "\"coupon_id\": null, \"subscription_id\": null, \"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, " +
+                "\"location\": \"sample\", \"ip\": \"sample\", \"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, " +
+                "\"discord_data\": {}, \"billing_details\": {}}, \"product_variants\": []}}",
         )
         val result = api().get("sample-arg")
         assertNotNull(result)
@@ -79,12 +79,12 @@ class InvoicesTest : TestBase() {
                 "{\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": " +
                 "\"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": " +
                 "\"sample\"}}, \"original_amount\": {\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": " +
-                "{\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}}, \"status\": {\"history\": [], \"status\": {\"setAt\": " +
-                "\"2024-01-01T00:00:00Z\", \"status\": \"sample\", \"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": " +
-                "null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, " +
-                "\"subscription_id\": null, \"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": " +
-                "\"sample\", \"ip\": \"sample\", \"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, " +
-                "\"billing_details\": {}}, \"product_variants\": []}}",
+                "{\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"refund_currency\": null, \"refunded_total_cents\": 0}, \"status\": " +
+                "{\"history\": [], \"status\": {\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": \"sample\", \"updatedAt\": " +
+                "\"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": " +
+                "\"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, \"subscription_id\": null, \"customer_information\": {\"id\": 0," +
+                " \"email\": \"sample\", \"country\": null, \"location\": \"sample\", \"ip\": \"sample\", \"proxied\": false, \"browser_agent\": " +
+                "\"sample\", \"vat\": null, \"discord_data\": {}, \"billing_details\": {}}, \"product_variants\": []}}",
         )
         val result = api().goToCheckout("sample-arg")
         assertNotNull(result)
@@ -110,12 +110,12 @@ class InvoicesTest : TestBase() {
                 "\"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": \"sample\", \"currency\": \"sample\", " +
                 "\"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"original_amount\": {\"base\": " +
                 "\"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": " +
-                "\"sample\"}}}, \"status\": {\"history\": [], \"status\": {\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": \"sample\", " +
-                "\"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": null, \"created_at\": \"2024-01-01T00:00:00Z\", " +
-                "\"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, \"subscription_id\": null, " +
-                "\"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": \"sample\", \"ip\": \"sample\", " +
-                "\"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, \"billing_details\": {}}, " +
-                "\"product_variants\": []}",
+                "\"sample\"}}, \"refund_currency\": null, \"refunded_total_cents\": 0}, \"status\": {\"history\": [], \"status\": {\"setAt\": " +
+                "\"2024-01-01T00:00:00Z\", \"status\": \"sample\", \"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": " +
+                "null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, " +
+                "\"subscription_id\": null, \"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": " +
+                "\"sample\", \"ip\": \"sample\", \"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, " +
+                "\"billing_details\": {}}, \"product_variants\": []}",
         )
         val result = api().markCompleted("sample-arg")
         assertNotNull(result)
@@ -135,12 +135,12 @@ class InvoicesTest : TestBase() {
                 "\"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": \"sample\", \"currency\": \"sample\", " +
                 "\"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"original_amount\": {\"base\": " +
                 "\"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": " +
-                "\"sample\"}}}, \"status\": {\"history\": [], \"status\": {\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": \"sample\", " +
-                "\"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": null, \"created_at\": \"2024-01-01T00:00:00Z\", " +
-                "\"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, \"subscription_id\": null, " +
-                "\"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": \"sample\", \"ip\": \"sample\", " +
-                "\"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, \"billing_details\": {}}, " +
-                "\"product_variants\": []}",
+                "\"sample\"}}, \"refund_currency\": null, \"refunded_total_cents\": 0}, \"status\": {\"history\": [], \"status\": {\"setAt\": " +
+                "\"2024-01-01T00:00:00Z\", \"status\": \"sample\", \"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": " +
+                "null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, " +
+                "\"subscription_id\": null, \"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": " +
+                "\"sample\", \"ip\": \"sample\", \"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, " +
+                "\"billing_details\": {}}, \"product_variants\": []}",
         )
         val result = api().markVoided("sample-arg")
         assertNotNull(result)
@@ -160,12 +160,12 @@ class InvoicesTest : TestBase() {
                 "\"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": \"sample\", \"currency\": \"sample\", " +
                 "\"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"original_amount\": {\"base\": " +
                 "\"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": " +
-                "\"sample\"}}}, \"status\": {\"history\": [], \"status\": {\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": \"sample\", " +
-                "\"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": null, \"created_at\": \"2024-01-01T00:00:00Z\", " +
-                "\"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, \"subscription_id\": null, " +
-                "\"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": \"sample\", \"ip\": \"sample\", " +
-                "\"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, \"billing_details\": {}}, " +
-                "\"product_variants\": []}",
+                "\"sample\"}}, \"refund_currency\": null, \"refunded_total_cents\": 0}, \"status\": {\"history\": [], \"status\": {\"setAt\": " +
+                "\"2024-01-01T00:00:00Z\", \"status\": \"sample\", \"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": " +
+                "null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, " +
+                "\"subscription_id\": null, \"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": " +
+                "\"sample\", \"ip\": \"sample\", \"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, " +
+                "\"billing_details\": {}}, \"product_variants\": []}",
         )
         val result =
             api()
@@ -197,13 +197,13 @@ class InvoicesTest : TestBase() {
                 "\"inclusive\": \"sample\"}}, \"expires_at\": \"2024-01-01T00:00:00Z\", \"full_price\": {\"base\": \"sample\", \"currency\": " +
                 "\"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", \"inclusive\": \"sample\"}}, \"original_amount\": " +
                 "{\"base\": \"sample\", \"currency\": \"sample\", \"units\": 0, \"vat\": 0, \"total\": {\"exclusive\": \"sample\", " +
-                "\"inclusive\": \"sample\"}}}, \"status\": {\"history\": [], \"status\": {\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": " +
-                "\"sample\", \"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], \"feedback\": null, \"created_at\": " +
-                "\"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"coupon_id\": null, \"subscription_id\": " +
-                "null, \"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, \"location\": \"sample\", \"ip\": " +
-                "\"sample\", \"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, \"discord_data\": {}, \"billing_details\": {}}, " +
-                "\"product_variants\": []}, \"refund\": {\"status\": \"pending\", \"provider\": null, \"provider_refund_id\": null, " +
-                "\"amount_cents\": null, \"currency\": null}}}",
+                "\"inclusive\": \"sample\"}}, \"refund_currency\": null, \"refunded_total_cents\": 0}, \"status\": {\"history\": [], \"status\": " +
+                "{\"setAt\": \"2024-01-01T00:00:00Z\", \"status\": \"sample\", \"updatedAt\": \"2024-01-01T00:00:00Z\"}}, \"webhooks\": [], " +
+                "\"feedback\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, " +
+                "\"coupon_id\": null, \"subscription_id\": null, \"customer_information\": {\"id\": 0, \"email\": \"sample\", \"country\": null, " +
+                "\"location\": \"sample\", \"ip\": \"sample\", \"proxied\": false, \"browser_agent\": \"sample\", \"vat\": null, " +
+                "\"discord_data\": {}, \"billing_details\": {}}, \"product_variants\": []}, \"refund\": {\"status\": \"pending\", \"provider\": " +
+                "null, \"provider_refund_id\": null, \"amount_cents\": null, \"currency\": null}}}",
         )
         val result = api().createRefund("sample-arg")
         assertNotNull(result)

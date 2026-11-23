@@ -213,6 +213,18 @@ class CouponsTest : TestBase() {
     }
 
     @Test
+    fun `v2GetCouponUsage returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/coupons/sample-arg/usage",
+            200,
+            "{\"data\": {\"coupon_id\": 0, \"uses\": 0}}",
+        )
+        val result = api().v2GetCouponUsage("sample-arg")
+        assertNotNull(result)
+    }
+
+    @Test
     fun `list translates 401 to UnauthorizedException`() {
         stubResponse("GET", "/v1/coupons", 401)
         assertThrows(UnauthorizedException::class.java) {

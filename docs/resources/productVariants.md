@@ -430,6 +430,10 @@ Search product variants
 ```kotlin
 fun search(
         product: String,
+        limit: Long? = null,
+        page: Long? = null,
+        withDrafts: Boolean? = null,
+        onlyDrafts: Boolean? = null,
         filters: List<SearchProductVariantsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchProductVariantsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchProductVariantsRequestApplicationJsonPropertySearch? = null,
@@ -441,6 +445,10 @@ fun search(
 | Argument | Native type | Required |
 | --- | --- | --- |
 | product | `String` | Yes |
+| limit | `Long?` | No |
+| page | `Long?` | No |
+| withDrafts | `Boolean?` | No |
+| onlyDrafts | `Boolean?` | No |
 | filters | `List<SearchProductVariantsRequestApplicationJsonPropertyFiltersItem>?` | No |
 | sort | `List<SearchProductVariantsRequestApplicationJsonPropertySortItem>?` | No |
 | search | `SearchProductVariantsRequestApplicationJsonPropertySearch?` | No |
@@ -621,6 +629,171 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
     val result = client.productVariants.batchDelete(product = "1", resources = listOf(1L, 2L))
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## publish
+
+Publish a product variant
+
+[API reference](https://sell.app/docs/api/product-variants/publish-a-product-variant) · Effect: **consequential**
+
+```kotlin
+fun publish(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkPublishProductVariantResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| product | `String` | Yes |
+| variant | `String` | Yes |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkPublishProductVariantResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.productVariants.publish(product = "11", variant = "12")
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## duplicate
+
+Duplicate a product variant
+
+[API reference](https://sell.app/docs/api/product-variants/duplicate-a-product-variant) · Effect: **write**
+
+```kotlin
+fun duplicate(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkDuplicateProductVariantResponseValue201ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| product | `String` | Yes |
+| variant | `String` | Yes |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkDuplicateProductVariantResponseValue201ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.productVariants.duplicate(product = "1", variant = "2")
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 201, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## reorder
+
+Reorder product variants
+
+[API reference](https://sell.app/docs/api/product-variants/reorder-product-variants) · Effect: **consequential**
+
+```kotlin
+fun reorder(
+        product: String,
+        variantIds: List<Long>,
+        requestOptions: RequestOptions? = null,
+    ): SdkReorderProductVariantsResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| product | `String` | Yes |
+| variantIds | `List<Long>` | Yes |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkReorderProductVariantsResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.productVariants.reorder(product = "1", variantIds = listOf(2L, 1L))
     println(result)
 }
 ```

@@ -7,6 +7,11 @@ import app.sell.sellapp.common.exceptions.NotFoundException
 import app.sell.sellapp.common.exceptions.RateLimitException
 import app.sell.sellapp.common.exceptions.UnauthorizedException
 import app.sell.sellapp.test.TestBase
+import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.matching
+import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
+import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -24,6 +29,26 @@ class CoursesTest : TestBase() {
         )
         val result = api().list()
         assertNotNull(result)
+    }
+
+    @Test
+    fun `create returns a typed response`() {
+        stubResponse(
+            "POST",
+            "/v2/courses",
+            200,
+            "{\"data\": {\"id\": 0, \"title\": \"sample\", \"slug\": \"sample\", \"description\": null, \"visibility\": \"PUBLIC\", " +
+                "\"is_draft\": false, \"delivery_text\": null, \"category\": null, \"level\": \"all_levels\", \"language\": \"sample\", " +
+                "\"subtitle\": null, \"author\": null, \"subcategory\": null, \"what_you_learn\": [], \"requirements\": [], " +
+                "\"certificate_enabled\": false, \"access_type\": \"lifetime\", \"access_duration_days\": null, \"enrollment_limit\": null, " +
+                "\"promo_video\": null, \"sections\": [], \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\"}}",
+        )
+        val result = api().create(title = "sample-arg")
+        assertNotNull(result)
+        wireMockRule.verify(
+            postRequestedFor(urlPathMatching("/v2/courses"))
+                .withRequestBody(matchingJsonPath("\$.title"))
+        )
     }
 
     @Test
@@ -84,6 +109,25 @@ class CoursesTest : TestBase() {
         )
         val result = api().update("sample-arg")
         assertNotNull(result)
+    }
+
+    @Test
+    fun `getStudentSummary returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/course-students",
+            200,
+            "{\"data\": {\"period\": {\"start_date\": \"2024-01-01\", \"end_date\": \"2024-01-01\", \"timezone\": \"sample\", \"currency\": " +
+                "\"sample\"}, \"summary\": {\"students_count\": 0, \"multi_course_students_count\": null, \"course_purchases_count\": 0, " +
+                "\"course_units_count\": 0, \"course_orders_count\": 0, \"courses_sold_count\": null}, \"students\": [], \"courses\": []}}",
+        )
+        val result = api().getStudentSummary("sample-arg", "sample-arg")
+        assertNotNull(result)
+        wireMockRule.verify(
+            getRequestedFor(urlPathMatching("/v2/course-students"))
+                .withQueryParam("start_date", matching("sample-arg"))
+                .withQueryParam("end_date", matching("sample-arg"))
+        )
     }
 
     @Test

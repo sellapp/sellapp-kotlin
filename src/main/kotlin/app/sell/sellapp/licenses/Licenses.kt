@@ -8,6 +8,7 @@ import app.sell.sellapp.common.http.PatchField
 import app.sell.sellapp.common.http.RawResponse
 import app.sell.sellapp.common.http.RequestConfig
 import app.sell.sellapp.common.http.RequestOptions
+import app.sell.sellapp.common.http.addIfNotNull
 import app.sell.sellapp.common.http.bodyOf
 import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.http.patchBodyOf
@@ -18,6 +19,7 @@ import app.sell.sellapp.models.SdkGetLicenseKeyResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkListLicenseKeysResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkUpdateLicenseKeyResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkValidateLicenseKeyResponseValue200ApplicationJson
+import app.sell.sellapp.types.LicensesValidity
 import com.fasterxml.jackson.core.type.TypeReference
 import java.time.OffsetDateTime
 
@@ -224,12 +226,24 @@ class Licenses(internal val sellapp: SellApp) {
     /**
      * List all license keys
      *
-     * List your store's license keys. Use `limit` and `page` to read one page at a time. The
-     * response schema describes each license. OAuth callers use the admin grant and select a store
-     * with X-STORE. Current membership and role permissions apply to every request.
+     * List your store's license keys, one page at a time with `limit` and `page`. Filter by part of
+     * the key, the customer's email, the product, the order, or `validity`; several filters
+     * combine, and a key must match all of them. A filter value in the wrong shape returns `422` on
+     * that parameter. Requires the `license` API-key ability. The response schema describes each
+     * license. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * membership and role permissions apply to every request.
      *
      * @param limit Number of items to return per page.
      * @param page Page number to return.
+     * @param key Keep keys that contain this text: letters, digits, and hyphens, up to 100
+     *   characters. A full key as the customer sees it, including the store's key prefix, also
+     *   finds its key.
+     * @param customerEmail Keep keys of the store customer with exactly this email address.
+     * @param productId Keep keys issued for this product.
+     * @param orderId Keep keys issued by this order.
+     * @param validity Keep keys by whether they validate now, decided the way license validation
+     *   decides it: `active` keys are switched on and not past their expiry, `inactive` keys are
+     *   switched off but not expired, and `expired` keys are past `expires_at`.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return a [app.sell.sellapp.common.http.Page] of results
      */
@@ -237,6 +251,11 @@ class Licenses(internal val sellapp: SellApp) {
     fun list(
         limit: Int? = null,
         page: Long? = null,
+        key: String? = null,
+        customerEmail: String? = null,
+        productId: Long? = null,
+        orderId: Long? = null,
+        validity: LicensesValidity? = null,
         requestOptions: RequestOptions? = null,
     ): Page<SdkListLicenseKeysResponseValue200ApplicationJson> {
         val itemType =
@@ -256,6 +275,11 @@ class Licenses(internal val sellapp: SellApp) {
         ) {
             limit?.let { add("limit" to it.toString()) }
             page?.let { add("page" to it.toString()) }
+            addIfNotNull("key", key)
+            addIfNotNull("customer_email", customerEmail)
+            productId?.let { add("product_id" to it.toString()) }
+            orderId?.let { add("order_id" to it.toString()) }
+            validity?.let { add("validity" to it.value) }
         }
     }
 
@@ -263,6 +287,11 @@ class Licenses(internal val sellapp: SellApp) {
     fun listWithResponse(
         limit: Int? = null,
         page: Long? = null,
+        key: String? = null,
+        customerEmail: String? = null,
+        productId: Long? = null,
+        orderId: Long? = null,
+        validity: LicensesValidity? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<SdkListLicenseKeysResponseValue200ApplicationJson>> {
         var captured: RawResponse<Any?>? = null
@@ -270,7 +299,7 @@ class Licenses(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        list(limit, page, capturingOptions)
+        list(limit, page, key, customerEmail, productId, orderId, validity, capturingOptions)
         return captured as? RawResponse<Page<SdkListLicenseKeysResponseValue200ApplicationJson>>
             ?: error("Response metadata was not captured")
     }
@@ -285,10 +314,15 @@ class Licenses(internal val sellapp: SellApp) {
     suspend fun listSuspend(
         limit: Int? = null,
         page: Long? = null,
+        key: String? = null,
+        customerEmail: String? = null,
+        productId: Long? = null,
+        orderId: Long? = null,
+        validity: LicensesValidity? = null,
         requestOptions: RequestOptions? = null,
     ): Page<SdkListLicenseKeysResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
-            list(limit, page, requestOptions)
+            list(limit, page, key, customerEmail, productId, orderId, validity, requestOptions)
         }
 
     /**
@@ -302,10 +336,24 @@ class Licenses(internal val sellapp: SellApp) {
     suspend fun listWithResponseSuspend(
         limit: Int? = null,
         page: Long? = null,
+        key: String? = null,
+        customerEmail: String? = null,
+        productId: Long? = null,
+        orderId: Long? = null,
+        validity: LicensesValidity? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<SdkListLicenseKeysResponseValue200ApplicationJson>> =
         sellapp.baseClient.runCancellable {
-            listWithResponse(limit, page, requestOptions)
+            listWithResponse(
+                limit,
+                page,
+                key,
+                customerEmail,
+                productId,
+                orderId,
+                validity,
+                requestOptions,
+            )
         }
 
     /**

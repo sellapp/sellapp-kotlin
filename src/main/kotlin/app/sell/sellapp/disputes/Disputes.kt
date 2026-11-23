@@ -7,10 +7,12 @@ import app.sell.sellapp.common.http.Page
 import app.sell.sellapp.common.http.RawResponse
 import app.sell.sellapp.common.http.RequestConfig
 import app.sell.sellapp.common.http.RequestOptions
+import app.sell.sellapp.common.http.addIfNotNull
 import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.models.ListDisputesResponseValue200ApplicationJsonPropertyDataItem
 import app.sell.sellapp.models.SdkGetDisputeResponseValue200ApplicationJson
+import app.sell.sellapp.types.DisputesStatus
 import com.fasterxml.jackson.core.type.TypeReference
 
 /**
@@ -25,16 +27,36 @@ class Disputes(internal val sellapp: SellApp) {
     /**
      * List disputes
      *
-     * Read-only, redacted, store-scoped disputes that may reference an Order or Charge. OAuth
-     * callers use the admin grant and select a store with X-STORE. Current membership and role
-     * permissions apply to every request.
+     * List your store's payment disputes, most recently opened first, 50 per page. Each dispute is
+     * read-only and redacted, and may reference an order or a standalone charge. Filter by
+     * `status`, `provider`, or the day a dispute was opened; filters combine, and the date filters
+     * read whole days in the store's time zone and include both ends. An unknown `status`, a date
+     * that cannot be read, or an `opened_before` earlier than `opened_after` returns `422` on that
+     * parameter. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * membership and role permissions apply to every request.
      *
+     * @param page Page number, starting at 1.
+     * @param status Keep disputes in this state: `open`, `under_review`, `won`, `lost`, or
+     *   `closed`.
+     * @param provider Keep disputes raised through this payment provider, such as `stripe`. Any
+     *   letter case works.
+     * @param openedAfter Keep disputes opened on or after this moment. A date such as `2026-08-01`
+     *   starts at midnight of that day in the store's time zone; a date-time without an offset is
+     *   also read in the store's time zone. Inclusive.
+     * @param openedBefore Keep disputes opened on or before this moment. A date such as
+     *   `2026-08-31` runs to the last second of that day in the store's time zone; a date-time
+     *   without an offset is also read in the store's time zone. Inclusive.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return a [app.sell.sellapp.common.http.Page] of results
      */
     @JvmOverloads
     fun list(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        status: DisputesStatus? = null,
+        provider: String? = null,
+        openedAfter: String? = null,
+        openedBefore: String? = null,
+        requestOptions: RequestOptions? = null,
     ): Page<ListDisputesResponseValue200ApplicationJsonPropertyDataItem> {
         val itemType =
             object : TypeReference<ListDisputesResponseValue200ApplicationJsonPropertyDataItem>() {}
@@ -50,19 +72,30 @@ class Disputes(internal val sellapp: SellApp) {
                     .runtimeSchema,
             before = null,
             after = null,
-        ) {}
+        ) {
+            page?.let { add("page" to it.toString()) }
+            status?.let { add("status" to it.value) }
+            addIfNotNull("provider", provider)
+            addIfNotNull("opened_after", openedAfter)
+            addIfNotNull("opened_before", openedBefore)
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun listWithResponse(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        status: DisputesStatus? = null,
+        provider: String? = null,
+        openedAfter: String? = null,
+        openedBefore: String? = null,
+        requestOptions: RequestOptions? = null,
     ): RawResponse<Page<ListDisputesResponseValue200ApplicationJsonPropertyDataItem>> {
         var captured: RawResponse<Any?>? = null
         val capturingOptions =
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        list(capturingOptions)
+        list(page, status, provider, openedAfter, openedBefore, capturingOptions)
         return captured
             as? RawResponse<Page<ListDisputesResponseValue200ApplicationJsonPropertyDataItem>>
             ?: error("Response metadata was not captured")
@@ -76,10 +109,15 @@ class Disputes(internal val sellapp: SellApp) {
      */
     @JvmName("listSuspend")
     suspend fun listSuspend(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        status: DisputesStatus? = null,
+        provider: String? = null,
+        openedAfter: String? = null,
+        openedBefore: String? = null,
+        requestOptions: RequestOptions? = null,
     ): Page<ListDisputesResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            list(requestOptions)
+            list(page, status, provider, openedAfter, openedBefore, requestOptions)
         }
 
     /**
@@ -91,10 +129,15 @@ class Disputes(internal val sellapp: SellApp) {
      */
     @JvmName("listWithResponseSuspend")
     suspend fun listWithResponseSuspend(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        status: DisputesStatus? = null,
+        provider: String? = null,
+        openedAfter: String? = null,
+        openedBefore: String? = null,
+        requestOptions: RequestOptions? = null,
     ): RawResponse<Page<ListDisputesResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            listWithResponse(requestOptions)
+            listWithResponse(page, status, provider, openedAfter, openedBefore, requestOptions)
         }
 
     /**

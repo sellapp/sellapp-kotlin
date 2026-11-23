@@ -2,5 +2,5 @@
 
 package app.sell.sellapp.types
 
-/** Alias for [SdkUpdateCourseRequestApplicationJsonLevel]. */
-typealias SdkReplaceCourseRequestApplicationJsonLevel = SdkUpdateCourseRequestApplicationJsonLevel
+/** Alias for [SdkCreateCourseRequestApplicationJsonLevel]. */
+typealias SdkReplaceCourseRequestApplicationJsonLevel = SdkCreateCourseRequestApplicationJsonLevel

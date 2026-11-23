@@ -295,6 +295,8 @@ Search groups
 
 ```kotlin
 fun search(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<SearchGroupsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchGroupsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchGroupsRequestApplicationJsonPropertySearch? = null,
@@ -305,6 +307,8 @@ fun search(
 
 | Argument | Native type | Required |
 | --- | --- | --- |
+| limit | `Long?` | No |
+| page | `Long?` | No |
 | filters | `List<SearchGroupsRequestApplicationJsonPropertyFiltersItem>?` | No |
 | sort | `List<SearchGroupsRequestApplicationJsonPropertySortItem>?` | No |
 | search | `SearchGroupsRequestApplicationJsonPropertySearch?` | No |

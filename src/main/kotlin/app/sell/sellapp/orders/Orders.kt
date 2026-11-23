@@ -12,7 +12,6 @@ import app.sell.sellapp.common.http.bodyOf
 import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.http.patchBodyOf
 import app.sell.sellapp.common.json.runtimeSchema
-import app.sell.sellapp.models.CreateOrderReplacementRequestApplicationJsonPropertyProductVariants
 import app.sell.sellapp.models.CreateOrderRequestApplicationJsonPropertyExtra
 import app.sell.sellapp.models.CreateOrderRequestApplicationJsonPropertyProductVariants
 import app.sell.sellapp.models.CreateWalletOrderRequestApplicationJsonPropertyExtra
@@ -26,6 +25,7 @@ import app.sell.sellapp.models.SdkCreateWalletOrderResponseValue201ApplicationJs
 import app.sell.sellapp.models.SdkGetOrderResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkListOrderDeliverablesResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkPayOrderFromWalletResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkRegenerateOrderTelegramInviteResponseValue201ApplicationJson
 import app.sell.sellapp.models.SdkRetryOrderDynamicDeliveryResponseValue202ApplicationJson
 import app.sell.sellapp.models.SdkRetryOrderFulfillmentResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkSendOrderFulfillmentNotificationsResponseValue200ApplicationJson
@@ -349,9 +349,14 @@ class Orders(internal val sellapp: SellApp) {
     /**
      * Search orders
      *
-     * Find orders using the same filters as the list endpoint. Requires the invoice token ability.
-     * OAuth callers use the admin grant and select a store with X-STORE. Current membership and
-     * role permissions apply to every request.
+     * Find your store's orders by transaction, customer, product, delivery, payment, status,
+     * currency, placement time, or total, newest first unless `sort` says otherwise. Every filter
+     * must match. Combine a `gte` and an `lte` filter on `created_at` or `total` for a range; a
+     * `gte` value above the `lte` value returns `422` on `filters`. An unknown field, an operator
+     * the field does not take, or a value of the wrong type returns `422` on its position, such as
+     * `filters.0.operator`. Requires the invoice token ability. Read-only and safe to repeat. OAuth
+     * callers use the admin grant and select a store with X-STORE. Current membership and role
+     * permissions apply to every request.
      *
      * @param filters the filters of the request.
      * @param sort the sort of the request.
@@ -523,9 +528,18 @@ class Orders(internal val sellapp: SellApp) {
      * paid/partial/disputing order; it does not capture a pending payment. VOIDED can schedule
      * provider side effects. REVIEW and DISPUTING have state restrictions. Send expected_status to
      * prevent overwriting a changed state; an invalid transition, stale status, or busy lifecycle
-     * lock returns 422. Requires the invoice ability or orders:write OAuth scope and current store
-     * permission. Idempotency-Key is required. Reuse the same key and identical request after a
-     * lost response; changed input or an in-progress request returns 409. OAuth callers use the
+     * lock returns 422. To record a payment the store received outside SellApp, send `status:
+     * COMPLETED` with `payment_received: true` and `expected_status` set to the status you last
+     * read; this is the dashboard's manual completion. A `PENDING`, `REVIEW`, or `VOIDED` order
+     * then becomes `PAID` and delivery to the customer starts; a `PAID` or `PARTIAL` order has its
+     * delivery finished and becomes `COMPLETED`. An order can be marked paid by hand only when its
+     * total is at most 100000 minor units of its currency ($1,000.00 in USD), unless it is a custom
+     * payment method order in `REVIEW`. A larger order, or an order in any other status, returns
+     * `422` on `status`; a status that changed since you read it returns `422` on
+     * `expected_status`. Without `payment_received`, a `PENDING` order cannot be completed.
+     * Requires the `invoice` API-key ability or the `orders:write` OAuth scope, and current store
+     * permission. `Idempotency-Key` is required. Reuse the same key and identical request after a
+     * lost response; changed input or an in-progress request returns `409`. OAuth callers use the
      * admin grant and select a store with X-STORE. Current membership and role permissions apply to
      * every request.
      *
@@ -533,6 +547,11 @@ class Orders(internal val sellapp: SellApp) {
      * @param status the status of the request.
      * @param expectedStatus Expected current status. A status update checks this under the order
      *   lock and returns 422 if the order has changed.
+     * @param paymentReceived Send `true` to confirm that the store received the payment for this
+     *   order outside SellApp, which can release purchased products to the customer. `true` is
+     *   accepted only with `status: COMPLETED` (otherwise `422` on `payment_received`) and requires
+     *   `expected_status` (otherwise `422` on `expected_status`). `false` is accepted with any
+     *   status and changes nothing.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkUpdateOrderStatusResponseValue200ApplicationJson
      */
@@ -541,12 +560,14 @@ class Orders(internal val sellapp: SellApp) {
         order: String,
         status: SdkUpdateOrderStatusRequestApplicationJsonStatus,
         expectedStatus: PatchField<ExpectedStatus?> = PatchField.Absent,
+        paymentReceived: PatchField<Boolean> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateOrderStatusResponseValue200ApplicationJson {
         val body =
             patchBodyOf(
                 "status" to status,
                 "expected_status" to expectedStatus,
+                "payment_received" to paymentReceived,
             )
         body["status"] = status
         val config =
@@ -575,6 +596,7 @@ class Orders(internal val sellapp: SellApp) {
         order: String,
         status: SdkUpdateOrderStatusRequestApplicationJsonStatus,
         expectedStatus: PatchField<ExpectedStatus?> = PatchField.Absent,
+        paymentReceived: PatchField<Boolean> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkUpdateOrderStatusResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -582,7 +604,7 @@ class Orders(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        updateStatus(order, status, expectedStatus, capturingOptions)
+        updateStatus(order, status, expectedStatus, paymentReceived, capturingOptions)
         return captured as? RawResponse<SdkUpdateOrderStatusResponseValue200ApplicationJson>
             ?: error("Response metadata was not captured")
     }
@@ -599,10 +621,11 @@ class Orders(internal val sellapp: SellApp) {
         order: String,
         status: SdkUpdateOrderStatusRequestApplicationJsonStatus,
         expectedStatus: PatchField<ExpectedStatus?> = PatchField.Absent,
+        paymentReceived: PatchField<Boolean> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateOrderStatusResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
-            updateStatus(order, status, expectedStatus, requestOptions)
+            updateStatus(order, status, expectedStatus, paymentReceived, requestOptions)
         }
 
     /**
@@ -617,10 +640,11 @@ class Orders(internal val sellapp: SellApp) {
         order: String,
         status: SdkUpdateOrderStatusRequestApplicationJsonStatus,
         expectedStatus: PatchField<ExpectedStatus?> = PatchField.Absent,
+        paymentReceived: PatchField<Boolean> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkUpdateOrderStatusResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
-            updateStatusWithResponse(order, status, expectedStatus, requestOptions)
+            updateStatusWithResponse(order, status, expectedStatus, paymentReceived, requestOptions)
         }
 
     /**
@@ -638,10 +662,11 @@ class Orders(internal val sellapp: SellApp) {
      * 422 on order.checkout. Other failures can mark the order FAILED and release wallet
      * reservations. Do not infer payment from a checkout URL or browser return. The optional
      * expected_status field is validated but is not a checkout concurrency precondition. Requires
-     * the invoice ability or orders:write OAuth scope and current store permission. Idempotency-Key
-     * is required. Reuse the same key and identical request after a lost response; changed input or
-     * an in-progress request returns 409. OAuth callers use the admin grant and select a store with
-     * X-STORE. Current membership and role permissions apply to every request.
+     * the `invoice` API-key ability or the `orders:write` OAuth scope, and current store
+     * permission. `Idempotency-Key` is required. Reuse the same key and identical request after a
+     * lost response; changed input or an in-progress request returns `409`. OAuth callers use the
+     * admin grant and select a store with X-STORE. Current membership and role permissions apply to
+     * every request.
      *
      * @param order The order identifier.
      * @param expectedStatus Validated status value; checkout does not compare it with current
@@ -734,11 +759,11 @@ class Orders(internal val sellapp: SellApp) {
      * variant ID, an array of variant IDs, or a map of variant IDs to replacement quantities (null
      * means original quantity). Variants must belong to this order; replacement quantities cannot
      * exceed purchased quantity or available stock. Already replaced deliveries cannot be replaced
-     * again. The returned ID belongs to the new replacement order. Requires the invoice ability or
-     * orders:write OAuth scope and current store permission. Idempotency-Key is required. Reuse the
-     * same key and identical request after a lost response; changed input or an in-progress request
-     * returns 409. OAuth callers use the admin grant and select a store with X-STORE. Current
-     * membership and role permissions apply to every request.
+     * again. The returned ID belongs to the new replacement order. Requires the `invoice` API-key
+     * ability or the `orders:write` OAuth scope, and current store permission. `Idempotency-Key` is
+     * required. Reuse the same key and identical request after a lost response; changed input or an
+     * in-progress request returns `409`. OAuth callers use the admin grant and select a store with
+     * X-STORE. Current membership and role permissions apply to every request.
      *
      * @param order The order identifier.
      * @param productVariants the product variants of the request.
@@ -748,7 +773,7 @@ class Orders(internal val sellapp: SellApp) {
     @JvmOverloads
     fun createReplacement(
         order: String,
-        productVariants: CreateOrderReplacementRequestApplicationJsonPropertyProductVariants,
+        productVariants: Any,
         requestOptions: RequestOptions? = null,
     ): SdkCreateOrderReplacementResponseValue200ApplicationJson {
         val body = bodyOf("product_variants" to productVariants)
@@ -777,7 +802,7 @@ class Orders(internal val sellapp: SellApp) {
     @Suppress("UNCHECKED_CAST")
     fun createReplacementWithResponse(
         order: String,
-        productVariants: CreateOrderReplacementRequestApplicationJsonPropertyProductVariants,
+        productVariants: Any,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkCreateOrderReplacementResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -800,7 +825,7 @@ class Orders(internal val sellapp: SellApp) {
     @JvmName("createReplacementSuspend")
     suspend fun createReplacementSuspend(
         order: String,
-        productVariants: CreateOrderReplacementRequestApplicationJsonPropertyProductVariants,
+        productVariants: Any,
         requestOptions: RequestOptions? = null,
     ): SdkCreateOrderReplacementResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -818,7 +843,7 @@ class Orders(internal val sellapp: SellApp) {
     @JvmName("createReplacementWithResponseSuspend")
     suspend fun createReplacementWithResponseSuspend(
         order: String,
-        productVariants: CreateOrderReplacementRequestApplicationJsonPropertyProductVariants,
+        productVariants: Any,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkCreateOrderReplacementResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -829,20 +854,35 @@ class Orders(internal val sellapp: SellApp) {
      * Refund an order
      *
      * Request a real refund for a completed, nonsubscription order with refundable balance and a
-     * supported provider. amount is a decimal string in the order currency: "5.00" means $5.00 in
-     * USD, not 500 cents. Omitting amount, sending null, or an empty string requests the FULL
-     * remaining balance. Do not send amount_cents: it is not a request field. Inspect refund.status
-     * (pending/effective/failed/cancelled); a 200 response does not guarantee money has reached the
-     * customer. Retrieve refund state before retrying an uncertain provider outcome. Requires the
-     * invoice ability or orders:write OAuth scope and current store permission. Idempotency-Key is
-     * required. Reuse the same key and identical request after a lost response; changed input or an
-     * in-progress request returns 409. OAuth callers use the admin grant and select a store with
-     * X-STORE. Current membership and role permissions apply to every request.
+     * supported provider. amount is a decimal string in the order's `totals.refund_currency`:
+     * "5.00" means $5.00 in USD, not 500 cents. Omitting amount, sending null, or an empty string
+     * requests the FULL remaining balance. Do not send amount_cents: it is not a request field.
+     * Inspect refund.status (pending/effective/failed/cancelled); a 200 response does not guarantee
+     * money has reached the customer. Retrieve refund state before retrying an uncertain provider
+     * outcome. Send the order's `totals.refunded_total_cents` unchanged as
+     * `expected_refunded_total_cents` so that a retry under a new Idempotency-Key, or a refund
+     * someone else made meanwhile, is refused instead of refunding twice: the refund goes out only
+     * while the order's refunded total still equals it. A changed total returns `422` on
+     * `expected_refunded_total_cents`; read the order again before deciding whether to refund. An
+     * invalid `amount` returns `422` on `amount`; other refusals return `422` on `refund`,
+     * including, when you send `expected_refunded_total_cents`, a refund still pending on the
+     * order. Requires the `invoice` API-key ability or the `orders:write` OAuth scope, and current
+     * store permission. `Idempotency-Key` is required. Reuse the same key and identical request
+     * after a lost response; changed input or an in-progress request returns `409`. OAuth callers
+     * use the admin grant and select a store with X-STORE. Current membership and role permissions
+     * apply to every request.
      *
      * @param order The order identifier.
-     * @param amount Decimal major-unit amount in the order currency, positive and no greater than
-     *   remaining balance. Precision follows that currency. Omission/null/empty requests the full
-     *   remaining balance.
+     * @param amount Decimal major-unit amount in the order's `totals.refund_currency`, positive and
+     *   no greater than remaining balance. Precision follows that currency. Omission/null/empty
+     *   requests the full remaining balance.
+     * @param expectedRefundedTotalCents The refunded total you expect, in integer minor units of
+     *   the order's `totals.refund_currency`, which can differ from the order currency: `500` means
+     *   $5.00 in USD. Read it from `totals.refunded_total_cents` on the order and send it
+     *   unchanged; it is `0` before the first refund. After a refund,
+     *   `data.order.totals.refunded_total_cents` in the response is the value to send with the next
+     *   one. With this field, the refund goes out only while the refunded total still equals it and
+     *   no other refund on the order is pending. Omit it or send null to refund without the check.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkCreateOrderRefundResponseValue200ApplicationJson
      */
@@ -850,9 +890,14 @@ class Orders(internal val sellapp: SellApp) {
     fun createRefund(
         order: String,
         amount: String? = null,
+        expectedRefundedTotalCents: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCreateOrderRefundResponseValue200ApplicationJson {
-        val body = bodyOf("amount" to amount)
+        val body =
+            bodyOf(
+                "amount" to amount,
+                "expected_refunded_total_cents" to expectedRefundedTotalCents,
+            )
         val config =
             RequestConfig(
                 method = "POST",
@@ -878,6 +923,7 @@ class Orders(internal val sellapp: SellApp) {
     fun createRefundWithResponse(
         order: String,
         amount: String? = null,
+        expectedRefundedTotalCents: Long? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkCreateOrderRefundResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -885,7 +931,7 @@ class Orders(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        createRefund(order, amount, capturingOptions)
+        createRefund(order, amount, expectedRefundedTotalCents, capturingOptions)
         return captured as? RawResponse<SdkCreateOrderRefundResponseValue200ApplicationJson>
             ?: error("Response metadata was not captured")
     }
@@ -901,10 +947,11 @@ class Orders(internal val sellapp: SellApp) {
     suspend fun createRefundSuspend(
         order: String,
         amount: String? = null,
+        expectedRefundedTotalCents: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCreateOrderRefundResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
-            createRefund(order, amount, requestOptions)
+            createRefund(order, amount, expectedRefundedTotalCents, requestOptions)
         }
 
     /**
@@ -918,10 +965,11 @@ class Orders(internal val sellapp: SellApp) {
     suspend fun createRefundWithResponseSuspend(
         order: String,
         amount: String? = null,
+        expectedRefundedTotalCents: Long? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkCreateOrderRefundResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
-            createRefundWithResponse(order, amount, requestOptions)
+            createRefundWithResponse(order, amount, expectedRefundedTotalCents, requestOptions)
         }
 
     /**
@@ -930,10 +978,11 @@ class Orders(internal val sellapp: SellApp) {
      * Reset fulfillment effects for a PAID or PARTIAL order and retry delivery. The optional email
      * overrides the recipient. meta.effects_reset counts reset effects; it does not prove
      * fulfillment finished. Other order states and a busy lifecycle lock return 422. Requires the
-     * invoice ability or orders:write OAuth scope and current store permission. Idempotency-Key is
-     * required. Reuse the same key and identical request after a lost response; changed input or an
-     * in-progress request returns 409. OAuth callers use the admin grant and select a store with
-     * X-STORE. Current membership and role permissions apply to every request.
+     * `invoice` API-key ability or the `orders:write` OAuth scope, and current store permission.
+     * `Idempotency-Key` is required. Reuse the same key and identical request after a lost
+     * response; changed input or an in-progress request returns `409`. OAuth callers use the admin
+     * grant and select a store with X-STORE. Current membership and role permissions apply to every
+     * request.
      *
      * @param order The order identifier.
      * @param email Optional delivery recipient override. Omit or send null to use the order
@@ -1025,16 +1074,15 @@ class Orders(internal val sellapp: SellApp) {
      * Queue another dynamic delivery attempt for one delivered product of a COMPLETED order. The
      * delivered product, line item and currently dynamic variant must all belong to this order and
      * store, with a configured webhook. 202 and meta.queued acknowledge the retry request, not
-     * successful external delivery. Requires the invoice ability or orders:write OAuth scope and
-     * current store permission. Idempotency-Key is required. Reuse the same key and identical
-     * request after a lost response; changed input or an in-progress request returns 409. OAuth
-     * callers use the admin grant and select a store with X-STORE. Current membership and role
-     * permissions apply to every request.
+     * successful external delivery. Requires the `invoice` API-key ability or the `orders:write`
+     * OAuth scope, and current store permission. `Idempotency-Key` is required. Reuse the same key
+     * and identical request after a lost response; changed input or an in-progress request returns
+     * `409`. OAuth callers use the admin grant and select a store with X-STORE. Current membership
+     * and role permissions apply to every request.
      *
      * @param order The order identifier.
      * @param deliveredProductId Delivered product record ID, not a catalog product or order
-     *   line-item ID. The public order-deliverables response does not currently expose this ID;
-     *   obtain it from an authorized integration context before requesting a retry.
+     *   line-item ID. Read it from `delivered_product_id` in `GET /v2/orders/{order}/deliverables`.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkRetryOrderDynamicDeliveryResponseValue202ApplicationJson
      */
@@ -1126,10 +1174,11 @@ class Orders(internal val sellapp: SellApp) {
      * select all variants. A supplied list must contain distinct positive IDs belonging to this
      * order and store. Noncompleted orders or a missing recipient return meta.notifications_sent=0.
      * The count records notifications requested, not email delivery confirmation. Requires the
-     * invoice ability or orders:write OAuth scope and current store permission. Idempotency-Key is
-     * required. Reuse the same key and identical request after a lost response; changed input or an
-     * in-progress request returns 409. OAuth callers use the admin grant and select a store with
-     * X-STORE. Current membership and role permissions apply to every request.
+     * `invoice` API-key ability or the `orders:write` OAuth scope, and current store permission.
+     * `Idempotency-Key` is required. Reuse the same key and identical request after a lost
+     * response; changed input or an in-progress request returns `409`. OAuth callers use the admin
+     * grant and select a store with X-STORE. Current membership and role permissions apply to every
+     * request.
      *
      * @param order The order identifier.
      * @param email Optional delivery recipient override. Omit or send null to use the order
@@ -1234,13 +1283,121 @@ class Orders(internal val sellapp: SellApp) {
         }
 
     /**
+     * Create a Telegram invite link
+     *
+     * Create a new Telegram invite link for a customer whose order granted access to a Telegram
+     * group or channel, for example after their first link expired or was used. Each link admits
+     * one person and expires 24 hours after it is created. SellApp saves the link on the order but
+     * does not send it: pass `invite_link` to the customer yourself. Send `variant_id` to choose
+     * the product when the order grants Telegram access for several; omit it when only one does. At
+     * most three links per product of an order are created in 24 hours, and a failed attempt does
+     * not count; a fourth returns `422` on `telegram_invite`, as do Telegram refusals such as an
+     * unhealthy bot connection or missing invite data. An order that is no longer paid, for example
+     * one refunded, disputed or voided, returns `422` on `telegram_invite` with `This order no
+     * longer grants Telegram access.` and creates no link. An order without granted Telegram access
+     * returns `422` on `order`; a product without it, or a missing `variant_id` when several
+     * products qualify, returns `422` on `variant_id`. Requires the `invoice` API-key ability or
+     * the `orders:write` OAuth scope, and current store permission. `Idempotency-Key` is required.
+     * Reuse the same key and identical request after a lost response; changed input or an
+     * in-progress request returns `409`. OAuth callers use the admin grant and select a store with
+     * X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param order The order identifier.
+     * @param variantId The purchased product variant whose Telegram access needs a new link, as in
+     *   `line_items[].product_variant_id`. Required only when the order grants Telegram access for
+     *   more than one product.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkRegenerateOrderTelegramInviteResponseValue201ApplicationJson
+     */
+    @JvmOverloads
+    fun regenerateTelegramInvite(
+        order: String,
+        variantId: Long? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkRegenerateOrderTelegramInviteResponseValue201ApplicationJson {
+        val body = bodyOf("variant_id" to variantId)
+        val config =
+            RequestConfig(
+                method = "POST",
+                path = "/v2/orders/${encodePathSegment(order)}/telegram-invites",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkRegenerateOrderTelegramInviteRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkRegenerateOrderTelegramInviteResponseValue201ApplicationJson
+                        .runtimeSchema,
+                operationId = "regenerateOrderTelegramInvite",
+                supportsIdempotency = true,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkRegenerateOrderTelegramInviteResponseValue201ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun regenerateTelegramInviteWithResponse(
+        order: String,
+        variantId: Long? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkRegenerateOrderTelegramInviteResponseValue201ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        regenerateTelegramInvite(order, variantId, capturingOptions)
+        return captured
+            as? RawResponse<SdkRegenerateOrderTelegramInviteResponseValue201ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [regenerateTelegramInvite]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [regenerateTelegramInvite] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("regenerateTelegramInviteSuspend")
+    suspend fun regenerateTelegramInviteSuspend(
+        order: String,
+        variantId: Long? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkRegenerateOrderTelegramInviteResponseValue201ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            regenerateTelegramInvite(order, variantId, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [regenerateTelegramInviteWithResponse]. Use this from a `suspend`
+     * function or coroutine scope.
+     *
+     * Delegates to the blocking [regenerateTelegramInviteWithResponse] under
+     * `withContext(Dispatchers.IO)`, so this is safe to call from any coroutine dispatcher
+     * (including `Dispatchers.Main`).
+     */
+    @JvmName("regenerateTelegramInviteWithResponseSuspend")
+    suspend fun regenerateTelegramInviteWithResponseSuspend(
+        order: String,
+        variantId: Long? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkRegenerateOrderTelegramInviteResponseValue201ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            regenerateTelegramInviteWithResponse(order, variantId, requestOptions)
+        }
+
+    /**
      * List order deliverables
      *
      * List seller-visible fulfillment records, expanding purchased bundle snapshots into their
-     * component variants. File download links expire after one hour. This payload includes
-     * line-item and variant IDs but does not expose the delivered_product_id required for dynamic
-     * delivery retries. OAuth callers use the admin grant and select a store with X-STORE. Current
-     * membership and role permissions apply to every request.
+     * component variants. File download links expire after one hour. A delivered record carries
+     * `delivered_product_id`, which `POST /v2/orders/{order}/dynamic-delivery-retries` takes to
+     * retry a dynamic delivery. OAuth callers use the admin grant and select a store with X-STORE.
+     * Current membership and role permissions apply to every request.
      *
      * @param order The order identifier.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)

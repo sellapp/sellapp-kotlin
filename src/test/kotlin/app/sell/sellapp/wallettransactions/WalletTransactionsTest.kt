@@ -7,12 +7,33 @@ import app.sell.sellapp.common.exceptions.NotFoundException
 import app.sell.sellapp.common.exceptions.RateLimitException
 import app.sell.sellapp.common.exceptions.UnauthorizedException
 import app.sell.sellapp.test.TestBase
+import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
+import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 class WalletTransactionsTest : TestBase() {
     private fun api() = WalletTransactions(createSellAppClient())
+
+    @Test
+    fun `reverse returns a typed response`() {
+        stubResponse(
+            "POST",
+            "/v2/wallets/sample-arg/transactions/sample-arg/reverse",
+            200,
+            "{\"data\": {\"id\": 0, \"wallet_id\": 0, \"type\": \"TOP_UP\", \"amount_cents\": 0, \"balance_after_cents\": 0}}",
+        )
+        val result = api().reverse("sample-arg", "sample-arg", note = "sample-arg")
+        assertNotNull(result)
+        wireMockRule.verify(
+            postRequestedFor(
+                    urlPathMatching("/v2/wallets/sample-arg/transactions/sample-arg/reverse")
+                )
+                .withRequestBody(matchingJsonPath("\$.note"))
+        )
+    }
 
     @Test
     fun `list returns a typed response`() {
@@ -27,34 +48,34 @@ class WalletTransactionsTest : TestBase() {
     }
 
     @Test
-    fun `list translates 401 to UnauthorizedException`() {
-        stubResponse("GET", "/v2/wallets/sample-arg/transactions", 401)
+    fun `reverse translates 401 to UnauthorizedException`() {
+        stubResponse("POST", "/v2/wallets/sample-arg/transactions/sample-arg/reverse", 401)
         assertThrows(UnauthorizedException::class.java) {
-            api().list("sample-arg")
+            api().reverse("sample-arg", "sample-arg", note = "sample-arg")
         }
     }
 
     @Test
-    fun `list translates 404 to NotFoundException`() {
-        stubResponse("GET", "/v2/wallets/sample-arg/transactions", 404)
+    fun `reverse translates 404 to NotFoundException`() {
+        stubResponse("POST", "/v2/wallets/sample-arg/transactions/sample-arg/reverse", 404)
         assertThrows(NotFoundException::class.java) {
-            api().list("sample-arg")
+            api().reverse("sample-arg", "sample-arg", note = "sample-arg")
         }
     }
 
     @Test
-    fun `list translates 429 to RateLimitException`() {
-        stubResponse("GET", "/v2/wallets/sample-arg/transactions", 429)
+    fun `reverse translates 429 to RateLimitException`() {
+        stubResponse("POST", "/v2/wallets/sample-arg/transactions/sample-arg/reverse", 429)
         assertThrows(RateLimitException::class.java) {
-            api().list("sample-arg")
+            api().reverse("sample-arg", "sample-arg", note = "sample-arg")
         }
     }
 
     @Test
-    fun `list translates 500 to GenericServerException`() {
-        stubResponse("GET", "/v2/wallets/sample-arg/transactions", 500)
+    fun `reverse translates 500 to GenericServerException`() {
+        stubResponse("POST", "/v2/wallets/sample-arg/transactions/sample-arg/reverse", 500)
         assertThrows(GenericServerException::class.java) {
-            api().list("sample-arg")
+            api().reverse("sample-arg", "sample-arg", note = "sample-arg")
         }
     }
 }

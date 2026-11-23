@@ -12,6 +12,9 @@ List affiliates
 fun list(
         status: AffiliatesStatus? = null,
         search: String? = null,
+        customRatesOnly: Boolean? = null,
+        payoutMethod: AffiliatesPayoutMethod? = null,
+        sort: String? = null,
         limit: Int? = null,
         page: Long? = null,
         requestOptions: RequestOptions? = null,
@@ -22,6 +25,9 @@ fun list(
 | --- | --- | --- |
 | status | `AffiliatesStatus?` | No |
 | search | `String?` | No |
+| customRatesOnly | `Boolean?` | No |
+| payoutMethod | `AffiliatesPayoutMethod?` | No |
+| sort | `String?` | No |
 | limit | `Int?` | No |
 | page | `Long?` | No |
 | requestOptions | `RequestOptions?` | No |

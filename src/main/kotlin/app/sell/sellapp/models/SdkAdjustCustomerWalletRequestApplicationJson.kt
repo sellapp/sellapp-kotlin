@@ -5,22 +5,38 @@ package app.sell.sellapp.models
 import app.sell.sellapp.common.json.runtimeSchema
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
 
 /** SdkAdjustCustomerWalletRequestApplicationJson model. */
 data class SdkAdjustCustomerWalletRequestApplicationJson(
-    /** The signed adjustment amount in cents. Must not be zero. */
+    /**
+     * The signed change in integer USD cents: positive adds money, negative takes it away. Must not
+     * be zero.
+     */
     @JsonProperty("amount_cents") val amountCents: Long,
 
     /**
-     * Required body key, at most 128 characters. Keep the customer, amount, staff actor and trimmed
-     * note unchanged when retrying this intended adjustment.
+     * Your key for this one adjustment, in printable ASCII characters and unique across all stores.
+     * Reuse it only to retry the same customer, amount, and note as the same staff member.
      */
     @JsonProperty("idempotency_key") val idempotencyKey: String,
 
-    /** The note. */
+    /**
+     * Why the balance changed, with at least one character that is not a space. Leading and
+     * trailing spaces are removed. Saved on the entry and shown in the wallet history.
+     */
     @JsonProperty("note") val note: String,
+
+    /**
+     * Optional. The wallet balance in integer USD cents that you read before deciding on this
+     * change. If the balance is different now, nothing is written and the request returns `422` on
+     * `expected_balance_cents`. Use `0` for a customer who has no wallet yet.
+     */
+    @JsonProperty("expected_balance_cents")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val expectedBalanceCents: Long? = null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -33,7 +49,7 @@ data class SdkAdjustCustomerWalletRequestApplicationJson(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"SdkAdjustCustomerWalletRequestApplicationJson\",\"properties\":{\"amount_cents\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":-999999999999,\"maximum\":999999999999}},\"idempotency_key\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":128}},\"note\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"minLength\":1,\"maxLength\":255,\"pattern\":\"\\\\S\"}}},\"required\":[\"amount_cents\",\"idempotency_key\",\"note\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"SdkAdjustCustomerWalletRequestApplicationJson\",\"properties\":{\"amount_cents\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":-999999999999,\"maximum\":999999999999}},\"idempotency_key\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":128}},\"note\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"minLength\":1,\"maxLength\":255,\"pattern\":\"\\\\S\"}},\"expected_balance_cents\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0,\"maximum\":999999999999}}},\"required\":[\"amount_cents\",\"idempotency_key\",\"note\"],\"additionalProperties\":true}"
             )
     }
 }

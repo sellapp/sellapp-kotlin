@@ -7,6 +7,7 @@ import app.sell.sellapp.types.ExpectedStatus
 import app.sell.sellapp.types.SdkUpdateOrderStatusRequestApplicationJsonStatus
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
 
@@ -20,6 +21,16 @@ data class SdkUpdateOrderStatusRequestApplicationJson(
      * the order has changed.
      */
     @JsonProperty("expected_status") val expectedStatus: ExpectedStatus? = null,
+
+    /**
+     * Send `true` to confirm that the store received the payment for this order outside SellApp,
+     * which can release purchased products to the customer. `true` is accepted only with `status:
+     * COMPLETED` (otherwise `422` on `payment_received`) and requires `expected_status` (otherwise
+     * `422` on `expected_status`). `false` is accepted with any status and changes nothing.
+     */
+    @JsonProperty("payment_received")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val paymentReceived: Boolean? = null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -32,7 +43,7 @@ data class SdkUpdateOrderStatusRequestApplicationJson(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"SdkUpdateOrderStatusRequestApplicationJson\",\"properties\":{\"status\":{\"kind\":\"enum\",\"values\":[\"COMPLETED\",\"VOIDED\",\"REVIEW\",\"DISPUTING\"]},\"expected_status\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"enum\",\"values\":[\"PENDING\",\"REVERSED\",\"PARTIAL\",\"VOIDED\",\"REFUNDED\",\"PAID\",\"COMPLETED\",\"DISPUTING\",\"REVIEW\",\"FAILED\",\"null\"]}}},\"required\":[\"status\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"SdkUpdateOrderStatusRequestApplicationJson\",\"properties\":{\"status\":{\"kind\":\"enum\",\"values\":[\"COMPLETED\",\"VOIDED\",\"REVIEW\",\"DISPUTING\"]},\"expected_status\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"enum\",\"values\":[\"PENDING\",\"REVERSED\",\"PARTIAL\",\"VOIDED\",\"REFUNDED\",\"PAID\",\"COMPLETED\",\"DISPUTING\",\"REVIEW\",\"FAILED\",\"null\"]}},\"payment_received\":{\"kind\":\"primitive\",\"type\":\"boolean\"}},\"required\":[\"status\"],\"additionalProperties\":true}"
             )
     }
 }

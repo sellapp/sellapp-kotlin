@@ -9,6 +9,7 @@ import app.sell.sellapp.common.http.RawResponse
 import app.sell.sellapp.common.http.RequestConfig
 import app.sell.sellapp.common.http.RequestOptions
 import app.sell.sellapp.common.http.addEach
+import app.sell.sellapp.common.http.addIfNotNull
 import app.sell.sellapp.common.http.bodyOf
 import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.http.patchBodyOf
@@ -210,8 +211,12 @@ class Subscriptions(internal val sellapp: SellApp) {
      *
      * List the subscriptions belonging to the authenticated store, ordered by identifier ascending.
      * Requires the `invoice` Sanctum ability. Use `status[]` to keep only the states you care
-     * about. OAuth callers use the admin grant and select a store with X-STORE. Current membership
-     * and role permissions apply to every request.
+     * about, and the other filters to find subscriptions by order, product, renewal date,
+     * cancellation date, or whether they are paused or set to cancel. Filters combine: a
+     * subscription must match all of them. Date filters read whole days in the store's time zone
+     * and include both ends. A filter value in the wrong shape, or a `*_before` date earlier than
+     * its `*_after` date, returns `422` on that parameter. OAuth callers use the admin grant and
+     * select a store with X-STORE. Current membership and role permissions apply to every request.
      *
      * @param limit Number of items to return per page.
      * @param page Page number to return.
@@ -220,6 +225,28 @@ class Subscriptions(internal val sellapp: SellApp) {
      * @param status Filter by one or more subscription statuses. Repeat the parameter to select
      *   several; a single `status=ACTIVE` works too. A status outside the list is rejected with a
      *   validation error.
+     * @param orderId Keep subscriptions sold by this order.
+     * @param productId Keep subscriptions whose plan is a variant of this product, including
+     *   subscriptions moved to that plan after signup.
+     * @param renewsAfter Keep subscriptions that renew on or after this moment. Only `ACTIVE` and
+     *   `TRIALING` subscriptions with a renewal date that are neither paused nor scheduled to
+     *   cancel match a renewal filter. A date such as `2026-11-01` starts at midnight of that day
+     *   in the store's time zone; a date-time without an offset is also read in the store's time
+     *   zone. Inclusive.
+     * @param renewsBefore Keep subscriptions that renew on or before this moment, with the same
+     *   rules as `renews_after`. A date runs to the last second of that day in the store's time
+     *   zone. Inclusive. Must not be earlier than `renews_after`.
+     * @param cancelledAfter Keep `CANCELED` subscriptions cancelled on or after this moment. The
+     *   cancellation time is when an immediate cancellation happened; for a subscription that ran
+     *   out at its period end it is approximate, the last time the subscription record changed.
+     *   Dates are read like `renews_after`. Inclusive.
+     * @param cancelledBefore Keep `CANCELED` subscriptions cancelled on or before this moment, with
+     *   the same rules as `cancelled_after`. A date runs to the last second of that day in the
+     *   store's time zone. Inclusive. Must not be earlier than `cancelled_after`.
+     * @param scheduledToCancel `true` keeps `ACTIVE` and `TRIALING` subscriptions set to cancel at
+     *   the end of their period; `false` keeps subscriptions that are not set to.
+     * @param paused `true` keeps paused subscriptions; `false` keeps subscriptions that are not
+     *   paused.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return a [app.sell.sellapp.common.http.Page] of results
      */
@@ -229,6 +256,14 @@ class Subscriptions(internal val sellapp: SellApp) {
         page: Long? = null,
         pagination: Boolean? = null,
         status: List<SubscriptionsStatus>? = null,
+        orderId: Long? = null,
+        productId: Long? = null,
+        renewsAfter: String? = null,
+        renewsBefore: String? = null,
+        cancelledAfter: String? = null,
+        cancelledBefore: String? = null,
+        scheduledToCancel: Boolean? = null,
+        paused: Boolean? = null,
         requestOptions: RequestOptions? = null,
     ): Page<SdkListSubscriptionsResponseValue200ApplicationJson> {
         val itemType =
@@ -250,6 +285,14 @@ class Subscriptions(internal val sellapp: SellApp) {
             page?.let { add("page" to it.toString()) }
             pagination?.let { add("pagination" to it.toString()) }
             status?.let { addEach("status[]", it.map { it.value }) }
+            orderId?.let { add("order_id" to it.toString()) }
+            productId?.let { add("product_id" to it.toString()) }
+            addIfNotNull("renews_after", renewsAfter)
+            addIfNotNull("renews_before", renewsBefore)
+            addIfNotNull("cancelled_after", cancelledAfter)
+            addIfNotNull("cancelled_before", cancelledBefore)
+            scheduledToCancel?.let { add("scheduled_to_cancel" to it.toString()) }
+            paused?.let { add("paused" to it.toString()) }
         }
     }
 
@@ -259,6 +302,14 @@ class Subscriptions(internal val sellapp: SellApp) {
         page: Long? = null,
         pagination: Boolean? = null,
         status: List<SubscriptionsStatus>? = null,
+        orderId: Long? = null,
+        productId: Long? = null,
+        renewsAfter: String? = null,
+        renewsBefore: String? = null,
+        cancelledAfter: String? = null,
+        cancelledBefore: String? = null,
+        scheduledToCancel: Boolean? = null,
+        paused: Boolean? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<SdkListSubscriptionsResponseValue200ApplicationJson>> {
         var captured: RawResponse<Any?>? = null
@@ -266,7 +317,21 @@ class Subscriptions(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        list(limit, page, pagination, status, capturingOptions)
+        list(
+            limit,
+            page,
+            pagination,
+            status,
+            orderId,
+            productId,
+            renewsAfter,
+            renewsBefore,
+            cancelledAfter,
+            cancelledBefore,
+            scheduledToCancel,
+            paused,
+            capturingOptions,
+        )
         return captured as? RawResponse<Page<SdkListSubscriptionsResponseValue200ApplicationJson>>
             ?: error("Response metadata was not captured")
     }
@@ -283,10 +348,32 @@ class Subscriptions(internal val sellapp: SellApp) {
         page: Long? = null,
         pagination: Boolean? = null,
         status: List<SubscriptionsStatus>? = null,
+        orderId: Long? = null,
+        productId: Long? = null,
+        renewsAfter: String? = null,
+        renewsBefore: String? = null,
+        cancelledAfter: String? = null,
+        cancelledBefore: String? = null,
+        scheduledToCancel: Boolean? = null,
+        paused: Boolean? = null,
         requestOptions: RequestOptions? = null,
     ): Page<SdkListSubscriptionsResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
-            list(limit, page, pagination, status, requestOptions)
+            list(
+                limit,
+                page,
+                pagination,
+                status,
+                orderId,
+                productId,
+                renewsAfter,
+                renewsBefore,
+                cancelledAfter,
+                cancelledBefore,
+                scheduledToCancel,
+                paused,
+                requestOptions,
+            )
         }
 
     /**
@@ -302,10 +389,32 @@ class Subscriptions(internal val sellapp: SellApp) {
         page: Long? = null,
         pagination: Boolean? = null,
         status: List<SubscriptionsStatus>? = null,
+        orderId: Long? = null,
+        productId: Long? = null,
+        renewsAfter: String? = null,
+        renewsBefore: String? = null,
+        cancelledAfter: String? = null,
+        cancelledBefore: String? = null,
+        scheduledToCancel: Boolean? = null,
+        paused: Boolean? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<SdkListSubscriptionsResponseValue200ApplicationJson>> =
         sellapp.baseClient.runCancellable {
-            listWithResponse(limit, page, pagination, status, requestOptions)
+            listWithResponse(
+                limit,
+                page,
+                pagination,
+                status,
+                orderId,
+                productId,
+                renewsAfter,
+                renewsBefore,
+                cancelledAfter,
+                cancelledBefore,
+                scheduledToCancel,
+                paused,
+                requestOptions,
+            )
         }
 
     /**
@@ -315,9 +424,13 @@ class Subscriptions(internal val sellapp: SellApp) {
      * otherwise. `search.value` matches the provider subscription ID, the provider customer ID, and
      * the customer email. Filter on `id`, `customer_id` (the SellApp customer ID, as in
      * `customer.id`), `provider`, `status`, or `product_variant_id`, and sort on `id`, `status`,
-     * `current_period_start`, `current_period_end`, `created_at`, or `updated_at`. Requires the
-     * `invoice` Sanctum ability. OAuth callers use the admin grant and select a store with X-STORE.
-     * Current membership and role permissions apply to every request.
+     * `current_period_start`, `current_period_end`, `created_at`, or `updated_at`. The body also
+     * takes the list endpoint's filters as top-level fields: `order_id`, `product_id`,
+     * `renews_after`, `renews_before`, `cancelled_after`, `cancelled_before`,
+     * `scheduled_to_cancel`, and `paused`, with the same rules; date filters read whole days in the
+     * store's time zone and include both ends. Requires the `invoice` Sanctum ability. OAuth
+     * callers use the admin grant and select a store with X-STORE. Current membership and role
+     * permissions apply to every request.
      *
      * @param limit Number of items to return per page.
      * @param page Page number to return.
@@ -327,6 +440,28 @@ class Subscriptions(internal val sellapp: SellApp) {
      * @param sort the sort of the request.
      * @param search the search of the request.
      * @param includes the includes of the request.
+     * @param orderId Keep subscriptions sold by this order.
+     * @param productId Keep subscriptions whose plan is a variant of this product, including
+     *   subscriptions moved to that plan after signup.
+     * @param renewsAfter Keep subscriptions that renew on or after this moment. Only `ACTIVE` and
+     *   `TRIALING` subscriptions with a renewal date that are neither paused nor scheduled to
+     *   cancel match a renewal filter. A date such as `2026-11-01` starts at midnight of that day
+     *   in the store's time zone; a date-time without an offset is also read in the store's time
+     *   zone. Inclusive.
+     * @param renewsBefore Keep subscriptions that renew on or before this moment, with the same
+     *   rules as `renews_after`. A date runs to the last second of that day in the store's time
+     *   zone. Inclusive. Must not be earlier than `renews_after`.
+     * @param cancelledAfter Keep `CANCELED` subscriptions cancelled on or after this moment. The
+     *   cancellation time is when an immediate cancellation happened; for a subscription that ran
+     *   out at its period end it is approximate, the last time the subscription record changed.
+     *   Dates are read like `renews_after`. Inclusive.
+     * @param cancelledBefore Keep `CANCELED` subscriptions cancelled on or before this moment, with
+     *   the same rules as `cancelled_after`. A date runs to the last second of that day in the
+     *   store's time zone. Inclusive. Must not be earlier than `cancelled_after`.
+     * @param scheduledToCancel `true` keeps `ACTIVE` and `TRIALING` subscriptions set to cancel at
+     *   the end of their period; `false` keeps subscriptions that are not set to.
+     * @param paused `true` keeps paused subscriptions; `false` keeps subscriptions that are not
+     *   paused.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return a [app.sell.sellapp.common.http.Page] of results
      */
@@ -339,6 +474,14 @@ class Subscriptions(internal val sellapp: SellApp) {
         sort: List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchSubscriptionsRequestApplicationJsonPropertySearch? = null,
         includes: List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>? = null,
+        orderId: Long? = null,
+        productId: Long? = null,
+        renewsAfter: String? = null,
+        renewsBefore: String? = null,
+        cancelledAfter: String? = null,
+        cancelledBefore: String? = null,
+        scheduledToCancel: Boolean? = null,
+        paused: Boolean? = null,
         requestOptions: RequestOptions? = null,
     ): Page<SdkSearchSubscriptionsResponseValue200ApplicationJson> {
         val itemType =
@@ -371,6 +514,14 @@ class Subscriptions(internal val sellapp: SellApp) {
         sort: List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchSubscriptionsRequestApplicationJsonPropertySearch? = null,
         includes: List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>? = null,
+        orderId: Long? = null,
+        productId: Long? = null,
+        renewsAfter: String? = null,
+        renewsBefore: String? = null,
+        cancelledAfter: String? = null,
+        cancelledBefore: String? = null,
+        scheduledToCancel: Boolean? = null,
+        paused: Boolean? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<SdkSearchSubscriptionsResponseValue200ApplicationJson>> {
         var captured: RawResponse<Any?>? = null
@@ -378,7 +529,24 @@ class Subscriptions(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        search(limit, page, pagination, filters, sort, search, includes, capturingOptions)
+        search(
+            limit,
+            page,
+            pagination,
+            filters,
+            sort,
+            search,
+            includes,
+            orderId,
+            productId,
+            renewsAfter,
+            renewsBefore,
+            cancelledAfter,
+            cancelledBefore,
+            scheduledToCancel,
+            paused,
+            capturingOptions,
+        )
         return captured as? RawResponse<Page<SdkSearchSubscriptionsResponseValue200ApplicationJson>>
             ?: error("Response metadata was not captured")
     }
@@ -398,10 +566,35 @@ class Subscriptions(internal val sellapp: SellApp) {
         sort: List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchSubscriptionsRequestApplicationJsonPropertySearch? = null,
         includes: List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>? = null,
+        orderId: Long? = null,
+        productId: Long? = null,
+        renewsAfter: String? = null,
+        renewsBefore: String? = null,
+        cancelledAfter: String? = null,
+        cancelledBefore: String? = null,
+        scheduledToCancel: Boolean? = null,
+        paused: Boolean? = null,
         requestOptions: RequestOptions? = null,
     ): Page<SdkSearchSubscriptionsResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
-            search(limit, page, pagination, filters, sort, search, includes, requestOptions)
+            search(
+                limit,
+                page,
+                pagination,
+                filters,
+                sort,
+                search,
+                includes,
+                orderId,
+                productId,
+                renewsAfter,
+                renewsBefore,
+                cancelledAfter,
+                cancelledBefore,
+                scheduledToCancel,
+                paused,
+                requestOptions,
+            )
         }
 
     /**
@@ -420,6 +613,14 @@ class Subscriptions(internal val sellapp: SellApp) {
         sort: List<SearchSubscriptionsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchSubscriptionsRequestApplicationJsonPropertySearch? = null,
         includes: List<SearchSubscriptionsRequestApplicationJsonPropertyIncludesItem>? = null,
+        orderId: Long? = null,
+        productId: Long? = null,
+        renewsAfter: String? = null,
+        renewsBefore: String? = null,
+        cancelledAfter: String? = null,
+        cancelledBefore: String? = null,
+        scheduledToCancel: Boolean? = null,
+        paused: Boolean? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<SdkSearchSubscriptionsResponseValue200ApplicationJson>> =
         sellapp.baseClient.runCancellable {
@@ -431,6 +632,14 @@ class Subscriptions(internal val sellapp: SellApp) {
                 sort,
                 search,
                 includes,
+                orderId,
+                productId,
+                renewsAfter,
+                renewsBefore,
+                cancelledAfter,
+                cancelledBefore,
+                scheduledToCancel,
+                paused,
                 requestOptions,
             )
         }

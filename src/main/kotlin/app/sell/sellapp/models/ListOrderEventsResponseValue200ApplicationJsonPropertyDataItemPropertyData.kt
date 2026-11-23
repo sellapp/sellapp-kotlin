@@ -20,7 +20,7 @@ class ListOrderEventsResponseValue200ApplicationJsonPropertyDataItemPropertyData
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"ListOrderEventsResponseValue200ApplicationJsonPropertyDataItemPropertyData\",\"properties\":{},\"required\":[],\"additionalProperties\":{\"kind\":\"object\",\"modelName\":\"ScalarMetadataValue\",\"properties\":{},\"required\":[],\"additionalProperties\":true},\"constraints\":{\"maxProperties\":100}}"
+                "{\"kind\":\"object\",\"modelName\":\"ListOrderEventsResponseValue200ApplicationJsonPropertyDataItemPropertyData\",\"properties\":{},\"required\":[],\"additionalProperties\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"union\",\"variants\":[{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":500}},{\"kind\":\"primitive\",\"type\":\"number\"},{\"kind\":\"primitive\",\"type\":\"boolean\"}],\"composition\":\"oneOf\"}},\"constraints\":{\"maxProperties\":100}}"
             )
     }
 }

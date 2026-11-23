@@ -10,14 +10,33 @@ import app.sell.sellapp.common.http.RequestOptions
 import app.sell.sellapp.common.http.bodyOf
 import app.sell.sellapp.common.http.patchBodyOf
 import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.models.ReplaceCheckoutSettingsRequestApplicationJsonPropertyCrypto
 import app.sell.sellapp.models.ReplaceMarketingSettingsRequestApplicationJsonPropertyAbandonedCart
+import app.sell.sellapp.models.SdkGetCheckoutSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkGetCustomerEmailSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkGetPersonalizationSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkGetStoreAlertSettingsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkGetStoreSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkGetTaxSettingsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkReplaceAnalyticsSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkReplaceCheckoutSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkReplaceCryptoCheckoutSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkReplaceCustomerEmailSettingsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkReplaceGeneralStoreSettingsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkReplaceMarketingSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkReplacePersonalizationSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkReplaceStoreAlertSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkReplaceTaxSettingsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkUpdateAnalyticsSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkUpdateCheckoutSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkUpdateCryptoCheckoutSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkUpdateCustomerEmailSettingsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkUpdateGeneralStoreSettingsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkUpdateMarketingSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkUpdatePersonalizationSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkUpdateStoreAlertSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkUpdateTaxSettingsResponseValue200ApplicationJson
+import app.sell.sellapp.models.UpdateCheckoutSettingsRequestApplicationJsonPropertyCrypto
 import app.sell.sellapp.models.UpdateMarketingSettingsRequestApplicationJsonPropertyAbandonedCart
 import app.sell.sellapp.types.DarkMode
 import app.sell.sellapp.types.StoreVisibility
@@ -803,5 +822,2133 @@ class StoreSettings(internal val sellapp: SellApp) {
     ): RawResponse<SdkUpdateMarketingSettingsResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
             updateMarketingWithResponse(abandonedCart, requestOptions)
+        }
+
+    /**
+     * Retrieve checkout settings
+     *
+     * Get your store's checkout settings: the shopping cart, whether checkout asks for an email,
+     * fraud controls, the minimum order total, the billing descriptor, the checkout rate limits,
+     * and the crypto checkout values when the store takes crypto through SellApp's crypto
+     * processor. The response body can be sent back to `PUT /v2/store/settings/checkout` unchanged.
+     * Requires the `store` API-key ability and the `store` permission in your team role. OAuth
+     * callers use the admin grant and select a store with X-STORE. Current membership and role
+     * permissions apply to every request.
+     *
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkGetCheckoutSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun getCheckout(
+        requestOptions: RequestOptions? = null
+    ): SdkGetCheckoutSettingsResponseValue200ApplicationJson {
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/store/settings/checkout",
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models.SdkGetCheckoutSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "getCheckoutSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkGetCheckoutSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getCheckoutWithResponse(
+        requestOptions: RequestOptions? = null
+    ): RawResponse<SdkGetCheckoutSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        getCheckout(capturingOptions)
+        return captured as? RawResponse<SdkGetCheckoutSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [getCheckout]. Use this from a `suspend` function or coroutine
+     * scope.
+     *
+     * Delegates to the blocking [getCheckout] under `withContext(Dispatchers.IO)`, so this is safe
+     * to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getCheckoutSuspend")
+    suspend fun getCheckoutSuspend(
+        requestOptions: RequestOptions? = null
+    ): SdkGetCheckoutSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            getCheckout(requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [getCheckoutWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [getCheckoutWithResponse] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getCheckoutWithResponseSuspend")
+    suspend fun getCheckoutWithResponseSuspend(
+        requestOptions: RequestOptions? = null
+    ): RawResponse<SdkGetCheckoutSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            getCheckoutWithResponse(requestOptions)
+        }
+
+    /**
+     * Update checkout settings
+     *
+     * Replace all eleven checkout settings. Every field except `crypto` is required; send `null` to
+     * remove a nullable one. A missing field returns `422` and nothing is saved. The body of `GET
+     * /v2/store/settings/checkout`, including `crypto`, can be sent back unchanged. Sending the
+     * same body again is safe. Requires the `store` API-key ability and the `store` permission in
+     * your team role. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * membership and role permissions apply to every request.
+     *
+     * @param shoppingCartEnabled Whether customers can add several products to a cart and buy them
+     *   in one checkout. `false` turns the storefront cart off.
+     * @param customerEmailRequired Whether checkout asks customers for an email address. With
+     *   `false`, checkout does not ask, and delivery and payment emails cannot reach a customer who
+     *   left none.
+     * @param allowVpnPurchases Whether customers who use a VPN or a proxy can buy.
+     * @param blacklistOnDispute Whether a customer's email address and IP address are added to your
+     *   blacklist when they open a payment dispute.
+     * @param minimumSpend The smallest order total, VAT included, that customers can check out
+     *   with, as a decimal string in the order's currency: `"12.50"` on a USD order means $12.50.
+     *   At least `1`; digits with an optional decimal part, no sign or exponent. Send `null` or
+     *   `"0"` to remove the minimum; it then reads `null`.
+     * @param billingDescriptor The purchase name customers see while they check out, up to 20
+     *   characters. `null` uses the default, `SellApp Order`.
+     * @param attemptsPerCustomer How many checkout attempts one customer can make within the
+     *   window, counted per IP address and email pair, or per checkout session fingerprint when
+     *   checkout does not ask for an email. 1 to 100000; the default is `5`. This limit cannot be
+     *   removed.
+     * @param attemptsPerIp How many checkout attempts can come from one IP address within the
+     *   window. 1 to 100000; `null` turns this limit off.
+     * @param attemptsPerEmail How many checkout attempts can use one customer email address within
+     *   the window. 1 to 100000; `null` turns this limit off.
+     * @param attemptsPerFingerprint How many checkout attempts can come from one checkout session
+     *   fingerprint (a browser identifier) within the window. 1 to 100000; `null` turns this limit
+     *   off.
+     * @param rateLimitWindowSeconds How long each checkout limit counts attempts before allowing
+     *   them again, in seconds: 60 (one minute) to 604800 (seven days). The default is `3600` (one
+     *   hour). Attempts are counted per store.
+     * @param crypto the crypto of the request.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkReplaceCheckoutSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun replaceCheckout(
+        shoppingCartEnabled: Boolean,
+        customerEmailRequired: Boolean,
+        allowVpnPurchases: Boolean,
+        blacklistOnDispute: Boolean,
+        minimumSpend: String?,
+        billingDescriptor: String?,
+        attemptsPerCustomer: Long,
+        attemptsPerIp: Long?,
+        attemptsPerEmail: Long?,
+        attemptsPerFingerprint: Long?,
+        rateLimitWindowSeconds: Long,
+        crypto: ReplaceCheckoutSettingsRequestApplicationJsonPropertyCrypto? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkReplaceCheckoutSettingsResponseValue200ApplicationJson {
+        val body =
+            bodyOf(
+                "shopping_cart_enabled" to shoppingCartEnabled,
+                "customer_email_required" to customerEmailRequired,
+                "allow_vpn_purchases" to allowVpnPurchases,
+                "blacklist_on_dispute" to blacklistOnDispute,
+                "minimum_spend" to minimumSpend,
+                "billing_descriptor" to billingDescriptor,
+                "attempts_per_customer" to attemptsPerCustomer,
+                "attempts_per_ip" to attemptsPerIp,
+                "attempts_per_email" to attemptsPerEmail,
+                "attempts_per_fingerprint" to attemptsPerFingerprint,
+                "rate_limit_window_seconds" to rateLimitWindowSeconds,
+                "crypto" to crypto,
+            )
+        body["shopping_cart_enabled"] = shoppingCartEnabled
+        body["customer_email_required"] = customerEmailRequired
+        body["allow_vpn_purchases"] = allowVpnPurchases
+        body["blacklist_on_dispute"] = blacklistOnDispute
+        body["minimum_spend"] = minimumSpend
+        body["billing_descriptor"] = billingDescriptor
+        body["attempts_per_customer"] = attemptsPerCustomer
+        body["attempts_per_ip"] = attemptsPerIp
+        body["attempts_per_email"] = attemptsPerEmail
+        body["attempts_per_fingerprint"] = attemptsPerFingerprint
+        body["rate_limit_window_seconds"] = rateLimitWindowSeconds
+        val config =
+            RequestConfig(
+                method = "PUT",
+                path = "/v2/store/settings/checkout",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkReplaceCheckoutSettingsRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkReplaceCheckoutSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "replaceCheckoutSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkReplaceCheckoutSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun replaceCheckoutWithResponse(
+        shoppingCartEnabled: Boolean,
+        customerEmailRequired: Boolean,
+        allowVpnPurchases: Boolean,
+        blacklistOnDispute: Boolean,
+        minimumSpend: String?,
+        billingDescriptor: String?,
+        attemptsPerCustomer: Long,
+        attemptsPerIp: Long?,
+        attemptsPerEmail: Long?,
+        attemptsPerFingerprint: Long?,
+        rateLimitWindowSeconds: Long,
+        crypto: ReplaceCheckoutSettingsRequestApplicationJsonPropertyCrypto? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkReplaceCheckoutSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        replaceCheckout(
+            shoppingCartEnabled,
+            customerEmailRequired,
+            allowVpnPurchases,
+            blacklistOnDispute,
+            minimumSpend,
+            billingDescriptor,
+            attemptsPerCustomer,
+            attemptsPerIp,
+            attemptsPerEmail,
+            attemptsPerFingerprint,
+            rateLimitWindowSeconds,
+            crypto,
+            capturingOptions,
+        )
+        return captured as? RawResponse<SdkReplaceCheckoutSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [replaceCheckout]. Use this from a `suspend` function or coroutine
+     * scope.
+     *
+     * Delegates to the blocking [replaceCheckout] under `withContext(Dispatchers.IO)`, so this is
+     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("replaceCheckoutSuspend")
+    suspend fun replaceCheckoutSuspend(
+        shoppingCartEnabled: Boolean,
+        customerEmailRequired: Boolean,
+        allowVpnPurchases: Boolean,
+        blacklistOnDispute: Boolean,
+        minimumSpend: String?,
+        billingDescriptor: String?,
+        attemptsPerCustomer: Long,
+        attemptsPerIp: Long?,
+        attemptsPerEmail: Long?,
+        attemptsPerFingerprint: Long?,
+        rateLimitWindowSeconds: Long,
+        crypto: ReplaceCheckoutSettingsRequestApplicationJsonPropertyCrypto? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkReplaceCheckoutSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            replaceCheckout(
+                shoppingCartEnabled,
+                customerEmailRequired,
+                allowVpnPurchases,
+                blacklistOnDispute,
+                minimumSpend,
+                billingDescriptor,
+                attemptsPerCustomer,
+                attemptsPerIp,
+                attemptsPerEmail,
+                attemptsPerFingerprint,
+                rateLimitWindowSeconds,
+                crypto,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Coroutine-aware variant of [replaceCheckoutWithResponse]. Use this from a `suspend` function
+     * or coroutine scope.
+     *
+     * Delegates to the blocking [replaceCheckoutWithResponse] under `withContext(Dispatchers.IO)`,
+     * so this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("replaceCheckoutWithResponseSuspend")
+    suspend fun replaceCheckoutWithResponseSuspend(
+        shoppingCartEnabled: Boolean,
+        customerEmailRequired: Boolean,
+        allowVpnPurchases: Boolean,
+        blacklistOnDispute: Boolean,
+        minimumSpend: String?,
+        billingDescriptor: String?,
+        attemptsPerCustomer: Long,
+        attemptsPerIp: Long?,
+        attemptsPerEmail: Long?,
+        attemptsPerFingerprint: Long?,
+        rateLimitWindowSeconds: Long,
+        crypto: ReplaceCheckoutSettingsRequestApplicationJsonPropertyCrypto? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkReplaceCheckoutSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            replaceCheckoutWithResponse(
+                shoppingCartEnabled,
+                customerEmailRequired,
+                allowVpnPurchases,
+                blacklistOnDispute,
+                minimumSpend,
+                billingDescriptor,
+                attemptsPerCustomer,
+                attemptsPerIp,
+                attemptsPerEmail,
+                attemptsPerFingerprint,
+                rateLimitWindowSeconds,
+                crypto,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Update checkout settings
+     *
+     * Change only the checkout settings you send and keep the others, including one someone else
+     * saved while your request was in flight. Send `null` to remove `minimum_spend`,
+     * `billing_descriptor`, `attempts_per_ip`, `attempts_per_email` or `attempts_per_fingerprint`.
+     * `crypto` is read-only here; change it with `PATCH /v2/store/settings/checkout/crypto`. A
+     * refused value returns `422` on the field name of this endpoint, such as
+     * `rate_limit_window_seconds`, and nothing is saved. Sending the same change again is safe.
+     * Requires the `store` API-key ability and the `store` permission in your team role. OAuth
+     * callers use the admin grant and select a store with X-STORE. Current membership and role
+     * permissions apply to every request.
+     *
+     * @param shoppingCartEnabled Whether customers can add several products to a cart and buy them
+     *   in one checkout. `false` turns the storefront cart off.
+     * @param customerEmailRequired Whether checkout asks customers for an email address. With
+     *   `false`, checkout does not ask, and delivery and payment emails cannot reach a customer who
+     *   left none.
+     * @param allowVpnPurchases Whether customers who use a VPN or a proxy can buy.
+     * @param blacklistOnDispute Whether a customer's email address and IP address are added to your
+     *   blacklist when they open a payment dispute.
+     * @param minimumSpend The smallest order total, VAT included, that customers can check out
+     *   with, as a decimal string in the order's currency: `"12.50"` on a USD order means $12.50.
+     *   At least `1`; digits with an optional decimal part, no sign or exponent. Send `null` or
+     *   `"0"` to remove the minimum; it then reads `null`.
+     * @param billingDescriptor The purchase name customers see while they check out, up to 20
+     *   characters. `null` uses the default, `SellApp Order`.
+     * @param attemptsPerCustomer How many checkout attempts one customer can make within the
+     *   window, counted per IP address and email pair, or per checkout session fingerprint when
+     *   checkout does not ask for an email. 1 to 100000; the default is `5`. This limit cannot be
+     *   removed.
+     * @param attemptsPerIp How many checkout attempts can come from one IP address within the
+     *   window. 1 to 100000; `null` turns this limit off.
+     * @param attemptsPerEmail How many checkout attempts can use one customer email address within
+     *   the window. 1 to 100000; `null` turns this limit off.
+     * @param attemptsPerFingerprint How many checkout attempts can come from one checkout session
+     *   fingerprint (a browser identifier) within the window. 1 to 100000; `null` turns this limit
+     *   off.
+     * @param rateLimitWindowSeconds How long each checkout limit counts attempts before allowing
+     *   them again, in seconds: 60 (one minute) to 604800 (seven days). The default is `3600` (one
+     *   hour). Attempts are counted per store.
+     * @param crypto the crypto of the request.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkUpdateCheckoutSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun updateCheckout(
+        shoppingCartEnabled: PatchField<Boolean> = PatchField.Absent,
+        customerEmailRequired: PatchField<Boolean> = PatchField.Absent,
+        allowVpnPurchases: PatchField<Boolean> = PatchField.Absent,
+        blacklistOnDispute: PatchField<Boolean> = PatchField.Absent,
+        minimumSpend: PatchField<String?> = PatchField.Absent,
+        billingDescriptor: PatchField<String?> = PatchField.Absent,
+        attemptsPerCustomer: PatchField<Long> = PatchField.Absent,
+        attemptsPerIp: PatchField<Long?> = PatchField.Absent,
+        attemptsPerEmail: PatchField<Long?> = PatchField.Absent,
+        attemptsPerFingerprint: PatchField<Long?> = PatchField.Absent,
+        rateLimitWindowSeconds: PatchField<Long> = PatchField.Absent,
+        crypto: PatchField<UpdateCheckoutSettingsRequestApplicationJsonPropertyCrypto?> =
+            PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkUpdateCheckoutSettingsResponseValue200ApplicationJson {
+        val body =
+            patchBodyOf(
+                "shopping_cart_enabled" to shoppingCartEnabled,
+                "customer_email_required" to customerEmailRequired,
+                "allow_vpn_purchases" to allowVpnPurchases,
+                "blacklist_on_dispute" to blacklistOnDispute,
+                "minimum_spend" to minimumSpend,
+                "billing_descriptor" to billingDescriptor,
+                "attempts_per_customer" to attemptsPerCustomer,
+                "attempts_per_ip" to attemptsPerIp,
+                "attempts_per_email" to attemptsPerEmail,
+                "attempts_per_fingerprint" to attemptsPerFingerprint,
+                "rate_limit_window_seconds" to rateLimitWindowSeconds,
+                "crypto" to crypto,
+            )
+        val config =
+            RequestConfig(
+                method = "PATCH",
+                path = "/v2/store/settings/checkout",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkUpdateCheckoutSettingsRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models.SdkUpdateCheckoutSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "updateCheckoutSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkUpdateCheckoutSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun updateCheckoutWithResponse(
+        shoppingCartEnabled: PatchField<Boolean> = PatchField.Absent,
+        customerEmailRequired: PatchField<Boolean> = PatchField.Absent,
+        allowVpnPurchases: PatchField<Boolean> = PatchField.Absent,
+        blacklistOnDispute: PatchField<Boolean> = PatchField.Absent,
+        minimumSpend: PatchField<String?> = PatchField.Absent,
+        billingDescriptor: PatchField<String?> = PatchField.Absent,
+        attemptsPerCustomer: PatchField<Long> = PatchField.Absent,
+        attemptsPerIp: PatchField<Long?> = PatchField.Absent,
+        attemptsPerEmail: PatchField<Long?> = PatchField.Absent,
+        attemptsPerFingerprint: PatchField<Long?> = PatchField.Absent,
+        rateLimitWindowSeconds: PatchField<Long> = PatchField.Absent,
+        crypto: PatchField<UpdateCheckoutSettingsRequestApplicationJsonPropertyCrypto?> =
+            PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkUpdateCheckoutSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        updateCheckout(
+            shoppingCartEnabled,
+            customerEmailRequired,
+            allowVpnPurchases,
+            blacklistOnDispute,
+            minimumSpend,
+            billingDescriptor,
+            attemptsPerCustomer,
+            attemptsPerIp,
+            attemptsPerEmail,
+            attemptsPerFingerprint,
+            rateLimitWindowSeconds,
+            crypto,
+            capturingOptions,
+        )
+        return captured as? RawResponse<SdkUpdateCheckoutSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [updateCheckout]. Use this from a `suspend` function or coroutine
+     * scope.
+     *
+     * Delegates to the blocking [updateCheckout] under `withContext(Dispatchers.IO)`, so this is
+     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("updateCheckoutSuspend")
+    suspend fun updateCheckoutSuspend(
+        shoppingCartEnabled: PatchField<Boolean> = PatchField.Absent,
+        customerEmailRequired: PatchField<Boolean> = PatchField.Absent,
+        allowVpnPurchases: PatchField<Boolean> = PatchField.Absent,
+        blacklistOnDispute: PatchField<Boolean> = PatchField.Absent,
+        minimumSpend: PatchField<String?> = PatchField.Absent,
+        billingDescriptor: PatchField<String?> = PatchField.Absent,
+        attemptsPerCustomer: PatchField<Long> = PatchField.Absent,
+        attemptsPerIp: PatchField<Long?> = PatchField.Absent,
+        attemptsPerEmail: PatchField<Long?> = PatchField.Absent,
+        attemptsPerFingerprint: PatchField<Long?> = PatchField.Absent,
+        rateLimitWindowSeconds: PatchField<Long> = PatchField.Absent,
+        crypto: PatchField<UpdateCheckoutSettingsRequestApplicationJsonPropertyCrypto?> =
+            PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkUpdateCheckoutSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            updateCheckout(
+                shoppingCartEnabled,
+                customerEmailRequired,
+                allowVpnPurchases,
+                blacklistOnDispute,
+                minimumSpend,
+                billingDescriptor,
+                attemptsPerCustomer,
+                attemptsPerIp,
+                attemptsPerEmail,
+                attemptsPerFingerprint,
+                rateLimitWindowSeconds,
+                crypto,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Coroutine-aware variant of [updateCheckoutWithResponse]. Use this from a `suspend` function
+     * or coroutine scope.
+     *
+     * Delegates to the blocking [updateCheckoutWithResponse] under `withContext(Dispatchers.IO)`,
+     * so this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("updateCheckoutWithResponseSuspend")
+    suspend fun updateCheckoutWithResponseSuspend(
+        shoppingCartEnabled: PatchField<Boolean> = PatchField.Absent,
+        customerEmailRequired: PatchField<Boolean> = PatchField.Absent,
+        allowVpnPurchases: PatchField<Boolean> = PatchField.Absent,
+        blacklistOnDispute: PatchField<Boolean> = PatchField.Absent,
+        minimumSpend: PatchField<String?> = PatchField.Absent,
+        billingDescriptor: PatchField<String?> = PatchField.Absent,
+        attemptsPerCustomer: PatchField<Long> = PatchField.Absent,
+        attemptsPerIp: PatchField<Long?> = PatchField.Absent,
+        attemptsPerEmail: PatchField<Long?> = PatchField.Absent,
+        attemptsPerFingerprint: PatchField<Long?> = PatchField.Absent,
+        rateLimitWindowSeconds: PatchField<Long> = PatchField.Absent,
+        crypto: PatchField<UpdateCheckoutSettingsRequestApplicationJsonPropertyCrypto?> =
+            PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkUpdateCheckoutSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            updateCheckoutWithResponse(
+                shoppingCartEnabled,
+                customerEmailRequired,
+                allowVpnPurchases,
+                blacklistOnDispute,
+                minimumSpend,
+                billingDescriptor,
+                attemptsPerCustomer,
+                attemptsPerIp,
+                attemptsPerEmail,
+                attemptsPerFingerprint,
+                rateLimitWindowSeconds,
+                crypto,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Retrieve tax settings
+     *
+     * Get whether checkout collects VAT, whether your prices include it, and whether checkout asks
+     * for billing details. The response body can be sent back to `PUT /v2/store/settings/taxes`
+     * unchanged. Requires the `store` API-key ability and the `store` permission in your team role.
+     * OAuth callers use the admin grant and select a store with X-STORE. Current membership and
+     * role permissions apply to every request.
+     *
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkGetTaxSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun getTaxes(
+        requestOptions: RequestOptions? = null
+    ): SdkGetTaxSettingsResponseValue200ApplicationJson {
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/store/settings/taxes",
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models.SdkGetTaxSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "getTaxSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkGetTaxSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getTaxesWithResponse(
+        requestOptions: RequestOptions? = null
+    ): RawResponse<SdkGetTaxSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        getTaxes(capturingOptions)
+        return captured as? RawResponse<SdkGetTaxSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [getTaxes]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [getTaxes] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getTaxesSuspend")
+    suspend fun getTaxesSuspend(
+        requestOptions: RequestOptions? = null
+    ): SdkGetTaxSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            getTaxes(requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [getTaxesWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [getTaxesWithResponse] under `withContext(Dispatchers.IO)`, so this
+     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getTaxesWithResponseSuspend")
+    suspend fun getTaxesWithResponseSuspend(
+        requestOptions: RequestOptions? = null
+    ): RawResponse<SdkGetTaxSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            getTaxesWithResponse(requestOptions)
+        }
+
+    /**
+     * Update tax settings
+     *
+     * Replace all three tax settings; every field is required. A missing field returns `422` and
+     * nothing is saved. `vat_enabled: true` while Stripe Tax is on returns `422` on `vat_enabled`
+     * and saves nothing: turn Stripe Tax off in the dashboard first. When Stripe Tax was turned on
+     * but Stripe is now turned off as a payment method, turning VAT on also turns Stripe Tax off.
+     * Sending the same body again is safe. Requires the `store` API-key ability and the `store`
+     * permission in your team role. OAuth callers use the admin grant and select a store with
+     * X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param vatEnabled Whether checkout collects VAT from customers. VAT and Stripe Tax cannot
+     *   both be on: turning VAT on while Stripe Tax is on returns `422` on `vat_enabled` with
+     *   `Disable Stripe Tax before enabling Sell VAT.` and saves nothing. Turn Stripe Tax off in
+     *   **Settings > Taxes** in the dashboard first. If Stripe Tax was turned on but Stripe is now
+     *   turned off as a payment method, turning VAT on succeeds and turns Stripe Tax off as well.
+     * @param vatInclusivePricing Whether your product prices already include VAT instead of VAT
+     *   being added on top. Always `false` while VAT is off, and turning `vat_enabled` off turns it
+     *   off too. `true` while VAT stays off returns `422` on `vat_inclusive_pricing`: send
+     *   `"vat_enabled": true` in the same request.
+     * @param collectBillingDetails Whether checkout asks customers for their billing details.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkReplaceTaxSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun replaceTaxes(
+        vatEnabled: Boolean,
+        vatInclusivePricing: Boolean,
+        collectBillingDetails: Boolean,
+        requestOptions: RequestOptions? = null,
+    ): SdkReplaceTaxSettingsResponseValue200ApplicationJson {
+        val body =
+            bodyOf(
+                "vat_enabled" to vatEnabled,
+                "vat_inclusive_pricing" to vatInclusivePricing,
+                "collect_billing_details" to collectBillingDetails,
+            )
+        body["vat_enabled"] = vatEnabled
+        body["vat_inclusive_pricing"] = vatInclusivePricing
+        body["collect_billing_details"] = collectBillingDetails
+        val config =
+            RequestConfig(
+                method = "PUT",
+                path = "/v2/store/settings/taxes",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkReplaceTaxSettingsRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models.SdkReplaceTaxSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "replaceTaxSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkReplaceTaxSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun replaceTaxesWithResponse(
+        vatEnabled: Boolean,
+        vatInclusivePricing: Boolean,
+        collectBillingDetails: Boolean,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkReplaceTaxSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        replaceTaxes(vatEnabled, vatInclusivePricing, collectBillingDetails, capturingOptions)
+        return captured as? RawResponse<SdkReplaceTaxSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [replaceTaxes]. Use this from a `suspend` function or coroutine
+     * scope.
+     *
+     * Delegates to the blocking [replaceTaxes] under `withContext(Dispatchers.IO)`, so this is safe
+     * to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("replaceTaxesSuspend")
+    suspend fun replaceTaxesSuspend(
+        vatEnabled: Boolean,
+        vatInclusivePricing: Boolean,
+        collectBillingDetails: Boolean,
+        requestOptions: RequestOptions? = null,
+    ): SdkReplaceTaxSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            replaceTaxes(vatEnabled, vatInclusivePricing, collectBillingDetails, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [replaceTaxesWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [replaceTaxesWithResponse] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("replaceTaxesWithResponseSuspend")
+    suspend fun replaceTaxesWithResponseSuspend(
+        vatEnabled: Boolean,
+        vatInclusivePricing: Boolean,
+        collectBillingDetails: Boolean,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkReplaceTaxSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            replaceTaxesWithResponse(
+                vatEnabled,
+                vatInclusivePricing,
+                collectBillingDetails,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Update tax settings
+     *
+     * Change only the tax settings you send and keep the others. Turning VAT off also turns
+     * VAT-inclusive pricing off. Asking for VAT-inclusive pricing while VAT stays off returns `422`
+     * on `vat_inclusive_pricing` and saves nothing. Turning VAT on while Stripe Tax is on returns
+     * `422` on `vat_enabled` and saves nothing: turn Stripe Tax off in the dashboard first. When
+     * Stripe Tax was turned on but Stripe is now turned off as a payment method, turning VAT on
+     * also turns Stripe Tax off. Sending the same change again is safe. Requires the `store`
+     * API-key ability and the `store` permission in your team role. OAuth callers use the admin
+     * grant and select a store with X-STORE. Current membership and role permissions apply to every
+     * request.
+     *
+     * @param vatEnabled Whether checkout collects VAT from customers. VAT and Stripe Tax cannot
+     *   both be on: turning VAT on while Stripe Tax is on returns `422` on `vat_enabled` with
+     *   `Disable Stripe Tax before enabling Sell VAT.` and saves nothing. Turn Stripe Tax off in
+     *   **Settings > Taxes** in the dashboard first. If Stripe Tax was turned on but Stripe is now
+     *   turned off as a payment method, turning VAT on succeeds and turns Stripe Tax off as well.
+     * @param vatInclusivePricing Whether your product prices already include VAT instead of VAT
+     *   being added on top. Always `false` while VAT is off, and turning `vat_enabled` off turns it
+     *   off too. `true` while VAT stays off returns `422` on `vat_inclusive_pricing`: send
+     *   `"vat_enabled": true` in the same request.
+     * @param collectBillingDetails Whether checkout asks customers for their billing details.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkUpdateTaxSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun updateTaxes(
+        vatEnabled: PatchField<Boolean> = PatchField.Absent,
+        vatInclusivePricing: PatchField<Boolean> = PatchField.Absent,
+        collectBillingDetails: PatchField<Boolean> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkUpdateTaxSettingsResponseValue200ApplicationJson {
+        val body =
+            patchBodyOf(
+                "vat_enabled" to vatEnabled,
+                "vat_inclusive_pricing" to vatInclusivePricing,
+                "collect_billing_details" to collectBillingDetails,
+            )
+        val config =
+            RequestConfig(
+                method = "PATCH",
+                path = "/v2/store/settings/taxes",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkUpdateTaxSettingsRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models.SdkUpdateTaxSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "updateTaxSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkUpdateTaxSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun updateTaxesWithResponse(
+        vatEnabled: PatchField<Boolean> = PatchField.Absent,
+        vatInclusivePricing: PatchField<Boolean> = PatchField.Absent,
+        collectBillingDetails: PatchField<Boolean> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkUpdateTaxSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        updateTaxes(vatEnabled, vatInclusivePricing, collectBillingDetails, capturingOptions)
+        return captured as? RawResponse<SdkUpdateTaxSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [updateTaxes]. Use this from a `suspend` function or coroutine
+     * scope.
+     *
+     * Delegates to the blocking [updateTaxes] under `withContext(Dispatchers.IO)`, so this is safe
+     * to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("updateTaxesSuspend")
+    suspend fun updateTaxesSuspend(
+        vatEnabled: PatchField<Boolean> = PatchField.Absent,
+        vatInclusivePricing: PatchField<Boolean> = PatchField.Absent,
+        collectBillingDetails: PatchField<Boolean> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkUpdateTaxSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            updateTaxes(vatEnabled, vatInclusivePricing, collectBillingDetails, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [updateTaxesWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [updateTaxesWithResponse] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("updateTaxesWithResponseSuspend")
+    suspend fun updateTaxesWithResponseSuspend(
+        vatEnabled: PatchField<Boolean> = PatchField.Absent,
+        vatInclusivePricing: PatchField<Boolean> = PatchField.Absent,
+        collectBillingDetails: PatchField<Boolean> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkUpdateTaxSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            updateTaxesWithResponse(
+                vatEnabled,
+                vatInclusivePricing,
+                collectBillingDetails,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Retrieve customer email settings
+     *
+     * Get which automatic emails your customers get: the delivery email after they pay, and the
+     * email asking them to pay when a subscription payment cannot be collected. The address these
+     * emails come from is managed with `/v2/store/settings/sender-email`. The response body can be
+     * sent back to `PUT /v2/store/settings/customer-emails` unchanged. Requires the `store` API-key
+     * ability and the `store` permission in your team role. OAuth callers use the admin grant and
+     * select a store with X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkGetCustomerEmailSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun getCustomerEmails(
+        requestOptions: RequestOptions? = null
+    ): SdkGetCustomerEmailSettingsResponseValue200ApplicationJson {
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/store/settings/customer-emails",
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkGetCustomerEmailSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "getCustomerEmailSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkGetCustomerEmailSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getCustomerEmailsWithResponse(
+        requestOptions: RequestOptions? = null
+    ): RawResponse<SdkGetCustomerEmailSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        getCustomerEmails(capturingOptions)
+        return captured as? RawResponse<SdkGetCustomerEmailSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [getCustomerEmails]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [getCustomerEmails] under `withContext(Dispatchers.IO)`, so this is
+     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getCustomerEmailsSuspend")
+    suspend fun getCustomerEmailsSuspend(
+        requestOptions: RequestOptions? = null
+    ): SdkGetCustomerEmailSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            getCustomerEmails(requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [getCustomerEmailsWithResponse]. Use this from a `suspend`
+     * function or coroutine scope.
+     *
+     * Delegates to the blocking [getCustomerEmailsWithResponse] under
+     * `withContext(Dispatchers.IO)`, so this is safe to call from any coroutine dispatcher
+     * (including `Dispatchers.Main`).
+     */
+    @JvmName("getCustomerEmailsWithResponseSuspend")
+    suspend fun getCustomerEmailsWithResponseSuspend(
+        requestOptions: RequestOptions? = null
+    ): RawResponse<SdkGetCustomerEmailSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            getCustomerEmailsWithResponse(requestOptions)
+        }
+
+    /**
+     * Update customer email settings
+     *
+     * Set both customer emails; both fields are required. A missing field returns `422` and nothing
+     * is saved. Sending the same body again is safe. Requires the `store` API-key ability and the
+     * `store` permission in your team role. OAuth callers use the admin grant and select a store
+     * with X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param sendDeliveryEmail Whether customers automatically get an email with what they bought
+     *   after paying. Turn it off when you deliver to customers yourself.
+     * @param sendPaymentFailureEmail Whether customers get an email with a way to pay when your
+     *   payment processor cannot collect a subscription payment. Turn it off when your processor
+     *   already emails them.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkReplaceCustomerEmailSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun replaceCustomerEmails(
+        sendDeliveryEmail: Boolean,
+        sendPaymentFailureEmail: Boolean,
+        requestOptions: RequestOptions? = null,
+    ): SdkReplaceCustomerEmailSettingsResponseValue200ApplicationJson {
+        val body =
+            bodyOf(
+                "send_delivery_email" to sendDeliveryEmail,
+                "send_payment_failure_email" to sendPaymentFailureEmail,
+            )
+        body["send_delivery_email"] = sendDeliveryEmail
+        body["send_payment_failure_email"] = sendPaymentFailureEmail
+        val config =
+            RequestConfig(
+                method = "PUT",
+                path = "/v2/store/settings/customer-emails",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkReplaceCustomerEmailSettingsRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkReplaceCustomerEmailSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "replaceCustomerEmailSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkReplaceCustomerEmailSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun replaceCustomerEmailsWithResponse(
+        sendDeliveryEmail: Boolean,
+        sendPaymentFailureEmail: Boolean,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkReplaceCustomerEmailSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        replaceCustomerEmails(sendDeliveryEmail, sendPaymentFailureEmail, capturingOptions)
+        return captured
+            as? RawResponse<SdkReplaceCustomerEmailSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [replaceCustomerEmails]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [replaceCustomerEmails] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("replaceCustomerEmailsSuspend")
+    suspend fun replaceCustomerEmailsSuspend(
+        sendDeliveryEmail: Boolean,
+        sendPaymentFailureEmail: Boolean,
+        requestOptions: RequestOptions? = null,
+    ): SdkReplaceCustomerEmailSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            replaceCustomerEmails(sendDeliveryEmail, sendPaymentFailureEmail, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [replaceCustomerEmailsWithResponse]. Use this from a `suspend`
+     * function or coroutine scope.
+     *
+     * Delegates to the blocking [replaceCustomerEmailsWithResponse] under
+     * `withContext(Dispatchers.IO)`, so this is safe to call from any coroutine dispatcher
+     * (including `Dispatchers.Main`).
+     */
+    @JvmName("replaceCustomerEmailsWithResponseSuspend")
+    suspend fun replaceCustomerEmailsWithResponseSuspend(
+        sendDeliveryEmail: Boolean,
+        sendPaymentFailureEmail: Boolean,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkReplaceCustomerEmailSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            replaceCustomerEmailsWithResponse(
+                sendDeliveryEmail,
+                sendPaymentFailureEmail,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Update customer email settings
+     *
+     * Turn the customer emails you send on or off and keep the other one. Takes effect for emails
+     * sent after the change. Sending the same change again is safe. Requires the `store` API-key
+     * ability and the `store` permission in your team role. OAuth callers use the admin grant and
+     * select a store with X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param sendDeliveryEmail Whether customers automatically get an email with what they bought
+     *   after paying. Turn it off when you deliver to customers yourself.
+     * @param sendPaymentFailureEmail Whether customers get an email with a way to pay when your
+     *   payment processor cannot collect a subscription payment. Turn it off when your processor
+     *   already emails them.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkUpdateCustomerEmailSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun updateCustomerEmails(
+        sendDeliveryEmail: PatchField<Boolean> = PatchField.Absent,
+        sendPaymentFailureEmail: PatchField<Boolean> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkUpdateCustomerEmailSettingsResponseValue200ApplicationJson {
+        val body =
+            patchBodyOf(
+                "send_delivery_email" to sendDeliveryEmail,
+                "send_payment_failure_email" to sendPaymentFailureEmail,
+            )
+        val config =
+            RequestConfig(
+                method = "PATCH",
+                path = "/v2/store/settings/customer-emails",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkUpdateCustomerEmailSettingsRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkUpdateCustomerEmailSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "updateCustomerEmailSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkUpdateCustomerEmailSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun updateCustomerEmailsWithResponse(
+        sendDeliveryEmail: PatchField<Boolean> = PatchField.Absent,
+        sendPaymentFailureEmail: PatchField<Boolean> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkUpdateCustomerEmailSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        updateCustomerEmails(sendDeliveryEmail, sendPaymentFailureEmail, capturingOptions)
+        return captured
+            as? RawResponse<SdkUpdateCustomerEmailSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [updateCustomerEmails]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [updateCustomerEmails] under `withContext(Dispatchers.IO)`, so this
+     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("updateCustomerEmailsSuspend")
+    suspend fun updateCustomerEmailsSuspend(
+        sendDeliveryEmail: PatchField<Boolean> = PatchField.Absent,
+        sendPaymentFailureEmail: PatchField<Boolean> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkUpdateCustomerEmailSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            updateCustomerEmails(sendDeliveryEmail, sendPaymentFailureEmail, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [updateCustomerEmailsWithResponse]. Use this from a `suspend`
+     * function or coroutine scope.
+     *
+     * Delegates to the blocking [updateCustomerEmailsWithResponse] under
+     * `withContext(Dispatchers.IO)`, so this is safe to call from any coroutine dispatcher
+     * (including `Dispatchers.Main`).
+     */
+    @JvmName("updateCustomerEmailsWithResponseSuspend")
+    suspend fun updateCustomerEmailsWithResponseSuspend(
+        sendDeliveryEmail: PatchField<Boolean> = PatchField.Absent,
+        sendPaymentFailureEmail: PatchField<Boolean> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkUpdateCustomerEmailSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            updateCustomerEmailsWithResponse(
+                sendDeliveryEmail,
+                sendPaymentFailureEmail,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Retrieve store alert settings
+     *
+     * Get whether the store owner gets an email for each sale. Other alerts go to notification
+     * channels (`/v2/store/notification-channels`) and to the dashboard notifications
+     * (`/v2/notifications`). The response body can be sent back to `PUT
+     * /v2/store/settings/store-alerts` unchanged. Requires the `store` API-key ability and the
+     * `store` permission in your team role. OAuth callers use the admin grant and select a store
+     * with X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkGetStoreAlertSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun getAlerts(
+        requestOptions: RequestOptions? = null
+    ): SdkGetStoreAlertSettingsResponseValue200ApplicationJson {
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/store/settings/store-alerts",
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models.SdkGetStoreAlertSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "getStoreAlertSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkGetStoreAlertSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getAlertsWithResponse(
+        requestOptions: RequestOptions? = null
+    ): RawResponse<SdkGetStoreAlertSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        getAlerts(capturingOptions)
+        return captured as? RawResponse<SdkGetStoreAlertSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [getAlerts]. Use this from a `suspend` function or coroutine
+     * scope.
+     *
+     * Delegates to the blocking [getAlerts] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getAlertsSuspend")
+    suspend fun getAlertsSuspend(
+        requestOptions: RequestOptions? = null
+    ): SdkGetStoreAlertSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            getAlerts(requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [getAlertsWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [getAlertsWithResponse] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getAlertsWithResponseSuspend")
+    suspend fun getAlertsWithResponseSuspend(
+        requestOptions: RequestOptions? = null
+    ): RawResponse<SdkGetStoreAlertSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            getAlertsWithResponse(requestOptions)
+        }
+
+    /**
+     * Update store alert settings
+     *
+     * Set the sale emails to the store owner; `sale_emails_enabled` is required. Sending the same
+     * body again is safe. Requires the `store` API-key ability and the `store` permission in your
+     * team role. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * membership and role permissions apply to every request.
+     *
+     * @param saleEmailsEnabled Whether the store owner gets an email for each sale.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkReplaceStoreAlertSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun replaceAlerts(
+        saleEmailsEnabled: Boolean,
+        requestOptions: RequestOptions? = null,
+    ): SdkReplaceStoreAlertSettingsResponseValue200ApplicationJson {
+        val body = bodyOf("sale_emails_enabled" to saleEmailsEnabled)
+        body["sale_emails_enabled"] = saleEmailsEnabled
+        val config =
+            RequestConfig(
+                method = "PUT",
+                path = "/v2/store/settings/store-alerts",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkReplaceStoreAlertSettingsRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkReplaceStoreAlertSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "replaceStoreAlertSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkReplaceStoreAlertSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun replaceAlertsWithResponse(
+        saleEmailsEnabled: Boolean,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkReplaceStoreAlertSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        replaceAlerts(saleEmailsEnabled, capturingOptions)
+        return captured as? RawResponse<SdkReplaceStoreAlertSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [replaceAlerts]. Use this from a `suspend` function or coroutine
+     * scope.
+     *
+     * Delegates to the blocking [replaceAlerts] under `withContext(Dispatchers.IO)`, so this is
+     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("replaceAlertsSuspend")
+    suspend fun replaceAlertsSuspend(
+        saleEmailsEnabled: Boolean,
+        requestOptions: RequestOptions? = null,
+    ): SdkReplaceStoreAlertSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            replaceAlerts(saleEmailsEnabled, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [replaceAlertsWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [replaceAlertsWithResponse] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("replaceAlertsWithResponseSuspend")
+    suspend fun replaceAlertsWithResponseSuspend(
+        saleEmailsEnabled: Boolean,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkReplaceStoreAlertSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            replaceAlertsWithResponse(saleEmailsEnabled, requestOptions)
+        }
+
+    /**
+     * Update store alert settings
+     *
+     * Turn the sale emails to the store owner on or off. Sending the same change again is safe.
+     * Requires the `store` API-key ability and the `store` permission in your team role. OAuth
+     * callers use the admin grant and select a store with X-STORE. Current membership and role
+     * permissions apply to every request.
+     *
+     * @param saleEmailsEnabled Whether the store owner gets an email for each sale.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkUpdateStoreAlertSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun updateAlerts(
+        saleEmailsEnabled: PatchField<Boolean> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkUpdateStoreAlertSettingsResponseValue200ApplicationJson {
+        val body = patchBodyOf("sale_emails_enabled" to saleEmailsEnabled)
+        val config =
+            RequestConfig(
+                method = "PATCH",
+                path = "/v2/store/settings/store-alerts",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkUpdateStoreAlertSettingsRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkUpdateStoreAlertSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "updateStoreAlertSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkUpdateStoreAlertSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun updateAlertsWithResponse(
+        saleEmailsEnabled: PatchField<Boolean> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkUpdateStoreAlertSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        updateAlerts(saleEmailsEnabled, capturingOptions)
+        return captured as? RawResponse<SdkUpdateStoreAlertSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [updateAlerts]. Use this from a `suspend` function or coroutine
+     * scope.
+     *
+     * Delegates to the blocking [updateAlerts] under `withContext(Dispatchers.IO)`, so this is safe
+     * to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("updateAlertsSuspend")
+    suspend fun updateAlertsSuspend(
+        saleEmailsEnabled: PatchField<Boolean> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkUpdateStoreAlertSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            updateAlerts(saleEmailsEnabled, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [updateAlertsWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [updateAlertsWithResponse] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("updateAlertsWithResponseSuspend")
+    suspend fun updateAlertsWithResponseSuspend(
+        saleEmailsEnabled: PatchField<Boolean> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkUpdateStoreAlertSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            updateAlertsWithResponse(saleEmailsEnabled, requestOptions)
+        }
+
+    /**
+     * Retrieve personalization settings
+     *
+     * Get the details customers see from your store: the support and Trustpilot addresses, the
+     * sender name and custom sender email of customer emails, the business details printed on
+     * invoices, and the Back button link of product and checkout pages. The response body can be
+     * sent back to `PUT /v2/store/settings/personalization` unchanged. Requires the `store` API-key
+     * ability and the `store` permission in your team role. OAuth callers use the admin grant and
+     * select a store with X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkGetPersonalizationSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun getPersonalization(
+        requestOptions: RequestOptions? = null
+    ): SdkGetPersonalizationSettingsResponseValue200ApplicationJson {
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/store/settings/personalization",
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkGetPersonalizationSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "getPersonalizationSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkGetPersonalizationSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getPersonalizationWithResponse(
+        requestOptions: RequestOptions? = null
+    ): RawResponse<SdkGetPersonalizationSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        getPersonalization(capturingOptions)
+        return captured
+            as? RawResponse<SdkGetPersonalizationSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [getPersonalization]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [getPersonalization] under `withContext(Dispatchers.IO)`, so this
+     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getPersonalizationSuspend")
+    suspend fun getPersonalizationSuspend(
+        requestOptions: RequestOptions? = null
+    ): SdkGetPersonalizationSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            getPersonalization(requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [getPersonalizationWithResponse]. Use this from a `suspend`
+     * function or coroutine scope.
+     *
+     * Delegates to the blocking [getPersonalizationWithResponse] under
+     * `withContext(Dispatchers.IO)`, so this is safe to call from any coroutine dispatcher
+     * (including `Dispatchers.Main`).
+     */
+    @JvmName("getPersonalizationWithResponseSuspend")
+    suspend fun getPersonalizationWithResponseSuspend(
+        requestOptions: RequestOptions? = null
+    ): RawResponse<SdkGetPersonalizationSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            getPersonalizationWithResponse(requestOptions)
+        }
+
+    /**
+     * Update personalization settings
+     *
+     * Replace every personalization setting. All fields except `sender_email` are required; send
+     * `null` to remove one. A missing field returns `422` and nothing is saved. The body of `GET
+     * /v2/store/settings/personalization`, including `sender_email`, can be sent back unchanged.
+     * Sending the same body again is safe. Requires the `store` API-key ability and the `store`
+     * permission in your team role. OAuth callers use the admin grant and select a store with
+     * X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param supportEmail The address customers can write to for support.
+     * @param trustpilotEmail Your Trustpilot invitation address. It receives a blind copy of every
+     *   delivery email, including the link to what the customer bought, so Trustpilot can invite
+     *   the customer to leave a review.
+     * @param senderName The name customer emails are sent from: letters, digits, spaces and `. - _
+     *   +`, up to 75 characters. It is used only while the store sends from its own verified sender
+     *   email. A store without a custom sender email cannot keep one: sent with other changes it is
+     *   ignored, and sent alone it returns `422` on `sender_name`.
+     * @param storeAddress Street address printed on invoices.
+     * @param storeCity City printed on invoices.
+     * @param storeState State or region printed on invoices.
+     * @param storeZip Postal code printed on invoices.
+     * @param storeCountry Country printed on invoices, as text.
+     * @param storeTax Tax or VAT details printed on invoices, such as `VAT GB123456789`.
+     * @param backLinkLabel Text of the Back button on product and checkout pages. A return link
+     *   needs both a label and a URL: a change that leaves one of them empty returns `422` on the
+     *   empty one. Send `null` for both to remove the link; the Back button then goes to the
+     *   store's home page.
+     * @param backLinkUrl Where the Back button on product and checkout pages goes, as a full URL.
+     *   Needs `back_link_label`.
+     * @param senderEmail The store's custom sender email, or `null` when it has none. Read-only
+     *   here: send it back unchanged or leave it out. A different value returns `422` on
+     *   `sender_email`; set it up or remove it with `/v2/store/settings/sender-email`.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkReplacePersonalizationSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun replacePersonalization(
+        supportEmail: String?,
+        trustpilotEmail: String?,
+        senderName: String?,
+        storeAddress: String?,
+        storeCity: String?,
+        storeState: String?,
+        storeZip: String?,
+        storeCountry: String?,
+        storeTax: String?,
+        backLinkLabel: String?,
+        backLinkUrl: String?,
+        senderEmail: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkReplacePersonalizationSettingsResponseValue200ApplicationJson {
+        val body =
+            bodyOf(
+                "support_email" to supportEmail,
+                "trustpilot_email" to trustpilotEmail,
+                "sender_name" to senderName,
+                "store_address" to storeAddress,
+                "store_city" to storeCity,
+                "store_state" to storeState,
+                "store_zip" to storeZip,
+                "store_country" to storeCountry,
+                "store_tax" to storeTax,
+                "back_link_label" to backLinkLabel,
+                "back_link_url" to backLinkUrl,
+                "sender_email" to senderEmail,
+            )
+        body["support_email"] = supportEmail
+        body["trustpilot_email"] = trustpilotEmail
+        body["sender_name"] = senderName
+        body["store_address"] = storeAddress
+        body["store_city"] = storeCity
+        body["store_state"] = storeState
+        body["store_zip"] = storeZip
+        body["store_country"] = storeCountry
+        body["store_tax"] = storeTax
+        body["back_link_label"] = backLinkLabel
+        body["back_link_url"] = backLinkUrl
+        val config =
+            RequestConfig(
+                method = "PUT",
+                path = "/v2/store/settings/personalization",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkReplacePersonalizationSettingsRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkReplacePersonalizationSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "replacePersonalizationSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkReplacePersonalizationSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun replacePersonalizationWithResponse(
+        supportEmail: String?,
+        trustpilotEmail: String?,
+        senderName: String?,
+        storeAddress: String?,
+        storeCity: String?,
+        storeState: String?,
+        storeZip: String?,
+        storeCountry: String?,
+        storeTax: String?,
+        backLinkLabel: String?,
+        backLinkUrl: String?,
+        senderEmail: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkReplacePersonalizationSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        replacePersonalization(
+            supportEmail,
+            trustpilotEmail,
+            senderName,
+            storeAddress,
+            storeCity,
+            storeState,
+            storeZip,
+            storeCountry,
+            storeTax,
+            backLinkLabel,
+            backLinkUrl,
+            senderEmail,
+            capturingOptions,
+        )
+        return captured
+            as? RawResponse<SdkReplacePersonalizationSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [replacePersonalization]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [replacePersonalization] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("replacePersonalizationSuspend")
+    suspend fun replacePersonalizationSuspend(
+        supportEmail: String?,
+        trustpilotEmail: String?,
+        senderName: String?,
+        storeAddress: String?,
+        storeCity: String?,
+        storeState: String?,
+        storeZip: String?,
+        storeCountry: String?,
+        storeTax: String?,
+        backLinkLabel: String?,
+        backLinkUrl: String?,
+        senderEmail: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkReplacePersonalizationSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            replacePersonalization(
+                supportEmail,
+                trustpilotEmail,
+                senderName,
+                storeAddress,
+                storeCity,
+                storeState,
+                storeZip,
+                storeCountry,
+                storeTax,
+                backLinkLabel,
+                backLinkUrl,
+                senderEmail,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Coroutine-aware variant of [replacePersonalizationWithResponse]. Use this from a `suspend`
+     * function or coroutine scope.
+     *
+     * Delegates to the blocking [replacePersonalizationWithResponse] under
+     * `withContext(Dispatchers.IO)`, so this is safe to call from any coroutine dispatcher
+     * (including `Dispatchers.Main`).
+     */
+    @JvmName("replacePersonalizationWithResponseSuspend")
+    suspend fun replacePersonalizationWithResponseSuspend(
+        supportEmail: String?,
+        trustpilotEmail: String?,
+        senderName: String?,
+        storeAddress: String?,
+        storeCity: String?,
+        storeState: String?,
+        storeZip: String?,
+        storeCountry: String?,
+        storeTax: String?,
+        backLinkLabel: String?,
+        backLinkUrl: String?,
+        senderEmail: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkReplacePersonalizationSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            replacePersonalizationWithResponse(
+                supportEmail,
+                trustpilotEmail,
+                senderName,
+                storeAddress,
+                storeCity,
+                storeState,
+                storeZip,
+                storeCountry,
+                storeTax,
+                backLinkLabel,
+                backLinkUrl,
+                senderEmail,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Update personalization settings
+     *
+     * Change only the personalization settings you send and keep the others. Send `null` to remove
+     * one. A request with no field this endpoint knows returns `200` with the current settings and
+     * saves nothing. A return link needs both `back_link_label` and `back_link_url`: a change that
+     * leaves one empty returns `422` on that field. `sender_email` is read-only here. Sending the
+     * same change again is safe. Requires the `store` API-key ability and the `store` permission in
+     * your team role. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * membership and role permissions apply to every request.
+     *
+     * @param supportEmail The address customers can write to for support.
+     * @param trustpilotEmail Your Trustpilot invitation address. It receives a blind copy of every
+     *   delivery email, including the link to what the customer bought, so Trustpilot can invite
+     *   the customer to leave a review.
+     * @param senderName The name customer emails are sent from: letters, digits, spaces and `. - _
+     *   +`, up to 75 characters. It is used only while the store sends from its own verified sender
+     *   email. A store without a custom sender email cannot keep one: sent with other changes it is
+     *   ignored, and sent alone it returns `422` on `sender_name`.
+     * @param senderEmail The store's custom sender email, or `null` when it has none. Read-only
+     *   here: send it back unchanged or leave it out. A different value returns `422` on
+     *   `sender_email`; set it up or remove it with `/v2/store/settings/sender-email`.
+     * @param storeAddress Street address printed on invoices.
+     * @param storeCity City printed on invoices.
+     * @param storeState State or region printed on invoices.
+     * @param storeZip Postal code printed on invoices.
+     * @param storeCountry Country printed on invoices, as text.
+     * @param storeTax Tax or VAT details printed on invoices, such as `VAT GB123456789`.
+     * @param backLinkLabel Text of the Back button on product and checkout pages. A return link
+     *   needs both a label and a URL: a change that leaves one of them empty returns `422` on the
+     *   empty one. Send `null` for both to remove the link; the Back button then goes to the
+     *   store's home page.
+     * @param backLinkUrl Where the Back button on product and checkout pages goes, as a full URL.
+     *   Needs `back_link_label`.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkUpdatePersonalizationSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun updatePersonalization(
+        supportEmail: PatchField<String?> = PatchField.Absent,
+        trustpilotEmail: PatchField<String?> = PatchField.Absent,
+        senderName: PatchField<String?> = PatchField.Absent,
+        senderEmail: PatchField<String?> = PatchField.Absent,
+        storeAddress: PatchField<String?> = PatchField.Absent,
+        storeCity: PatchField<String?> = PatchField.Absent,
+        storeState: PatchField<String?> = PatchField.Absent,
+        storeZip: PatchField<String?> = PatchField.Absent,
+        storeCountry: PatchField<String?> = PatchField.Absent,
+        storeTax: PatchField<String?> = PatchField.Absent,
+        backLinkLabel: PatchField<String?> = PatchField.Absent,
+        backLinkUrl: PatchField<String?> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkUpdatePersonalizationSettingsResponseValue200ApplicationJson {
+        val body =
+            patchBodyOf(
+                "support_email" to supportEmail,
+                "trustpilot_email" to trustpilotEmail,
+                "sender_name" to senderName,
+                "sender_email" to senderEmail,
+                "store_address" to storeAddress,
+                "store_city" to storeCity,
+                "store_state" to storeState,
+                "store_zip" to storeZip,
+                "store_country" to storeCountry,
+                "store_tax" to storeTax,
+                "back_link_label" to backLinkLabel,
+                "back_link_url" to backLinkUrl,
+            )
+        val config =
+            RequestConfig(
+                method = "PATCH",
+                path = "/v2/store/settings/personalization",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkUpdatePersonalizationSettingsRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkUpdatePersonalizationSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "updatePersonalizationSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkUpdatePersonalizationSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun updatePersonalizationWithResponse(
+        supportEmail: PatchField<String?> = PatchField.Absent,
+        trustpilotEmail: PatchField<String?> = PatchField.Absent,
+        senderName: PatchField<String?> = PatchField.Absent,
+        senderEmail: PatchField<String?> = PatchField.Absent,
+        storeAddress: PatchField<String?> = PatchField.Absent,
+        storeCity: PatchField<String?> = PatchField.Absent,
+        storeState: PatchField<String?> = PatchField.Absent,
+        storeZip: PatchField<String?> = PatchField.Absent,
+        storeCountry: PatchField<String?> = PatchField.Absent,
+        storeTax: PatchField<String?> = PatchField.Absent,
+        backLinkLabel: PatchField<String?> = PatchField.Absent,
+        backLinkUrl: PatchField<String?> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkUpdatePersonalizationSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        updatePersonalization(
+            supportEmail,
+            trustpilotEmail,
+            senderName,
+            senderEmail,
+            storeAddress,
+            storeCity,
+            storeState,
+            storeZip,
+            storeCountry,
+            storeTax,
+            backLinkLabel,
+            backLinkUrl,
+            capturingOptions,
+        )
+        return captured
+            as? RawResponse<SdkUpdatePersonalizationSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [updatePersonalization]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [updatePersonalization] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("updatePersonalizationSuspend")
+    suspend fun updatePersonalizationSuspend(
+        supportEmail: PatchField<String?> = PatchField.Absent,
+        trustpilotEmail: PatchField<String?> = PatchField.Absent,
+        senderName: PatchField<String?> = PatchField.Absent,
+        senderEmail: PatchField<String?> = PatchField.Absent,
+        storeAddress: PatchField<String?> = PatchField.Absent,
+        storeCity: PatchField<String?> = PatchField.Absent,
+        storeState: PatchField<String?> = PatchField.Absent,
+        storeZip: PatchField<String?> = PatchField.Absent,
+        storeCountry: PatchField<String?> = PatchField.Absent,
+        storeTax: PatchField<String?> = PatchField.Absent,
+        backLinkLabel: PatchField<String?> = PatchField.Absent,
+        backLinkUrl: PatchField<String?> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkUpdatePersonalizationSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            updatePersonalization(
+                supportEmail,
+                trustpilotEmail,
+                senderName,
+                senderEmail,
+                storeAddress,
+                storeCity,
+                storeState,
+                storeZip,
+                storeCountry,
+                storeTax,
+                backLinkLabel,
+                backLinkUrl,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Coroutine-aware variant of [updatePersonalizationWithResponse]. Use this from a `suspend`
+     * function or coroutine scope.
+     *
+     * Delegates to the blocking [updatePersonalizationWithResponse] under
+     * `withContext(Dispatchers.IO)`, so this is safe to call from any coroutine dispatcher
+     * (including `Dispatchers.Main`).
+     */
+    @JvmName("updatePersonalizationWithResponseSuspend")
+    suspend fun updatePersonalizationWithResponseSuspend(
+        supportEmail: PatchField<String?> = PatchField.Absent,
+        trustpilotEmail: PatchField<String?> = PatchField.Absent,
+        senderName: PatchField<String?> = PatchField.Absent,
+        senderEmail: PatchField<String?> = PatchField.Absent,
+        storeAddress: PatchField<String?> = PatchField.Absent,
+        storeCity: PatchField<String?> = PatchField.Absent,
+        storeState: PatchField<String?> = PatchField.Absent,
+        storeZip: PatchField<String?> = PatchField.Absent,
+        storeCountry: PatchField<String?> = PatchField.Absent,
+        storeTax: PatchField<String?> = PatchField.Absent,
+        backLinkLabel: PatchField<String?> = PatchField.Absent,
+        backLinkUrl: PatchField<String?> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkUpdatePersonalizationSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            updatePersonalizationWithResponse(
+                supportEmail,
+                trustpilotEmail,
+                senderName,
+                senderEmail,
+                storeAddress,
+                storeCity,
+                storeState,
+                storeZip,
+                storeCountry,
+                storeTax,
+                backLinkLabel,
+                backLinkUrl,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Update crypto checkout settings
+     *
+     * Replace both crypto checkout values, for a store that takes crypto through SellApp's crypto
+     * processor; `underpaid_percentage` and `minimum_confirmations` are required. SellApp sends the
+     * changed values to the crypto processor and saves them only once it accepts them; an unchanged
+     * value is not sent. Returns the checkout settings with the new `crypto` values. `422` on
+     * `crypto` when the store does not take crypto through SellApp's crypto processor, or when the
+     * processor refuses the values; nothing is saved then. `422` on `underpaid_percentage` or
+     * `minimum_confirmations` for a value out of range. Sending the same change again is safe.
+     * Requires the `store` API-key ability and the `store` permission in your team role. OAuth
+     * callers use the admin grant and select a store with X-STORE. Current membership and role
+     * permissions apply to every request.
+     *
+     * @param underpaidPercentage How far short of the amount due, in percent, a crypto payment can
+     *   be and still count as paid: `2` accepts a payment up to 2% short. 0 to 100.
+     * @param minimumConfirmations How many blockchain confirmations a crypto payment needs before
+     *   the order is processed. 1 to 25.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkReplaceCryptoCheckoutSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun replaceCryptoCheckout(
+        underpaidPercentage: Long,
+        minimumConfirmations: Long,
+        requestOptions: RequestOptions? = null,
+    ): SdkReplaceCryptoCheckoutSettingsResponseValue200ApplicationJson {
+        val body =
+            bodyOf(
+                "underpaid_percentage" to underpaidPercentage,
+                "minimum_confirmations" to minimumConfirmations,
+            )
+        body["underpaid_percentage"] = underpaidPercentage
+        body["minimum_confirmations"] = minimumConfirmations
+        val config =
+            RequestConfig(
+                method = "PUT",
+                path = "/v2/store/settings/checkout/crypto",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkReplaceCryptoCheckoutSettingsRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkReplaceCryptoCheckoutSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "replaceCryptoCheckoutSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkReplaceCryptoCheckoutSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun replaceCryptoCheckoutWithResponse(
+        underpaidPercentage: Long,
+        minimumConfirmations: Long,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkReplaceCryptoCheckoutSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        replaceCryptoCheckout(underpaidPercentage, minimumConfirmations, capturingOptions)
+        return captured
+            as? RawResponse<SdkReplaceCryptoCheckoutSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [replaceCryptoCheckout]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [replaceCryptoCheckout] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("replaceCryptoCheckoutSuspend")
+    suspend fun replaceCryptoCheckoutSuspend(
+        underpaidPercentage: Long,
+        minimumConfirmations: Long,
+        requestOptions: RequestOptions? = null,
+    ): SdkReplaceCryptoCheckoutSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            replaceCryptoCheckout(underpaidPercentage, minimumConfirmations, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [replaceCryptoCheckoutWithResponse]. Use this from a `suspend`
+     * function or coroutine scope.
+     *
+     * Delegates to the blocking [replaceCryptoCheckoutWithResponse] under
+     * `withContext(Dispatchers.IO)`, so this is safe to call from any coroutine dispatcher
+     * (including `Dispatchers.Main`).
+     */
+    @JvmName("replaceCryptoCheckoutWithResponseSuspend")
+    suspend fun replaceCryptoCheckoutWithResponseSuspend(
+        underpaidPercentage: Long,
+        minimumConfirmations: Long,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkReplaceCryptoCheckoutSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            replaceCryptoCheckoutWithResponse(
+                underpaidPercentage,
+                minimumConfirmations,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Update crypto checkout settings
+     *
+     * Change the crypto checkout values you send, for a store that takes crypto through SellApp's
+     * crypto processor. SellApp sends the changed values to the crypto processor and saves them
+     * only once it accepts them; an unchanged value is not sent. Returns the checkout settings with
+     * the new `crypto` values. `422` on `crypto` when the store does not take crypto through
+     * SellApp's crypto processor, or when the processor refuses the values; nothing is saved then.
+     * `422` on `underpaid_percentage` or `minimum_confirmations` for a value out of range. Sending
+     * the same change again is safe. Requires the `store` API-key ability and the `store`
+     * permission in your team role. OAuth callers use the admin grant and select a store with
+     * X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param underpaidPercentage How far short of the amount due, in percent, a crypto payment can
+     *   be and still count as paid: `2` accepts a payment up to 2% short. 0 to 100.
+     * @param minimumConfirmations How many blockchain confirmations a crypto payment needs before
+     *   the order is processed. 1 to 25.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkUpdateCryptoCheckoutSettingsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun updateCryptoCheckout(
+        underpaidPercentage: PatchField<Long> = PatchField.Absent,
+        minimumConfirmations: PatchField<Long> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkUpdateCryptoCheckoutSettingsResponseValue200ApplicationJson {
+        val body =
+            patchBodyOf(
+                "underpaid_percentage" to underpaidPercentage,
+                "minimum_confirmations" to minimumConfirmations,
+            )
+        val config =
+            RequestConfig(
+                method = "PATCH",
+                path = "/v2/store/settings/checkout/crypto",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkUpdateCryptoCheckoutSettingsRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkUpdateCryptoCheckoutSettingsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "updateCryptoCheckoutSettings",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkUpdateCryptoCheckoutSettingsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun updateCryptoCheckoutWithResponse(
+        underpaidPercentage: PatchField<Long> = PatchField.Absent,
+        minimumConfirmations: PatchField<Long> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkUpdateCryptoCheckoutSettingsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        updateCryptoCheckout(underpaidPercentage, minimumConfirmations, capturingOptions)
+        return captured
+            as? RawResponse<SdkUpdateCryptoCheckoutSettingsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [updateCryptoCheckout]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [updateCryptoCheckout] under `withContext(Dispatchers.IO)`, so this
+     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("updateCryptoCheckoutSuspend")
+    suspend fun updateCryptoCheckoutSuspend(
+        underpaidPercentage: PatchField<Long> = PatchField.Absent,
+        minimumConfirmations: PatchField<Long> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkUpdateCryptoCheckoutSettingsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            updateCryptoCheckout(underpaidPercentage, minimumConfirmations, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [updateCryptoCheckoutWithResponse]. Use this from a `suspend`
+     * function or coroutine scope.
+     *
+     * Delegates to the blocking [updateCryptoCheckoutWithResponse] under
+     * `withContext(Dispatchers.IO)`, so this is safe to call from any coroutine dispatcher
+     * (including `Dispatchers.Main`).
+     */
+    @JvmName("updateCryptoCheckoutWithResponseSuspend")
+    suspend fun updateCryptoCheckoutWithResponseSuspend(
+        underpaidPercentage: PatchField<Long> = PatchField.Absent,
+        minimumConfirmations: PatchField<Long> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkUpdateCryptoCheckoutSettingsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            updateCryptoCheckoutWithResponse(
+                underpaidPercentage,
+                minimumConfirmations,
+                requestOptions,
+            )
         }
 }

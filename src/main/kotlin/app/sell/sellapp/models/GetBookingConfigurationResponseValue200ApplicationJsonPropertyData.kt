@@ -3,9 +3,9 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.types.SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit
+import app.sell.sellapp.types.SdkCreateBookingProductRequestApplicationJsonVideoProvider
 import app.sell.sellapp.types.SdkUpdateBookingConfigurationRequestApplicationJsonConflictScope
-import app.sell.sellapp.types.SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit
-import app.sell.sellapp.types.SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -56,7 +56,7 @@ data class GetBookingConfigurationResponseValue200ApplicationJsonPropertyData(
 
     /** The video provider. */
     @JsonProperty("video_provider")
-    val videoProvider: SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider,
+    val videoProvider: SdkCreateBookingProductRequestApplicationJsonVideoProvider,
 
     /** The video provider connection id. */
     @JsonProperty("video_provider_connection_id") val videoProviderConnectionId: Long?,
@@ -69,7 +69,7 @@ data class GetBookingConfigurationResponseValue200ApplicationJsonPropertyData(
 
     /** The reminder offset unit. */
     @JsonProperty("reminder_offset_unit")
-    val reminderOffsetUnit: SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit,
+    val reminderOffsetUnit: SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit,
 
     /** The meta. */
     @JsonProperty("meta")

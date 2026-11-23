@@ -2,6 +2,5 @@
 
 package app.sell.sellapp.types
 
-/** Alias for [GetDisputeResponseValue200ApplicationJsonPropertyDataStatus]. */
-typealias ListDisputesResponseValue200ApplicationJsonPropertyDataItemStatus =
-    GetDisputeResponseValue200ApplicationJsonPropertyDataStatus
+/** Alias for [DisputesStatus]. */
+typealias ListDisputesResponseValue200ApplicationJsonPropertyDataItemStatus = DisputesStatus

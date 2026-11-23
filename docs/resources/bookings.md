@@ -289,3 +289,99 @@ Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API r
 
 [Response access, transport controls, pagination, and typed errors](../usage.md)
 
+## create
+
+Create a booking product
+
+[API reference](https://sell.app/docs/api/bookings/create-a-booking-product) · Effect: **consequential**
+
+```kotlin
+fun create(
+        title: String,
+        priceCents: Long,
+        description: String? = null,
+        visibility: CatalogVisibility? = null,
+        variantTitle: String? = null,
+        variantDescription: String? = null,
+        compareAtPriceCents: Long? = null,
+        currency: SdkCreateBookingProductRequestApplicationJsonCurrency? = null,
+        paymentMethods: List<PaymentMethod>? = null,
+        timezone: String? = null,
+        durationMinutes: Long? = null,
+        minNoticeMinutes: Long? = null,
+        maxAdvanceDays: Long? = null,
+        bufferBeforeMinutes: Long? = null,
+        bufferAfterMinutes: Long? = null,
+        providerConnectionIds: List<Long>? = null,
+        videoProvider: SdkCreateBookingProductRequestApplicationJsonVideoProvider? = null,
+        videoProviderConnectionId: Long? = null,
+        remindersEnabled: Boolean? = null,
+        reminderOffsetValue: Long? = null,
+        reminderOffsetUnit: SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit? = null,
+        availability: List<CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem>? =
+            null,
+        requestOptions: RequestOptions? = null,
+    ): SdkCreateBookingProductResponseValue201ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| title | `String` | Yes |
+| priceCents | `Long` | Yes |
+| description | `String?` | No |
+| visibility | `CatalogVisibility?` | No |
+| variantTitle | `String?` | No |
+| variantDescription | `String?` | No |
+| compareAtPriceCents | `Long?` | No |
+| currency | `SdkCreateBookingProductRequestApplicationJsonCurrency?` | No |
+| paymentMethods | `List<PaymentMethod>?` | No |
+| timezone | `String?` | No |
+| durationMinutes | `Long?` | No |
+| minNoticeMinutes | `Long?` | No |
+| maxAdvanceDays | `Long?` | No |
+| bufferBeforeMinutes | `Long?` | No |
+| bufferAfterMinutes | `Long?` | No |
+| providerConnectionIds | `List<Long>?` | No |
+| videoProvider | `SdkCreateBookingProductRequestApplicationJsonVideoProvider?` | No |
+| videoProviderConnectionId | `Long?` | No |
+| remindersEnabled | `Boolean?` | No |
+| reminderOffsetValue | `Long?` | No |
+| reminderOffsetUnit | `SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit?` | No |
+| availability | `List<CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem>?` | No |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkCreateBookingProductResponseValue201ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.bookings.create(title = "Strategy consultation", description = "<p>A private strategy session for your next launch.</p>", variantTitle = "60 minute session", priceCents = 2500L, currency = app.sell.sellapp.types.SdkCreateBookingProductRequestApplicationJsonCurrency("USD"), paymentMethods = listOf(app.sell.sellapp.types.PaymentMethod("STRIPE")), timezone = "Europe/London", durationMinutes = 60L, availability = listOf(ObjectMapperFactory.read("{\"day\":1,\"enabled\":true,\"start\":\"09:00\",\"end\":\"12:00\"}", app.sell.sellapp.models.CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem::class.java), ObjectMapperFactory.read("{\"day\":3,\"enabled\":true,\"start\":\"13:00\",\"end\":\"17:00\"}", app.sell.sellapp.models.CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem::class.java)))
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 201, 400, 401, 403, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+

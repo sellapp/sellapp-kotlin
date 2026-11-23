@@ -5,8 +5,8 @@ package app.sell.sellapp.models
 import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.types.CatalogVisibility
 import app.sell.sellapp.types.Category
-import app.sell.sellapp.types.SdkUpdateCourseRequestApplicationJsonAccessType
-import app.sell.sellapp.types.SdkUpdateCourseRequestApplicationJsonLevel
+import app.sell.sellapp.types.SdkCreateCourseRequestApplicationJsonAccessType
+import app.sell.sellapp.types.SdkCreateCourseRequestApplicationJsonLevel
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -40,7 +40,7 @@ data class UpdateCourseResponseValue200ApplicationJsonPropertyData(
     @JsonProperty("category") val category: Category?,
 
     /** The level. */
-    @JsonProperty("level") val level: SdkUpdateCourseRequestApplicationJsonLevel,
+    @JsonProperty("level") val level: SdkCreateCourseRequestApplicationJsonLevel,
 
     /** The language. */
     @JsonProperty("language") val language: String,
@@ -64,7 +64,7 @@ data class UpdateCourseResponseValue200ApplicationJsonPropertyData(
     @JsonProperty("certificate_enabled") val certificateEnabled: Boolean,
 
     /** The access type. */
-    @JsonProperty("access_type") val accessType: SdkUpdateCourseRequestApplicationJsonAccessType,
+    @JsonProperty("access_type") val accessType: SdkCreateCourseRequestApplicationJsonAccessType,
 
     /** The access duration days. */
     @JsonProperty("access_duration_days") val accessDurationDays: Long?,

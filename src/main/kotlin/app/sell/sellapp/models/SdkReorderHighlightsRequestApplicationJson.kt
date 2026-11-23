@@ -2,5 +2,29 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SdkDetachBundleItemsRequestApplicationJson]. */
-typealias SdkReorderHighlightsRequestApplicationJson = SdkDetachBundleItemsRequestApplicationJson
+import app.sell.sellapp.common.json.runtimeSchema
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
+
+/** SdkReorderHighlightsRequestApplicationJson model. */
+data class SdkReorderHighlightsRequestApplicationJson(
+    /** The resources. */
+    @JsonProperty("resources") val resources: List<Long>
+) {
+    /** Additive response fields retained verbatim for forward compatibility. */
+    @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
+
+    @JsonAnySetter
+    fun setAdditionalProperty(name: String, value: JsonNode) {
+        additionalProperties[name] = value
+    }
+
+    companion object {
+        internal val runtimeSchema =
+            runtimeSchema(
+                "{\"kind\":\"object\",\"modelName\":\"SdkReorderHighlightsRequestApplicationJson\",\"properties\":{\"resources\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"constraints\":{\"minItems\":1}}},\"required\":[\"resources\"],\"additionalProperties\":true}"
+            )
+    }
+}

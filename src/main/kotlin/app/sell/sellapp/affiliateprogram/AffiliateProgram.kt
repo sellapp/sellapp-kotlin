@@ -8,6 +8,7 @@ import app.sell.sellapp.common.http.RawResponse
 import app.sell.sellapp.common.http.RequestConfig
 import app.sell.sellapp.common.http.RequestOptions
 import app.sell.sellapp.common.http.bodyOf
+import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.models.ListPendingAffiliateInvitationsResponseValue200ApplicationJsonPropertyDataItem
 import app.sell.sellapp.models.ReplaceAffiliateProgramConfigurationRequestApplicationJsonPropertyProductsItem
@@ -15,6 +16,7 @@ import app.sell.sellapp.models.ReplaceAffiliateProgramConfigurationRequestApplic
 import app.sell.sellapp.models.SdkGetAffiliateProgramConfigurationResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkInviteAffiliateResponseValue201ApplicationJson
 import app.sell.sellapp.models.SdkReplaceAffiliateProgramConfigurationResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkResendAffiliateInvitationResponseValue200ApplicationJson
 import com.fasterxml.jackson.core.type.TypeReference
 
 /**
@@ -108,9 +110,10 @@ class AffiliateProgram(internal val sellapp: SellApp) {
      *
      * Replace the complete affiliate-program configuration. The products array is authoritative:
      * enabled entries replace existing store-level product restrictions, and every variant ID must
-     * belong to the authenticated store. Requires the `affiliate` token ability. OAuth callers use
-     * the admin grant and select a store with X-STORE. Current membership and role permissions
-     * apply to every request.
+     * belong to the authenticated store. Requires the `affiliate` token ability, and the staff
+     * member who owns the key also needs the `store` permission, the same permission that changing
+     * the program in the dashboard requires. OAuth callers use the admin grant and select a store
+     * with X-STORE. Current membership and role permissions apply to every request.
      *
      * @param enabled the enabled of the request.
      * @param settings the settings of the request.
@@ -318,8 +321,10 @@ class AffiliateProgram(internal val sellapp: SellApp) {
      *
      * Create a pending affiliate invitation and email a single-use onboarding link. Duplicate
      * invitations are rejected and invites are rate limited per store. The affiliate program must
-     * be enabled. Requires the `affiliate` token ability. OAuth callers use the admin grant and
-     * select a store with X-STORE. Current membership and role permissions apply to every request.
+     * be enabled. Requires the `affiliate` token ability, and the staff member who owns the key
+     * also needs the `store` permission, the same permission that inviting affiliates in the
+     * dashboard requires. OAuth callers use the admin grant and select a store with X-STORE.
+     * Current membership and role permissions apply to every request.
      *
      * @param email the email of the request.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
@@ -396,5 +401,100 @@ class AffiliateProgram(internal val sellapp: SellApp) {
     ): RawResponse<SdkInviteAffiliateResponseValue201ApplicationJson> =
         sellapp.baseClient.runCancellable {
             inviteWithResponse(email, requestOptions)
+        }
+
+    /**
+     * Resend an affiliate invitation
+     *
+     * Email a pending affiliate invitation again, with a new sign-in link that expires after 6
+     * hours, to the address it was created for. The invitation itself does not change: `invited_at`
+     * keeps the original date. Send no body. Requires the `affiliate` API-key ability, and the
+     * staff member who owns the key needs the affiliate and `store` permissions, the same as
+     * inviting an affiliate. Every refusal returns `422` on `invitation` and sends nothing: the
+     * invitation was already answered or is no longer pending, the affiliate program is not
+     * configured or turned off, the same invitation was sent within the last minute, your store
+     * reached its limit of 10 invitation emails per hour (new invitations and resends count
+     * together; the message says how many seconds to wait), or the email could not be sent. An
+     * invitation from another store returns `404`. Not safe to retry blindly: each successful call
+     * sends another email. A repeat within a minute is refused, so a quick retry after a lost
+     * response cannot send twice; after that, check with the invitee or wait for them to answer
+     * before sending again. If sending failed, wait a minute and try again. OAuth callers use the
+     * admin grant and select a store with X-STORE. Current membership and role permissions apply to
+     * every request.
+     *
+     * @param invitation The invitation ID, as returned by `GET /v2/affiliate-invitations` or `POST
+     *   /v2/affiliate-invitations`.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkResendAffiliateInvitationResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun resend(
+        invitation: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkResendAffiliateInvitationResponseValue200ApplicationJson {
+        val body = linkedMapOf<String, Any?>()
+        val config =
+            RequestConfig(
+                method = "POST",
+                path = "/v2/affiliate-invitations/${encodePathSegment(invitation)}/resend",
+                body = body,
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkResendAffiliateInvitationResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "resendAffiliateInvitation",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkResendAffiliateInvitationResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun resendWithResponse(
+        invitation: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkResendAffiliateInvitationResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        resend(invitation, capturingOptions)
+        return captured as? RawResponse<SdkResendAffiliateInvitationResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [resend]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [resend] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("resendSuspend")
+    suspend fun resendSuspend(
+        invitation: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkResendAffiliateInvitationResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            resend(invitation, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [resendWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [resendWithResponse] under `withContext(Dispatchers.IO)`, so this
+     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("resendWithResponseSuspend")
+    suspend fun resendWithResponseSuspend(
+        invitation: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkResendAffiliateInvitationResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            resendWithResponse(invitation, requestOptions)
         }
 }

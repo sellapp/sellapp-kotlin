@@ -10,12 +10,22 @@ List disputes
 
 ```kotlin
 fun list(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        status: DisputesStatus? = null,
+        provider: String? = null,
+        openedAfter: String? = null,
+        openedBefore: String? = null,
+        requestOptions: RequestOptions? = null,
     ): Page<ListDisputesResponseValue200ApplicationJsonPropertyDataItem>
 ```
 
 | Argument | Native type | Required |
 | --- | --- | --- |
+| page | `Long?` | No |
+| status | `DisputesStatus?` | No |
+| provider | `String?` | No |
+| openedAfter | `String?` | No |
+| openedBefore | `String?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<ListDisputesResponseValue200ApplicationJsonPropertyDataItem>`.

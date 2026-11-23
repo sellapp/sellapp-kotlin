@@ -112,6 +112,19 @@ class CashbackRulesTest : TestBase() {
     }
 
     @Test
+    fun `quote returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/cashback-rules/quote",
+            200,
+            "{\"data\": {\"product_id\": null, \"purchase_cents\": null, \"eligible\": false, \"cashback_cents\": null, \"reason\": " +
+                "\"sample\", \"matching_rule\": null}}",
+        )
+        val result = api().quote()
+        assertNotNull(result)
+    }
+
+    @Test
     fun `list translates 401 to UnauthorizedException`() {
         stubResponse("GET", "/v2/cashback-rules", 401)
         assertThrows(UnauthorizedException::class.java) {

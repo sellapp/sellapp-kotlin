@@ -3,6 +3,7 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.types.ReplyState
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -30,6 +31,12 @@ data class SdkV2SearchFeedbackRequestApplicationJson(
     @JsonProperty("includes")
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
     val includes: List<V2SearchFeedbackRequestApplicationJsonPropertyIncludesItem>? = null,
+
+    /**
+     * `replied`: feedback with a non-empty seller reply. `unreplied`: feedback without one. `all`
+     * (default): both. Any other value returns `422`.
+     */
+    @JsonProperty("reply_state") val replyState: ReplyState? = null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -42,7 +49,7 @@ data class SdkV2SearchFeedbackRequestApplicationJson(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"SdkV2SearchFeedbackRequestApplicationJson\",\"properties\":{\"filters\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchFeedbackRequestApplicationJsonPropertyFiltersItem\",\"properties\":{\"field\":{\"kind\":\"primitive\",\"type\":\"string\"},\"operator\":{\"kind\":\"primitive\",\"type\":\"string\"},\"value\":{\"kind\":\"primitive\",\"type\":\"unknown\"},\"type\":{\"kind\":\"enum\",\"values\":[\"and\",\"or\"]},\"nested\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchFeedbackRequestApplicationJsonPropertyFiltersItemPropertyNestedItem\",\"properties\":{},\"required\":[],\"additionalProperties\":true}}},\"required\":[],\"additionalProperties\":true}},\"sort\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchFeedbackRequestApplicationJsonPropertySortItem\",\"properties\":{\"field\":{\"kind\":\"primitive\",\"type\":\"string\"},\"direction\":{\"kind\":\"enum\",\"values\":[\"asc\",\"desc\"]}},\"required\":[\"field\"],\"additionalProperties\":true}},\"search\":{\"kind\":\"object\",\"modelName\":\"V2SearchFeedbackRequestApplicationJsonPropertySearch\",\"properties\":{\"value\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"case_sensitive\":{\"kind\":\"primitive\",\"type\":\"boolean\"}},\"required\":[],\"additionalProperties\":true},\"includes\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchFeedbackRequestApplicationJsonPropertyIncludesItem\",\"properties\":{\"relation\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"relation\"],\"additionalProperties\":true}}},\"required\":[],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"SdkV2SearchFeedbackRequestApplicationJson\",\"properties\":{\"filters\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchFeedbackRequestApplicationJsonPropertyFiltersItem\",\"properties\":{\"field\":{\"kind\":\"primitive\",\"type\":\"string\"},\"operator\":{\"kind\":\"primitive\",\"type\":\"string\"},\"value\":{\"kind\":\"primitive\",\"type\":\"unknown\"},\"type\":{\"kind\":\"enum\",\"values\":[\"and\",\"or\"]},\"nested\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchFeedbackRequestApplicationJsonPropertyFiltersItemPropertyNestedItem\",\"properties\":{},\"required\":[],\"additionalProperties\":true}}},\"required\":[],\"additionalProperties\":true}},\"sort\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchFeedbackRequestApplicationJsonPropertySortItem\",\"properties\":{\"field\":{\"kind\":\"primitive\",\"type\":\"string\"},\"direction\":{\"kind\":\"enum\",\"values\":[\"asc\",\"desc\"]}},\"required\":[\"field\"],\"additionalProperties\":true}},\"search\":{\"kind\":\"object\",\"modelName\":\"V2SearchFeedbackRequestApplicationJsonPropertySearch\",\"properties\":{\"value\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"case_sensitive\":{\"kind\":\"primitive\",\"type\":\"boolean\"}},\"required\":[],\"additionalProperties\":true},\"includes\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"V2SearchFeedbackRequestApplicationJsonPropertyIncludesItem\",\"properties\":{\"relation\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"relation\"],\"additionalProperties\":true}},\"reply_state\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"enum\",\"values\":[\"all\",\"replied\",\"unreplied\",\"null\"]}}},\"required\":[],\"additionalProperties\":true}"
             )
     }
 }

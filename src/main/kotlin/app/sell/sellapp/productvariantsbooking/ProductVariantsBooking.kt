@@ -22,9 +22,9 @@ import app.sell.sellapp.models.SdkReplaceBookingConfigurationResponseValue200App
 import app.sell.sellapp.models.SdkUpdateBookingConfigurationResponseValue200ApplicationJson
 import app.sell.sellapp.models.UpdateBookingConfigurationRequestApplicationJsonPropertyAvailabilityItem
 import app.sell.sellapp.models.UpdateBookingConfigurationRequestApplicationJsonPropertyMeta
+import app.sell.sellapp.types.SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit
+import app.sell.sellapp.types.SdkCreateBookingProductRequestApplicationJsonVideoProvider
 import app.sell.sellapp.types.SdkUpdateBookingConfigurationRequestApplicationJsonConflictScope
-import app.sell.sellapp.types.SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit
-import app.sell.sellapp.types.SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider
 import java.time.OffsetDateTime
 
 /**
@@ -492,12 +492,11 @@ class ProductVariantsBooking(internal val sellapp: SellApp) {
             List<ReplaceBookingConfigurationRequestApplicationJsonPropertyAvailabilityItem>? =
             null,
         providerConnectionIds: List<Long>? = null,
-        videoProvider: SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider? = null,
+        videoProvider: SdkCreateBookingProductRequestApplicationJsonVideoProvider? = null,
         videoProviderConnectionId: Long? = null,
         remindersEnabled: Boolean? = null,
         reminderOffsetValue: Long? = null,
-        reminderOffsetUnit: SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit? =
-            null,
+        reminderOffsetUnit: SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit? = null,
         meta: ReplaceBookingConfigurationRequestApplicationJsonPropertyMeta? = null,
         requestOptions: RequestOptions? = null,
     ): SdkReplaceBookingConfigurationResponseValue200ApplicationJson {
@@ -561,12 +560,11 @@ class ProductVariantsBooking(internal val sellapp: SellApp) {
             List<ReplaceBookingConfigurationRequestApplicationJsonPropertyAvailabilityItem>? =
             null,
         providerConnectionIds: List<Long>? = null,
-        videoProvider: SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider? = null,
+        videoProvider: SdkCreateBookingProductRequestApplicationJsonVideoProvider? = null,
         videoProviderConnectionId: Long? = null,
         remindersEnabled: Boolean? = null,
         reminderOffsetValue: Long? = null,
-        reminderOffsetUnit: SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit? =
-            null,
+        reminderOffsetUnit: SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit? = null,
         meta: ReplaceBookingConfigurationRequestApplicationJsonPropertyMeta? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkReplaceBookingConfigurationResponseValue200ApplicationJson> {
@@ -625,12 +623,11 @@ class ProductVariantsBooking(internal val sellapp: SellApp) {
             List<ReplaceBookingConfigurationRequestApplicationJsonPropertyAvailabilityItem>? =
             null,
         providerConnectionIds: List<Long>? = null,
-        videoProvider: SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider? = null,
+        videoProvider: SdkCreateBookingProductRequestApplicationJsonVideoProvider? = null,
         videoProviderConnectionId: Long? = null,
         remindersEnabled: Boolean? = null,
         reminderOffsetValue: Long? = null,
-        reminderOffsetUnit: SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit? =
-            null,
+        reminderOffsetUnit: SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit? = null,
         meta: ReplaceBookingConfigurationRequestApplicationJsonPropertyMeta? = null,
         requestOptions: RequestOptions? = null,
     ): SdkReplaceBookingConfigurationResponseValue200ApplicationJson =
@@ -683,12 +680,11 @@ class ProductVariantsBooking(internal val sellapp: SellApp) {
             List<ReplaceBookingConfigurationRequestApplicationJsonPropertyAvailabilityItem>? =
             null,
         providerConnectionIds: List<Long>? = null,
-        videoProvider: SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider? = null,
+        videoProvider: SdkCreateBookingProductRequestApplicationJsonVideoProvider? = null,
         videoProviderConnectionId: Long? = null,
         remindersEnabled: Boolean? = null,
         reminderOffsetValue: Long? = null,
-        reminderOffsetUnit: SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit? =
-            null,
+        reminderOffsetUnit: SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit? = null,
         meta: ReplaceBookingConfigurationRequestApplicationJsonPropertyMeta? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkReplaceBookingConfigurationResponseValue200ApplicationJson> =
@@ -768,14 +764,13 @@ class ProductVariantsBooking(internal val sellapp: SellApp) {
             > =
             PatchField.Absent,
         providerConnectionIds: PatchField<List<Long>> = PatchField.Absent,
-        videoProvider:
-            PatchField<SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider> =
+        videoProvider: PatchField<SdkCreateBookingProductRequestApplicationJsonVideoProvider> =
             PatchField.Absent,
         videoProviderConnectionId: PatchField<Long?> = PatchField.Absent,
         remindersEnabled: PatchField<Boolean> = PatchField.Absent,
         reminderOffsetValue: PatchField<Long> = PatchField.Absent,
         reminderOffsetUnit:
-            PatchField<SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit> =
+            PatchField<SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit> =
             PatchField.Absent,
         meta: PatchField<UpdateBookingConfigurationRequestApplicationJsonPropertyMeta> =
             PatchField.Absent,
@@ -845,14 +840,13 @@ class ProductVariantsBooking(internal val sellapp: SellApp) {
             > =
             PatchField.Absent,
         providerConnectionIds: PatchField<List<Long>> = PatchField.Absent,
-        videoProvider:
-            PatchField<SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider> =
+        videoProvider: PatchField<SdkCreateBookingProductRequestApplicationJsonVideoProvider> =
             PatchField.Absent,
         videoProviderConnectionId: PatchField<Long?> = PatchField.Absent,
         remindersEnabled: PatchField<Boolean> = PatchField.Absent,
         reminderOffsetValue: PatchField<Long> = PatchField.Absent,
         reminderOffsetUnit:
-            PatchField<SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit> =
+            PatchField<SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit> =
             PatchField.Absent,
         meta: PatchField<UpdateBookingConfigurationRequestApplicationJsonPropertyMeta> =
             PatchField.Absent,
@@ -917,14 +911,13 @@ class ProductVariantsBooking(internal val sellapp: SellApp) {
             > =
             PatchField.Absent,
         providerConnectionIds: PatchField<List<Long>> = PatchField.Absent,
-        videoProvider:
-            PatchField<SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider> =
+        videoProvider: PatchField<SdkCreateBookingProductRequestApplicationJsonVideoProvider> =
             PatchField.Absent,
         videoProviderConnectionId: PatchField<Long?> = PatchField.Absent,
         remindersEnabled: PatchField<Boolean> = PatchField.Absent,
         reminderOffsetValue: PatchField<Long> = PatchField.Absent,
         reminderOffsetUnit:
-            PatchField<SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit> =
+            PatchField<SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit> =
             PatchField.Absent,
         meta: PatchField<UpdateBookingConfigurationRequestApplicationJsonPropertyMeta> =
             PatchField.Absent,
@@ -983,14 +976,13 @@ class ProductVariantsBooking(internal val sellapp: SellApp) {
             > =
             PatchField.Absent,
         providerConnectionIds: PatchField<List<Long>> = PatchField.Absent,
-        videoProvider:
-            PatchField<SdkUpdateBookingConfigurationRequestApplicationJsonVideoProvider> =
+        videoProvider: PatchField<SdkCreateBookingProductRequestApplicationJsonVideoProvider> =
             PatchField.Absent,
         videoProviderConnectionId: PatchField<Long?> = PatchField.Absent,
         remindersEnabled: PatchField<Boolean> = PatchField.Absent,
         reminderOffsetValue: PatchField<Long> = PatchField.Absent,
         reminderOffsetUnit:
-            PatchField<SdkUpdateBookingConfigurationRequestApplicationJsonReminderOffsetUnit> =
+            PatchField<SdkCreateBookingProductRequestApplicationJsonReminderOffsetUnit> =
             PatchField.Absent,
         meta: PatchField<UpdateBookingConfigurationRequestApplicationJsonPropertyMeta> =
             PatchField.Absent,

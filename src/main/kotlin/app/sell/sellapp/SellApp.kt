@@ -10,14 +10,19 @@ import app.sell.sellapp.affiliateprogram.AffiliateProgram
 import app.sell.sellapp.affiliatereferrals.AffiliateReferrals
 import app.sell.sellapp.affiliatereferralsessions.AffiliateReferralSessions
 import app.sell.sellapp.affiliates.Affiliates
+import app.sell.sellapp.affiliatescoupon.AffiliatesCoupon
+import app.sell.sellapp.affiliatesproducts.AffiliatesProducts
 import app.sell.sellapp.blacklists.Blacklists
 import app.sell.sellapp.bookings.Bookings
 import app.sell.sellapp.bookingscalendarevents.BookingsCalendarEvents
 import app.sell.sellapp.bundleitems.BundleItems
 import app.sell.sellapp.cashbackrules.CashbackRules
 import app.sell.sellapp.charges.Charges
+import app.sell.sellapp.checkoutfieldtemplates.CheckoutFieldTemplates
 import app.sell.sellapp.common.http.BaseClient
 import app.sell.sellapp.communityconnections.CommunityConnections
+import app.sell.sellapp.communityconnectionsservers.CommunityConnectionsServers
+import app.sell.sellapp.communityconnectionsslack.CommunityConnectionsSlack
 import app.sell.sellapp.coupons.Coupons
 import app.sell.sellapp.courses.Courses
 import app.sell.sellapp.courseslessons.CoursesLessons
@@ -43,17 +48,23 @@ import app.sell.sellapp.licenseinstances.LicenseInstances
 import app.sell.sellapp.licenses.Licenses
 import app.sell.sellapp.licensesinstances.LicensesInstances
 import app.sell.sellapp.lineitems.LineItems
+import app.sell.sellapp.notifications.Notifications
 import app.sell.sellapp.oauth.OAuth
 import app.sell.sellapp.oauthmanagement.OAuthManagement
 import app.sell.sellapp.orders.Orders
 import app.sell.sellapp.orderslineitems.OrdersLineItems
 import app.sell.sellapp.paymentmethods.PaymentMethods
 import app.sell.sellapp.paymentmethodscustom.PaymentMethodsCustom
+import app.sell.sellapp.paymentmethodsmodifier.PaymentMethodsModifier
 import app.sell.sellapp.products.Products
 import app.sell.sellapp.productsaddons.ProductsAddons
+import app.sell.sellapp.productsfeaturedvariant.ProductsFeaturedVariant
+import app.sell.sellapp.productssimilarproducts.ProductsSimilarProducts
 import app.sell.sellapp.productvariants.ProductVariants
 import app.sell.sellapp.productvariantsbooking.ProductVariantsBooking
+import app.sell.sellapp.productvariantscommunityaccess.ProductVariantsCommunityAccess
 import app.sell.sellapp.productvariantspricing.ProductVariantsPricing
+import app.sell.sellapp.productvariantssubscriptionsettings.ProductVariantsSubscriptionSettings
 import app.sell.sellapp.promotions.Promotions
 import app.sell.sellapp.promotionsphases.PromotionsPhases
 import app.sell.sellapp.refunds.Refunds
@@ -62,12 +73,20 @@ import app.sell.sellapp.rewardgrants.RewardGrants
 import app.sell.sellapp.rewardrules.RewardRules
 import app.sell.sellapp.sections.Sections
 import app.sell.sellapp.storecustomdomains.StoreCustomDomains
+import app.sell.sellapp.storeintegrations.StoreIntegrations
 import app.sell.sellapp.storenotificationchannels.StoreNotificationChannels
+import app.sell.sellapp.storesenderemail.StoreSenderEmail
 import app.sell.sellapp.storesettings.StoreSettings
 import app.sell.sellapp.subscriptions.Subscriptions
 import app.sell.sellapp.subscriptionsactions.SubscriptionsActions
+import app.sell.sellapp.supportautomationrules.SupportAutomationRules
+import app.sell.sellapp.supportautomationsettings.SupportAutomationSettings
+import app.sell.sellapp.supportreasons.SupportReasons
+import app.sell.sellapp.supportreplytemplates.SupportReplyTemplates
 import app.sell.sellapp.tickets.Tickets
+import app.sell.sellapp.ticketsanalytics.TicketsAnalytics
 import app.sell.sellapp.ticketsmessages.TicketsMessages
+import app.sell.sellapp.ticketswalletrefunds.TicketsWalletRefunds
 import app.sell.sellapp.upselloffers.UpsellOffers
 import app.sell.sellapp.variantdeliverablefiles.VariantDeliverableFiles
 import app.sell.sellapp.variantdeliverablefolders.VariantDeliverableFolders
@@ -75,6 +94,8 @@ import app.sell.sellapp.variantdeliverables.VariantDeliverables
 import app.sell.sellapp.variantserials.VariantSerials
 import app.sell.sellapp.wallet.Wallet
 import app.sell.sellapp.walletbonustiers.WalletBonusTiers
+import app.sell.sellapp.walletledger.WalletLedger
+import app.sell.sellapp.walletoverview.WalletOverview
 import app.sell.sellapp.walletsettings.WalletSettings
 import app.sell.sellapp.wallettopups.WalletTopups
 import app.sell.sellapp.wallettransactions.WalletTransactions
@@ -180,6 +201,20 @@ constructor(
                 Products(this)
             }
 
+    /** Lazily-constructed [ProductsFeaturedVariant] accessor for this [SellApp] client. */
+    val productsFeaturedVariant: ProductsFeaturedVariant
+        get() =
+            service(ProductsFeaturedVariant::class) {
+                ProductsFeaturedVariant(this)
+            }
+
+    /** Lazily-constructed [ProductsSimilarProducts] accessor for this [SellApp] client. */
+    val productsSimilarProducts: ProductsSimilarProducts
+        get() =
+            service(ProductsSimilarProducts::class) {
+                ProductsSimilarProducts(this)
+            }
+
     /** Lazily-constructed [ProductVariants] accessor for this [SellApp] client. */
     val productVariants: ProductVariants
         get() =
@@ -199,6 +234,22 @@ constructor(
         get() =
             service(ProductVariantsBooking::class) {
                 ProductVariantsBooking(this)
+            }
+
+    /**
+     * Lazily-constructed [ProductVariantsSubscriptionSettings] accessor for this [SellApp] client.
+     */
+    val productVariantsSubscriptionSettings: ProductVariantsSubscriptionSettings
+        get() =
+            service(ProductVariantsSubscriptionSettings::class) {
+                ProductVariantsSubscriptionSettings(this)
+            }
+
+    /** Lazily-constructed [ProductVariantsCommunityAccess] accessor for this [SellApp] client. */
+    val productVariantsCommunityAccess: ProductVariantsCommunityAccess
+        get() =
+            service(ProductVariantsCommunityAccess::class) {
+                ProductVariantsCommunityAccess(this)
             }
 
     /** Lazily-constructed [Subscriptions] accessor for this [SellApp] client. */
@@ -234,6 +285,13 @@ constructor(
         get() =
             service(BundleItems::class) {
                 BundleItems(this)
+            }
+
+    /** Lazily-constructed [VariantDeliverables] accessor for this [SellApp] client. */
+    val variantDeliverables: VariantDeliverables
+        get() =
+            service(VariantDeliverables::class) {
+                VariantDeliverables(this)
             }
 
     /** Lazily-constructed [Promotions] accessor for this [SellApp] client. */
@@ -292,6 +350,34 @@ constructor(
                 WebhookChannels(this)
             }
 
+    /** Lazily-constructed [SupportReplyTemplates] accessor for this [SellApp] client. */
+    val supportReplyTemplates: SupportReplyTemplates
+        get() =
+            service(SupportReplyTemplates::class) {
+                SupportReplyTemplates(this)
+            }
+
+    /** Lazily-constructed [SupportReasons] accessor for this [SellApp] client. */
+    val supportReasons: SupportReasons
+        get() =
+            service(SupportReasons::class) {
+                SupportReasons(this)
+            }
+
+    /** Lazily-constructed [SupportAutomationRules] accessor for this [SellApp] client. */
+    val supportAutomationRules: SupportAutomationRules
+        get() =
+            service(SupportAutomationRules::class) {
+                SupportAutomationRules(this)
+            }
+
+    /** Lazily-constructed [SupportAutomationSettings] accessor for this [SellApp] client. */
+    val supportAutomationSettings: SupportAutomationSettings
+        get() =
+            service(SupportAutomationSettings::class) {
+                SupportAutomationSettings(this)
+            }
+
     /** Lazily-constructed [Customers] accessor for this [SellApp] client. */
     val customers: Customers
         get() =
@@ -318,13 +404,6 @@ constructor(
         get() =
             service(OrdersLineItems::class) {
                 OrdersLineItems(this)
-            }
-
-    /** Lazily-constructed [VariantDeliverables] accessor for this [SellApp] client. */
-    val variantDeliverables: VariantDeliverables
-        get() =
-            service(VariantDeliverables::class) {
-                VariantDeliverables(this)
             }
 
     /** Lazily-constructed [VariantDeliverableFiles] accessor for this [SellApp] client. */
@@ -390,6 +469,20 @@ constructor(
                 CommunityConnections(this)
             }
 
+    /** Lazily-constructed [CommunityConnectionsServers] accessor for this [SellApp] client. */
+    val communityConnectionsServers: CommunityConnectionsServers
+        get() =
+            service(CommunityConnectionsServers::class) {
+                CommunityConnectionsServers(this)
+            }
+
+    /** Lazily-constructed [CommunityConnectionsSlack] accessor for this [SellApp] client. */
+    val communityConnectionsSlack: CommunityConnectionsSlack
+        get() =
+            service(CommunityConnectionsSlack::class) {
+                CommunityConnectionsSlack(this)
+            }
+
     /** Lazily-constructed [WalletSettings] accessor for this [SellApp] client. */
     val walletSettings: WalletSettings
         get() =
@@ -409,6 +502,20 @@ constructor(
         get() =
             service(WalletTransactions::class) {
                 WalletTransactions(this)
+            }
+
+    /** Lazily-constructed [WalletLedger] accessor for this [SellApp] client. */
+    val walletLedger: WalletLedger
+        get() =
+            service(WalletLedger::class) {
+                WalletLedger(this)
+            }
+
+    /** Lazily-constructed [WalletOverview] accessor for this [SellApp] client. */
+    val walletOverview: WalletOverview
+        get() =
+            service(WalletOverview::class) {
+                WalletOverview(this)
             }
 
     /** Lazily-constructed [WalletTopups] accessor for this [SellApp] client. */
@@ -453,11 +560,25 @@ constructor(
                 CoursesLessons(this)
             }
 
+    /** Lazily-constructed [CheckoutFieldTemplates] accessor for this [SellApp] client. */
+    val checkoutFieldTemplates: CheckoutFieldTemplates
+        get() =
+            service(CheckoutFieldTemplates::class) {
+                CheckoutFieldTemplates(this)
+            }
+
     /** Lazily-constructed [PaymentMethods] accessor for this [SellApp] client. */
     val paymentMethods: PaymentMethods
         get() =
             service(PaymentMethods::class) {
                 PaymentMethods(this)
+            }
+
+    /** Lazily-constructed [PaymentMethodsModifier] accessor for this [SellApp] client. */
+    val paymentMethodsModifier: PaymentMethodsModifier
+        get() =
+            service(PaymentMethodsModifier::class) {
+                PaymentMethodsModifier(this)
             }
 
     /** Lazily-constructed [PaymentMethodsCustom] accessor for this [SellApp] client. */
@@ -474,6 +595,20 @@ constructor(
                 StoreSettings(this)
             }
 
+    /** Lazily-constructed [StoreSenderEmail] accessor for this [SellApp] client. */
+    val storeSenderEmail: StoreSenderEmail
+        get() =
+            service(StoreSenderEmail::class) {
+                StoreSenderEmail(this)
+            }
+
+    /** Lazily-constructed [StoreIntegrations] accessor for this [SellApp] client. */
+    val storeIntegrations: StoreIntegrations
+        get() =
+            service(StoreIntegrations::class) {
+                StoreIntegrations(this)
+            }
+
     /** Lazily-constructed [StoreNotificationChannels] accessor for this [SellApp] client. */
     val storeNotificationChannels: StoreNotificationChannels
         get() =
@@ -486,6 +621,13 @@ constructor(
         get() =
             service(StoreCustomDomains::class) {
                 StoreCustomDomains(this)
+            }
+
+    /** Lazily-constructed [Notifications] accessor for this [SellApp] client. */
+    val notifications: Notifications
+        get() =
+            service(Notifications::class) {
+                Notifications(this)
             }
 
     /** Lazily-constructed [CreditsProducts] accessor for this [SellApp] client. */
@@ -521,6 +663,20 @@ constructor(
         get() =
             service(Affiliates::class) {
                 Affiliates(this)
+            }
+
+    /** Lazily-constructed [AffiliatesProducts] accessor for this [SellApp] client. */
+    val affiliatesProducts: AffiliatesProducts
+        get() =
+            service(AffiliatesProducts::class) {
+                AffiliatesProducts(this)
+            }
+
+    /** Lazily-constructed [AffiliatesCoupon] accessor for this [SellApp] client. */
+    val affiliatesCoupon: AffiliatesCoupon
+        get() =
+            service(AffiliatesCoupon::class) {
+                AffiliatesCoupon(this)
             }
 
     /** Lazily-constructed [AffiliateReferrals] accessor for this [SellApp] client. */
@@ -654,6 +810,20 @@ constructor(
         get() =
             service(TicketsMessages::class) {
                 TicketsMessages(this)
+            }
+
+    /** Lazily-constructed [TicketsWalletRefunds] accessor for this [SellApp] client. */
+    val ticketsWalletRefunds: TicketsWalletRefunds
+        get() =
+            service(TicketsWalletRefunds::class) {
+                TicketsWalletRefunds(this)
+            }
+
+    /** Lazily-constructed [TicketsAnalytics] accessor for this [SellApp] client. */
+    val ticketsAnalytics: TicketsAnalytics
+        get() =
+            service(TicketsAnalytics::class) {
+                TicketsAnalytics(this)
             }
 
     /** Lazily-constructed [OAuth] accessor for this [SellApp] client. */

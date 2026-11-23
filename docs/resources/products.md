@@ -14,6 +14,11 @@ fun list(
         page: Long? = null,
         withDrafts: Boolean? = null,
         onlyDrafts: Boolean? = null,
+        minPrice: Long? = null,
+        maxPrice: Long? = null,
+        stock: ProductsStock? = null,
+        visibility: List<CatalogVisibility>? = null,
+        hasSales: Boolean? = null,
         requestOptions: RequestOptions? = null,
     ): Page<ListProductsResponseValue200ApplicationJsonPropertyDataItem>
 ```
@@ -24,6 +29,11 @@ fun list(
 | page | `Long?` | No |
 | withDrafts | `Boolean?` | No |
 | onlyDrafts | `Boolean?` | No |
+| minPrice | `Long?` | No |
+| maxPrice | `Long?` | No |
+| stock | `ProductsStock?` | No |
+| visibility | `List<CatalogVisibility>?` | No |
+| hasSales | `Boolean?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<ListProductsResponseValue200ApplicationJsonPropertyDataItem>`.
@@ -403,6 +413,13 @@ fun search(
         sort: List<SearchProductsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchProductsRequestApplicationJsonPropertySearch? = null,
         includes: List<SearchProductsRequestApplicationJsonPropertyIncludesItem>? = null,
+        minPrice: Long? = null,
+        maxPrice: Long? = null,
+        stock: Stock? = null,
+        visibility: List<CatalogVisibility>? = null,
+        hasSales: Boolean? = null,
+        withDrafts: Boolean? = null,
+        onlyDrafts: Boolean? = null,
         requestOptions: RequestOptions? = null,
     ): Page<SearchProductsResponseValue200ApplicationJsonPropertyDataItem>
 ```
@@ -415,6 +432,13 @@ fun search(
 | sort | `List<SearchProductsRequestApplicationJsonPropertySortItem>?` | No |
 | search | `SearchProductsRequestApplicationJsonPropertySearch?` | No |
 | includes | `List<SearchProductsRequestApplicationJsonPropertyIncludesItem>?` | No |
+| minPrice | `Long?` | No |
+| maxPrice | `Long?` | No |
+| stock | `Stock?` | No |
+| visibility | `List<CatalogVisibility>?` | No |
+| hasSales | `Boolean?` | No |
+| withDrafts | `Boolean?` | No |
+| onlyDrafts | `Boolean?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<SearchProductsResponseValue200ApplicationJsonPropertyDataItem>`.
@@ -425,7 +449,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
-    val result = client.products.search(filters = listOf(ObjectMapperFactory.read("{\"field\":\"id\",\"operator\":\"=\",\"value\":1}", app.sell.sellapp.models.SearchProductsRequestApplicationJsonPropertyFiltersItem::class.java)), sort = listOf(ObjectMapperFactory.read("{\"field\":\"created_at\",\"direction\":\"desc\"}", app.sell.sellapp.models.SearchProductsRequestApplicationJsonPropertySortItem::class.java)))
+    val result = client.products.search(search = ObjectMapperFactory.read("{\"value\":\"launch\"}", app.sell.sellapp.models.SearchProductsRequestApplicationJsonPropertySearch::class.java), maxPrice = 2500L, stock = app.sell.sellapp.types.Stock("in_stock"), visibility = listOf(app.sell.sellapp.types.CatalogVisibility("PUBLIC")), hasSales = true)
     println(result)
 }
 ```
@@ -608,6 +632,173 @@ Supported credential alternatives (each object is one alternative):
 ```
 
 Documented HTTP responses: 200, 400, 401, 403, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## publish
+
+Publish a product
+
+[API reference](https://sell.app/docs/api/products/publish-a-product) · Effect: **consequential**
+
+```kotlin
+fun publish(
+        product: String,
+        visibility: CatalogVisibility? = null,
+        variantIds: List<Long>? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkPublishProductResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| product | `String` | Yes |
+| visibility | `CatalogVisibility?` | No |
+| variantIds | `List<Long>?` | No |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkPublishProductResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.products.publish(product = "1", variantIds = listOf(2L))
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## duplicate
+
+Duplicate a product
+
+[API reference](https://sell.app/docs/api/products/duplicate-a-product) · Effect: **write**
+
+```kotlin
+fun duplicate(
+        product: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkDuplicateProductResponseValue201ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| product | `String` | Yes |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkDuplicateProductResponseValue201ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.products.duplicate(product = "1")
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 201, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## move
+
+Move a product
+
+[API reference](https://sell.app/docs/api/products/move-a-product) · Effect: **write**
+
+```kotlin
+fun move(
+        product: String,
+        position: Long,
+        expectedPosition: Long? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkMoveProductResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| product | `String` | Yes |
+| position | `Long` | Yes |
+| expectedPosition | `Long?` | No |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkMoveProductResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.products.move(product = "1", position = 1L, expectedPosition = 3L)
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
 
 [Response access, transport controls, pagination, and typed errors](../usage.md)
 

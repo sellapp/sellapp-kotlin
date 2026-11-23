@@ -2,6 +2,29 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SearchAddOnsRequestApplicationJsonPropertySearch]. */
-typealias SearchProductsRequestApplicationJsonPropertySearch =
-    SearchAddOnsRequestApplicationJsonPropertySearch
+import app.sell.sellapp.common.json.runtimeSchema
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
+
+/** Matches products whose title contains `value`. */
+data class SearchProductsRequestApplicationJsonPropertySearch(
+    /** The value. */
+    @JsonProperty("value") val value: String? = null
+) {
+    /** Additive response fields retained verbatim for forward compatibility. */
+    @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
+
+    @JsonAnySetter
+    fun setAdditionalProperty(name: String, value: JsonNode) {
+        additionalProperties[name] = value
+    }
+
+    companion object {
+        internal val runtimeSchema =
+            runtimeSchema(
+                "{\"kind\":\"object\",\"modelName\":\"SearchProductsRequestApplicationJsonPropertySearch\",\"properties\":{\"value\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}}},\"required\":[],\"additionalProperties\":true}"
+            )
+    }
+}

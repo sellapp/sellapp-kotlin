@@ -2,5 +2,112 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SdkUpdateCouponRequestApplicationJson]. */
-typealias SdkV2UpdateCouponRequestApplicationJson = SdkUpdateCouponRequestApplicationJson
+import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.types.SdkCreateCouponRequestApplicationJsonAppliesTo
+import app.sell.sellapp.types.SdkCreateCouponRequestApplicationJsonType
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
+import java.time.OffsetDateTime
+
+/** SdkV2UpdateCouponRequestApplicationJson model. */
+data class SdkV2UpdateCouponRequestApplicationJson(
+    /** The code. */
+    @JsonProperty("code") @get:JsonInclude(JsonInclude.Include.NON_NULL) val code: String? = null,
+
+    /** The type. */
+    @JsonProperty("type")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val type: SdkCreateCouponRequestApplicationJsonType? = null,
+
+    /**
+     * A decimal discount value of at least 1. Percentage discounts cannot exceed 100; amount
+     * discounts use the store currency's major unit. A `subscriptions` coupon cannot take 100% off:
+     * that returns `422` on `discount`, so offer a free trial instead.
+     */
+    @JsonProperty("discount")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val discount: Any? = null,
+
+    /** The store wide. */
+    @JsonProperty("store_wide")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val storeWide: Boolean? = null,
+
+    /**
+     * Product IDs the coupon applies to when store_wide is false. Each product you add must sell a
+     * variant of the coupon's kind: a subscription plan for a `subscriptions` coupon, or a one-time
+     * variant for a `one_time` one. Another product returns `422` on `products`. It may be an empty
+     * list when the same request sends `store_wide: true`, so a store-wide coupon you read can be
+     * sent back unchanged. Otherwise an empty list returns `422` on `products`.
+     */
+    @JsonProperty("products")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val products: List<Long>? = null,
+
+    /**
+     * Optional variant restrictions. Omit to preserve existing restrictions or send an empty array
+     * to allow every variant of the selected products. Each variant you add must be of the coupon's
+     * kind, a subscription plan or a one-time variant; another returns `422` on `product_variants`.
+     */
+    @JsonProperty("product_variants")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val productVariants: List<Long>? = null,
+
+    /** The limit. */
+    @JsonProperty("limit") val limit: Long? = null,
+
+    /** A future date and time, or null for no expiry. */
+    @JsonProperty("expires_at") val expiresAt: OffsetDateTime? = null,
+
+    /**
+     * A decimal minimum amount in the store currency's major unit that the order lines of the
+     * coupon's kind must reach, or null for no minimum.
+     */
+    @JsonProperty("minimum_amount") val minimumAmount: Any? = null,
+
+    /**
+     * What the coupon discounts: `one_time` for one-time purchases, or `subscriptions` for the
+     * first payments of a subscription plan. A new coupon defaults to `one_time`, and an update
+     * that leaves this out keeps the current kind. The coupon only discounts order lines of its
+     * kind.
+     */
+    @JsonProperty("applies_to")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
+
+    /**
+     * How many payments a `subscriptions` coupon discounts, counting the signup payment as the
+     * first, so `3` discounts the signup and the next two renewals. A `subscriptions` coupon needs
+     * one, and an update that leaves it out keeps the stored number. Missing on a `subscriptions`
+     * coupon, or outside 1 to 36, it returns `422` on `subscription_payments` with `The number of
+     * discounted payments must be between 1 and 36.` A `one_time` coupon always stores null here.
+     */
+    @JsonProperty("subscription_payments") val subscriptionPayments: Long? = null,
+
+    /**
+     * The most a percentage coupon takes off one order, as a decimal amount of at least 1 in the
+     * major unit of the order's currency, with at most two decimals: `15.50` caps the discount at
+     * 15.50. Send null to remove the cap. Only a `PERCENTAGE` coupon can have a cap: sending one
+     * for an `AMOUNT` coupon returns `422` on `maximum_discount_amount`, and changing a coupon to
+     * `AMOUNT` removes its cap.
+     */
+    @JsonProperty("maximum_discount_amount") val maximumDiscountAmount: Any? = null,
+) {
+    /** Additive response fields retained verbatim for forward compatibility. */
+    @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
+
+    @JsonAnySetter
+    fun setAdditionalProperty(name: String, value: JsonNode) {
+        additionalProperties[name] = value
+    }
+
+    companion object {
+        internal val runtimeSchema =
+            runtimeSchema(
+                "{\"kind\":\"object\",\"modelName\":\"SdkV2UpdateCouponRequestApplicationJson\",\"properties\":{\"code\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}},\"type\":{\"kind\":\"enum\",\"values\":[\"PERCENTAGE\",\"AMOUNT\"]},\"discount\":{\"kind\":\"union\",\"variants\":[{\"kind\":\"primitive\",\"type\":\"number\",\"constraints\":{\"minimum\":1,\"maxLength\":255}},{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"minimum\":1,\"maxLength\":255}}]},\"store_wide\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"products\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"product_variants\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"limit\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":1}}},\"expires_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"minimum_amount\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"union\",\"variants\":[{\"kind\":\"primitive\",\"type\":\"number\",\"constraints\":{\"minimum\":1,\"maxLength\":255}},{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"minimum\":1,\"maxLength\":255}}]}},\"applies_to\":{\"kind\":\"enum\",\"values\":[\"one_time\",\"subscriptions\"]},\"subscription_payments\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":1,\"maximum\":36}}},\"maximum_discount_amount\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"union\",\"variants\":[{\"kind\":\"primitive\",\"type\":\"number\",\"constraints\":{\"minimum\":1,\"maxLength\":255}},{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"minimum\":1,\"maxLength\":255}}]}}},\"required\":[],\"additionalProperties\":true}"
+            )
+    }
+}

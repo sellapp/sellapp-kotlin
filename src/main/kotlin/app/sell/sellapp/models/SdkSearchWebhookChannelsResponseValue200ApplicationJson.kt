@@ -2,6 +2,36 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SdkListWebhookChannelsResponseValue200ApplicationJson]. */
-typealias SdkSearchWebhookChannelsResponseValue200ApplicationJson =
-    SdkListWebhookChannelsResponseValue200ApplicationJson
+import app.sell.sellapp.common.json.runtimeSchema
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
+
+/** SdkSearchWebhookChannelsResponseValue200ApplicationJson model. */
+data class SdkSearchWebhookChannelsResponseValue200ApplicationJson(
+    /** The data. */
+    @JsonProperty("data")
+    val data: List<SearchWebhookChannelsResponseValue200ApplicationJsonPropertyDataItem>,
+
+    /** The links. */
+    @JsonProperty("links") val links: PaginationLinks,
+
+    /** The meta. */
+    @JsonProperty("meta") val meta: PaginationMeta,
+) {
+    /** Additive response fields retained verbatim for forward compatibility. */
+    @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
+
+    @JsonAnySetter
+    fun setAdditionalProperty(name: String, value: JsonNode) {
+        additionalProperties[name] = value
+    }
+
+    companion object {
+        internal val runtimeSchema =
+            runtimeSchema(
+                "{\"kind\":\"object\",\"modelName\":\"SdkSearchWebhookChannelsResponseValue200ApplicationJson\",\"properties\":{\"data\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"SearchWebhookChannelsResponseValue200ApplicationJsonPropertyDataItem\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"uuid\"},\"name\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"url\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"uri\"},\"allowed_notifications\":{\"kind\":\"array\",\"items\":{\"kind\":\"enum\",\"values\":[\"booking.cancelled\",\"booking.rescheduled\",\"cash_app.payment_requires_attention\",\"charge.completed\",\"charge.created\",\"charge.disputed\",\"charge.partial_paid\",\"charge.review\",\"feedback.created\",\"order.completed\",\"order.created\",\"order.disputed\",\"order.manual_payment_completed\",\"order.paid\",\"order.partial_paid\",\"product.created\",\"product.trashed\",\"product.updated\",\"subscription.action\",\"subscription.cancelled\",\"subscription.created\",\"subscription.plan_change_needs_attention\",\"subscription.renewal_needs_attention\",\"subscription.renewed\",\"subscription.signup_needs_attention\",\"ticket_message.created\",\"variant.created\",\"variant.sold_out\",\"variant.updated\"]},\"constraints\":{\"uniqueItems\":true}},\"signing_secret_configured\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"health\":{\"kind\":\"object\",\"modelName\":\"SearchWebhookChannelsResponseValue200ApplicationJsonPropertyDataItemPropertyHealth\",\"properties\":{\"state\":{\"kind\":\"enum\",\"values\":[\"active\",\"failing\",\"disabled\"]},\"last_success_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"last_failure_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}}},\"required\":[\"state\",\"last_success_at\",\"last_failure_at\"],\"additionalProperties\":true},\"last_delivery\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"object\",\"modelName\":\"SearchWebhookChannelsResponseValue200ApplicationJsonPropertyDataItemPropertyLastDelivery\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"uuid\"},\"event_type\":{\"kind\":\"primitive\",\"type\":\"string\"},\"status\":{\"kind\":\"enum\",\"values\":[\"pending\",\"retrying\",\"succeeded\",\"failed\",\"disabled\"]},\"created_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}}},\"required\":[\"id\",\"event_type\",\"status\",\"created_at\"],\"additionalProperties\":true}}},\"required\":[\"id\",\"name\",\"url\",\"allowed_notifications\",\"signing_secret_configured\",\"health\",\"last_delivery\"],\"additionalProperties\":true}},\"links\":{\"kind\":\"object\",\"modelName\":\"PaginationLinks\",\"properties\":{\"first\":{\"kind\":\"primitive\",\"type\":\"string\"},\"last\":{\"kind\":\"primitive\",\"type\":\"string\"},\"prev\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"next\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}}},\"required\":[\"first\",\"last\",\"prev\",\"next\"],\"additionalProperties\":true},\"meta\":{\"kind\":\"object\",\"modelName\":\"PaginationMeta\",\"properties\":{\"current_page\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"from\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"last_page\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"links\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"PaginationMetaLink\",\"properties\":{\"url\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"label\":{\"kind\":\"primitive\",\"type\":\"string\"},\"active\":{\"kind\":\"primitive\",\"type\":\"boolean\"}},\"required\":[\"url\",\"label\",\"active\"],\"additionalProperties\":true}},\"path\":{\"kind\":\"primitive\",\"type\":\"string\"},\"per_page\":{\"kind\":\"primitive\",\"type\":\"integer\"},\"to\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"total\":{\"kind\":\"primitive\",\"type\":\"integer\"}},\"required\":[\"current_page\",\"from\",\"last_page\",\"links\",\"path\",\"per_page\",\"to\",\"total\"],\"additionalProperties\":true}},\"required\":[\"data\",\"links\",\"meta\"],\"additionalProperties\":true}"
+            )
+    }
+}

@@ -62,6 +62,19 @@ class AffiliateProgramTest : TestBase() {
     }
 
     @Test
+    fun `resend returns a typed response`() {
+        stubResponse(
+            "POST",
+            "/v2/affiliate-invitations/sample-arg/resend",
+            200,
+            "{\"data\": {\"id\": 0, \"email\": \"sample\", \"status\": \"pending\", \"invited_at\": null, \"application_submitted_at\": null," +
+                " \"created_at\": null}}",
+        )
+        val result = api().resend("sample-arg")
+        assertNotNull(result)
+    }
+
+    @Test
     fun `get translates 401 to UnauthorizedException`() {
         stubResponse("GET", "/v2/affiliate-program", 401)
         assertThrows(UnauthorizedException::class.java) {

@@ -25,6 +25,7 @@ import app.sell.sellapp.models.SdkV2BatchCreateCouponsResponseValue200Applicatio
 import app.sell.sellapp.models.SdkV2BatchUpdateCouponsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkV2CreateCouponResponseValue201ApplicationJson
 import app.sell.sellapp.models.SdkV2GetCouponResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkV2GetCouponUsageResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkV2ReplaceCouponResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkV2UpdateCouponResponseValue200ApplicationJson
 import app.sell.sellapp.models.SearchCouponsRequestApplicationJsonPropertyFiltersItem
@@ -1498,7 +1499,9 @@ class Coupons(internal val sellapp: SellApp) {
      * @param products Product IDs the coupon applies to when store_wide is false. Each product you
      *   add must sell a variant of the coupon's kind: a subscription plan for a `subscriptions`
      *   coupon, or a one-time variant for a `one_time` one. Another product returns `422` on
-     *   `products`.
+     *   `products`. It may be an empty list when the same request sends `store_wide: true`, so a
+     *   store-wide coupon you read can be sent back unchanged. Otherwise an empty list returns
+     *   `422` on `products`.
      * @param productVariants Optional variant restrictions. Every variant must belong to a selected
      *   product. Products without listed variants remain eligible on all variants. Each variant you
      *   add must be of the coupon's kind, a subscription plan or a one-time variant; another
@@ -1517,6 +1520,11 @@ class Coupons(internal val sellapp: SellApp) {
      *   Missing on a `subscriptions` coupon, or outside 1 to 36, it returns `422` on
      *   `subscription_payments` with `The number of discounted payments must be between 1 and 36.`
      *   A `one_time` coupon always stores null here.
+     * @param maximumDiscountAmount The most a percentage coupon takes off one order, as a decimal
+     *   amount of at least 1 in the major unit of the order's currency, with at most two decimals:
+     *   `15.50` caps the discount at 15.50. Send null to remove the cap. Only a `PERCENTAGE` coupon
+     *   can have a cap: sending one for an `AMOUNT` coupon returns `422` on
+     *   `maximum_discount_amount`, and changing a coupon to `AMOUNT` removes its cap.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkV2CreateCouponResponseValue201ApplicationJson
      */
@@ -1533,6 +1541,7 @@ class Coupons(internal val sellapp: SellApp) {
         minimumAmount: Any? = null,
         appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
         subscriptionPayments: Long? = null,
+        maximumDiscountAmount: Any? = null,
         requestOptions: RequestOptions? = null,
     ): SdkV2CreateCouponResponseValue201ApplicationJson {
         val body =
@@ -1548,6 +1557,7 @@ class Coupons(internal val sellapp: SellApp) {
                 "minimum_amount" to minimumAmount,
                 "applies_to" to appliesTo,
                 "subscription_payments" to subscriptionPayments,
+                "maximum_discount_amount" to maximumDiscountAmount,
             )
         body["code"] = code
         body["type"] = type
@@ -1586,6 +1596,7 @@ class Coupons(internal val sellapp: SellApp) {
         minimumAmount: Any? = null,
         appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
         subscriptionPayments: Long? = null,
+        maximumDiscountAmount: Any? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkV2CreateCouponResponseValue201ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -1605,6 +1616,7 @@ class Coupons(internal val sellapp: SellApp) {
             minimumAmount,
             appliesTo,
             subscriptionPayments,
+            maximumDiscountAmount,
             capturingOptions,
         )
         return captured as? RawResponse<SdkV2CreateCouponResponseValue201ApplicationJson>
@@ -1631,6 +1643,7 @@ class Coupons(internal val sellapp: SellApp) {
         minimumAmount: Any? = null,
         appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
         subscriptionPayments: Long? = null,
+        maximumDiscountAmount: Any? = null,
         requestOptions: RequestOptions? = null,
     ): SdkV2CreateCouponResponseValue201ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -1646,6 +1659,7 @@ class Coupons(internal val sellapp: SellApp) {
                 minimumAmount,
                 appliesTo,
                 subscriptionPayments,
+                maximumDiscountAmount,
                 requestOptions,
             )
         }
@@ -1670,6 +1684,7 @@ class Coupons(internal val sellapp: SellApp) {
         minimumAmount: Any? = null,
         appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
         subscriptionPayments: Long? = null,
+        maximumDiscountAmount: Any? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkV2CreateCouponResponseValue201ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -1685,6 +1700,7 @@ class Coupons(internal val sellapp: SellApp) {
                 minimumAmount,
                 appliesTo,
                 subscriptionPayments,
+                maximumDiscountAmount,
                 requestOptions,
             )
         }
@@ -1696,6 +1712,8 @@ class Coupons(internal val sellapp: SellApp) {
      * v2 route is store-scoped. OAuth callers use the admin grant and select a store with X-STORE.
      * Current membership and role permissions apply to every request.
      *
+     * @param limit Number of items to return per page.
+     * @param page Page number to return.
      * @param withTrashed Include soft-deleted resources in the result.
      * @param onlyTrashed Return only soft-deleted resources. Ignored when with_trashed is true.
      * @param filters the filters of the request.
@@ -1707,6 +1725,8 @@ class Coupons(internal val sellapp: SellApp) {
      */
     @JvmOverloads
     fun v2SearchCoupons(
+        limit: Long? = null,
+        page: Long? = null,
         withTrashed: Boolean? = null,
         onlyTrashed: Boolean? = null,
         filters: List<V2SearchCouponsRequestApplicationJsonPropertyFiltersItem>? = null,
@@ -1732,6 +1752,8 @@ class Coupons(internal val sellapp: SellApp) {
             before = null,
             after = null,
         ) {
+            limit?.let { add("limit" to it.toString()) }
+            page?.let { add("page" to it.toString()) }
             withTrashed?.let { add("with_trashed" to it.toString()) }
             onlyTrashed?.let { add("only_trashed" to it.toString()) }
         }
@@ -1739,6 +1761,8 @@ class Coupons(internal val sellapp: SellApp) {
 
     @Suppress("UNCHECKED_CAST")
     fun v2SearchCouponsWithResponse(
+        limit: Long? = null,
+        page: Long? = null,
         withTrashed: Boolean? = null,
         onlyTrashed: Boolean? = null,
         filters: List<V2SearchCouponsRequestApplicationJsonPropertyFiltersItem>? = null,
@@ -1752,7 +1776,17 @@ class Coupons(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        v2SearchCoupons(withTrashed, onlyTrashed, filters, sort, search, includes, capturingOptions)
+        v2SearchCoupons(
+            limit,
+            page,
+            withTrashed,
+            onlyTrashed,
+            filters,
+            sort,
+            search,
+            includes,
+            capturingOptions,
+        )
         return captured
             as? RawResponse<Page<V2SearchCouponsResponseValue200ApplicationJsonPropertyDataItem>>
             ?: error("Response metadata was not captured")
@@ -1767,6 +1801,8 @@ class Coupons(internal val sellapp: SellApp) {
      */
     @JvmName("v2SearchCouponsSuspend")
     suspend fun v2SearchCouponsSuspend(
+        limit: Long? = null,
+        page: Long? = null,
         withTrashed: Boolean? = null,
         onlyTrashed: Boolean? = null,
         filters: List<V2SearchCouponsRequestApplicationJsonPropertyFiltersItem>? = null,
@@ -1777,6 +1813,8 @@ class Coupons(internal val sellapp: SellApp) {
     ): Page<V2SearchCouponsResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
             v2SearchCoupons(
+                limit,
+                page,
                 withTrashed,
                 onlyTrashed,
                 filters,
@@ -1796,6 +1834,8 @@ class Coupons(internal val sellapp: SellApp) {
      */
     @JvmName("v2SearchCouponsWithResponseSuspend")
     suspend fun v2SearchCouponsWithResponseSuspend(
+        limit: Long? = null,
+        page: Long? = null,
         withTrashed: Boolean? = null,
         onlyTrashed: Boolean? = null,
         filters: List<V2SearchCouponsRequestApplicationJsonPropertyFiltersItem>? = null,
@@ -1806,6 +1846,8 @@ class Coupons(internal val sellapp: SellApp) {
     ): RawResponse<Page<V2SearchCouponsResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
             v2SearchCouponsWithResponse(
+                limit,
+                page,
                 withTrashed,
                 onlyTrashed,
                 filters,
@@ -1929,7 +1971,9 @@ class Coupons(internal val sellapp: SellApp) {
      * @param products Product IDs the coupon applies to when store_wide is false. Each product you
      *   add must sell a variant of the coupon's kind: a subscription plan for a `subscriptions`
      *   coupon, or a one-time variant for a `one_time` one. Another product returns `422` on
-     *   `products`.
+     *   `products`. It may be an empty list when the same request sends `store_wide: true`, so a
+     *   store-wide coupon you read can be sent back unchanged. Otherwise an empty list returns
+     *   `422` on `products`.
      * @param productVariants Optional variant restrictions. Omit to preserve existing restrictions
      *   or send an empty array to allow every variant of the selected products. Each variant you
      *   add must be of the coupon's kind, a subscription plan or a one-time variant; another
@@ -1948,6 +1992,11 @@ class Coupons(internal val sellapp: SellApp) {
      *   Missing on a `subscriptions` coupon, or outside 1 to 36, it returns `422` on
      *   `subscription_payments` with `The number of discounted payments must be between 1 and 36.`
      *   A `one_time` coupon always stores null here.
+     * @param maximumDiscountAmount The most a percentage coupon takes off one order, as a decimal
+     *   amount of at least 1 in the major unit of the order's currency, with at most two decimals:
+     *   `15.50` caps the discount at 15.50. Send null to remove the cap. Only a `PERCENTAGE` coupon
+     *   can have a cap: sending one for an `AMOUNT` coupon returns `422` on
+     *   `maximum_discount_amount`, and changing a coupon to `AMOUNT` removes its cap.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkV2ReplaceCouponResponseValue200ApplicationJson
      */
@@ -1967,6 +2016,7 @@ class Coupons(internal val sellapp: SellApp) {
         minimumAmount: Any? = null,
         appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
         subscriptionPayments: Long? = null,
+        maximumDiscountAmount: Any? = null,
         requestOptions: RequestOptions? = null,
     ): SdkV2ReplaceCouponResponseValue200ApplicationJson {
         val params = mutableListOf<Pair<String, String>>()
@@ -1985,6 +2035,7 @@ class Coupons(internal val sellapp: SellApp) {
                 "minimum_amount" to minimumAmount,
                 "applies_to" to appliesTo,
                 "subscription_payments" to subscriptionPayments,
+                "maximum_discount_amount" to maximumDiscountAmount,
             )
         val config =
             RequestConfig(
@@ -2023,6 +2074,7 @@ class Coupons(internal val sellapp: SellApp) {
         minimumAmount: Any? = null,
         appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
         subscriptionPayments: Long? = null,
+        maximumDiscountAmount: Any? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkV2ReplaceCouponResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -2045,6 +2097,7 @@ class Coupons(internal val sellapp: SellApp) {
             minimumAmount,
             appliesTo,
             subscriptionPayments,
+            maximumDiscountAmount,
             capturingOptions,
         )
         return captured as? RawResponse<SdkV2ReplaceCouponResponseValue200ApplicationJson>
@@ -2074,6 +2127,7 @@ class Coupons(internal val sellapp: SellApp) {
         minimumAmount: Any? = null,
         appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
         subscriptionPayments: Long? = null,
+        maximumDiscountAmount: Any? = null,
         requestOptions: RequestOptions? = null,
     ): SdkV2ReplaceCouponResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -2092,6 +2146,7 @@ class Coupons(internal val sellapp: SellApp) {
                 minimumAmount,
                 appliesTo,
                 subscriptionPayments,
+                maximumDiscountAmount,
                 requestOptions,
             )
         }
@@ -2119,6 +2174,7 @@ class Coupons(internal val sellapp: SellApp) {
         minimumAmount: Any? = null,
         appliesTo: SdkCreateCouponRequestApplicationJsonAppliesTo? = null,
         subscriptionPayments: Long? = null,
+        maximumDiscountAmount: Any? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkV2ReplaceCouponResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -2137,6 +2193,7 @@ class Coupons(internal val sellapp: SellApp) {
                 minimumAmount,
                 appliesTo,
                 subscriptionPayments,
+                maximumDiscountAmount,
                 requestOptions,
             )
         }
@@ -2160,7 +2217,9 @@ class Coupons(internal val sellapp: SellApp) {
      * @param products Product IDs the coupon applies to when store_wide is false. Each product you
      *   add must sell a variant of the coupon's kind: a subscription plan for a `subscriptions`
      *   coupon, or a one-time variant for a `one_time` one. Another product returns `422` on
-     *   `products`.
+     *   `products`. It may be an empty list when the same request sends `store_wide: true`, so a
+     *   store-wide coupon you read can be sent back unchanged. Otherwise an empty list returns
+     *   `422` on `products`.
      * @param productVariants Optional variant restrictions. Omit to preserve existing restrictions
      *   or send an empty array to allow every variant of the selected products. Each variant you
      *   add must be of the coupon's kind, a subscription plan or a one-time variant; another
@@ -2179,6 +2238,11 @@ class Coupons(internal val sellapp: SellApp) {
      *   Missing on a `subscriptions` coupon, or outside 1 to 36, it returns `422` on
      *   `subscription_payments` with `The number of discounted payments must be between 1 and 36.`
      *   A `one_time` coupon always stores null here.
+     * @param maximumDiscountAmount The most a percentage coupon takes off one order, as a decimal
+     *   amount of at least 1 in the major unit of the order's currency, with at most two decimals:
+     *   `15.50` caps the discount at 15.50. Send null to remove the cap. Only a `PERCENTAGE` coupon
+     *   can have a cap: sending one for an `AMOUNT` coupon returns `422` on
+     *   `maximum_discount_amount`, and changing a coupon to `AMOUNT` removes its cap.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkV2UpdateCouponResponseValue200ApplicationJson
      */
@@ -2198,6 +2262,7 @@ class Coupons(internal val sellapp: SellApp) {
         minimumAmount: PatchField<Any?> = PatchField.Absent,
         appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
         subscriptionPayments: PatchField<Long?> = PatchField.Absent,
+        maximumDiscountAmount: PatchField<Any?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkV2UpdateCouponResponseValue200ApplicationJson {
         val params = mutableListOf<Pair<String, String>>()
@@ -2216,6 +2281,7 @@ class Coupons(internal val sellapp: SellApp) {
                 "minimum_amount" to minimumAmount,
                 "applies_to" to appliesTo,
                 "subscription_payments" to subscriptionPayments,
+                "maximum_discount_amount" to maximumDiscountAmount,
             )
         val config =
             RequestConfig(
@@ -2254,6 +2320,7 @@ class Coupons(internal val sellapp: SellApp) {
         minimumAmount: PatchField<Any?> = PatchField.Absent,
         appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
         subscriptionPayments: PatchField<Long?> = PatchField.Absent,
+        maximumDiscountAmount: PatchField<Any?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkV2UpdateCouponResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -2276,6 +2343,7 @@ class Coupons(internal val sellapp: SellApp) {
             minimumAmount,
             appliesTo,
             subscriptionPayments,
+            maximumDiscountAmount,
             capturingOptions,
         )
         return captured as? RawResponse<SdkV2UpdateCouponResponseValue200ApplicationJson>
@@ -2305,6 +2373,7 @@ class Coupons(internal val sellapp: SellApp) {
         minimumAmount: PatchField<Any?> = PatchField.Absent,
         appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
         subscriptionPayments: PatchField<Long?> = PatchField.Absent,
+        maximumDiscountAmount: PatchField<Any?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkV2UpdateCouponResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -2323,6 +2392,7 @@ class Coupons(internal val sellapp: SellApp) {
                 minimumAmount,
                 appliesTo,
                 subscriptionPayments,
+                maximumDiscountAmount,
                 requestOptions,
             )
         }
@@ -2350,6 +2420,7 @@ class Coupons(internal val sellapp: SellApp) {
         minimumAmount: PatchField<Any?> = PatchField.Absent,
         appliesTo: PatchField<SdkCreateCouponRequestApplicationJsonAppliesTo> = PatchField.Absent,
         subscriptionPayments: PatchField<Long?> = PatchField.Absent,
+        maximumDiscountAmount: PatchField<Any?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkV2UpdateCouponResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -2368,6 +2439,7 @@ class Coupons(internal val sellapp: SellApp) {
                 minimumAmount,
                 appliesTo,
                 subscriptionPayments,
+                maximumDiscountAmount,
                 requestOptions,
             )
         }
@@ -2744,5 +2816,88 @@ class Coupons(internal val sellapp: SellApp) {
     ): RawResponse<Unit> =
         sellapp.baseClient.runCancellable {
             v2BatchDeleteCouponsWithResponse(withTrashed, onlyTrashed, resources, requestOptions)
+        }
+
+    /**
+     * Retrieve coupon usage
+     *
+     * Count the completed orders that used a coupon, over the coupon's whole life. Only orders
+     * whose status is `COMPLETED` count; pending, failed, and refunded orders do not. A coupon from
+     * another store, a deleted coupon, and a coupon issued by a reward return `404`. Requires the
+     * `coupon` API-key ability and the coupon permission in your team role. OAuth callers use the
+     * admin grant and select a store with X-STORE. Current membership and role permissions apply to
+     * every request.
+     *
+     * @param coupon The coupon ID.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkV2GetCouponUsageResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun v2GetCouponUsage(
+        coupon: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkV2GetCouponUsageResponseValue200ApplicationJson {
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/coupons/${encodePathSegment(coupon)}/usage",
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models.SdkV2GetCouponUsageResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "v2GetCouponUsage",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkV2GetCouponUsageResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun v2GetCouponUsageWithResponse(
+        coupon: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkV2GetCouponUsageResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        v2GetCouponUsage(coupon, capturingOptions)
+        return captured as? RawResponse<SdkV2GetCouponUsageResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [v2GetCouponUsage]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [v2GetCouponUsage] under `withContext(Dispatchers.IO)`, so this is
+     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("v2GetCouponUsageSuspend")
+    suspend fun v2GetCouponUsageSuspend(
+        coupon: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkV2GetCouponUsageResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            v2GetCouponUsage(coupon, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [v2GetCouponUsageWithResponse]. Use this from a `suspend` function
+     * or coroutine scope.
+     *
+     * Delegates to the blocking [v2GetCouponUsageWithResponse] under `withContext(Dispatchers.IO)`,
+     * so this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("v2GetCouponUsageWithResponseSuspend")
+    suspend fun v2GetCouponUsageWithResponseSuspend(
+        coupon: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkV2GetCouponUsageResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            v2GetCouponUsageWithResponse(coupon, requestOptions)
         }
 }

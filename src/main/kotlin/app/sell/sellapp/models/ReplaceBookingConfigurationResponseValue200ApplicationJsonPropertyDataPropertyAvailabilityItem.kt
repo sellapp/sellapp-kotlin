@@ -2,6 +2,6 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [UpdateBookingConfigurationRequestApplicationJsonPropertyAvailabilityItem]. */
+/** Alias for [CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem]. */
 typealias ReplaceBookingConfigurationResponseValue200ApplicationJsonPropertyDataPropertyAvailabilityItem =
-    UpdateBookingConfigurationRequestApplicationJsonPropertyAvailabilityItem
+    CreateBookingProductRequestApplicationJsonPropertyAvailabilityItem

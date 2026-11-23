@@ -3,7 +3,7 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
-import app.sell.sellapp.types.ReplaceAffiliateProgramConfigurationRequestApplicationJsonPropertySettingsPayoutMethods
+import app.sell.sellapp.types.AffiliatesPayoutMethod
 import app.sell.sellapp.types.ReplaceAffiliateProgramConfigurationRequestApplicationJsonPropertySettingsReferrerType
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -38,11 +38,7 @@ data class ReplaceAffiliateProgramConfigurationRequestApplicationJsonPropertySet
     @JsonProperty("enabled_specific_products") val enabledSpecificProducts: Boolean,
 
     /** The payout methods. */
-    @JsonProperty("payout_methods")
-    val payoutMethods:
-        List<
-            ReplaceAffiliateProgramConfigurationRequestApplicationJsonPropertySettingsPayoutMethods
-        >,
+    @JsonProperty("payout_methods") val payoutMethods: List<AffiliatesPayoutMethod>,
 
     /** The enable hub. */
     @JsonProperty("enable_hub") val enableHub: Boolean,

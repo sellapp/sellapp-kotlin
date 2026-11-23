@@ -288,6 +288,8 @@ Search products within group
 ```kotlin
 fun search(
         group: String,
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<SearchProductsWithinGroupRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchProductsWithinGroupRequestApplicationJsonPropertySortItem>? = null,
         search: SearchProductsWithinGroupRequestApplicationJsonPropertySearch? = null,
@@ -299,6 +301,8 @@ fun search(
 | Argument | Native type | Required |
 | --- | --- | --- |
 | group | `String` | Yes |
+| limit | `Long?` | No |
+| page | `Long?` | No |
 | filters | `List<SearchProductsWithinGroupRequestApplicationJsonPropertyFiltersItem>?` | No |
 | sort | `List<SearchProductsWithinGroupRequestApplicationJsonPropertySortItem>?` | No |
 | search | `SearchProductsWithinGroupRequestApplicationJsonPropertySearch?` | No |

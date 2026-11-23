@@ -10,12 +10,26 @@ List refunds
 
 ```kotlin
 fun list(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        limit: Int? = null,
+        status: RefundsStatus? = null,
+        provider: RefundsProvider? = null,
+        source: RefundsSource? = null,
+        refundableType: RefundsRefundableType? = null,
+        refundableId: Long? = null,
+        requestOptions: RequestOptions? = null,
     ): Page<ListRefundsResponseValue200ApplicationJsonPropertyDataItem>
 ```
 
 | Argument | Native type | Required |
 | --- | --- | --- |
+| page | `Long?` | No |
+| limit | `Int?` | No |
+| status | `RefundsStatus?` | No |
+| provider | `RefundsProvider?` | No |
+| source | `RefundsSource?` | No |
+| refundableType | `RefundsRefundableType?` | No |
+| refundableId | `Long?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<ListRefundsResponseValue200ApplicationJsonPropertyDataItem>`.

@@ -11,6 +11,10 @@ import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.models.ListRefundsResponseValue200ApplicationJsonPropertyDataItem
 import app.sell.sellapp.models.SdkGetRefundResponseValue200ApplicationJson
+import app.sell.sellapp.types.RefundsProvider
+import app.sell.sellapp.types.RefundsRefundableType
+import app.sell.sellapp.types.RefundsSource
+import app.sell.sellapp.types.RefundsStatus
 import com.fasterxml.jackson.core.type.TypeReference
 
 /**
@@ -25,16 +29,38 @@ class Refunds(internal val sellapp: SellApp) {
     /**
      * List refunds
      *
-     * List refunds for orders and standalone charges in the selected store, one page at a time.
+     * List refunds for orders and standalone charges in the selected store, newest first, 15 per
+     * page by default. Filter by `status`, `provider`, `source`, or the order or charge refunded;
+     * filters combine. To see every refund of one order, send `refundable_type=order` and
+     * `refundable_id` set to the order ID. A value outside a parameter's accepted values, a `limit`
+     * above 100, or a query parameter the endpoint does not take returns `422` on that parameter.
      * OAuth callers use the admin grant and select a store with X-STORE. Current membership and
      * role permissions apply to every request.
      *
+     * @param page Page number, starting at 1.
+     * @param limit Refunds per page, from 1 to 100.
+     * @param status Keep refunds in this state: `pending`, `effective`, `failed`, or `cancelled`.
+     * @param provider Keep refunds made through this payment provider: `manual`, `mercado_pago`,
+     *   `nmi`, `mollie`, `paypal`, `razorpay`, `square`, or `stripe`.
+     * @param source Keep refunds by how they were recorded: `manual`, `provider_webhook`,
+     *   `provider_api`, or `system`. For example, `provider_api` is a refund SellApp requested from
+     *   the provider and `provider_webhook` one the provider reported.
+     * @param refundableType Keep refunds of orders (`order`) or of standalone charges (`charge`).
+     * @param refundableId Keep refunds of the order or charge with this ID. Send `refundable_type`
+     *   with it, because an order and a charge can share an ID.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return a [app.sell.sellapp.common.http.Page] of results
      */
     @JvmOverloads
     fun list(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        limit: Int? = null,
+        status: RefundsStatus? = null,
+        provider: RefundsProvider? = null,
+        source: RefundsSource? = null,
+        refundableType: RefundsRefundableType? = null,
+        refundableId: Long? = null,
+        requestOptions: RequestOptions? = null,
     ): Page<ListRefundsResponseValue200ApplicationJsonPropertyDataItem> {
         val itemType =
             object : TypeReference<ListRefundsResponseValue200ApplicationJsonPropertyDataItem>() {}
@@ -50,19 +76,34 @@ class Refunds(internal val sellapp: SellApp) {
                     .runtimeSchema,
             before = null,
             after = null,
-        ) {}
+        ) {
+            page?.let { add("page" to it.toString()) }
+            limit?.let { add("limit" to it.toString()) }
+            status?.let { add("status" to it.value) }
+            provider?.let { add("provider" to it.value) }
+            source?.let { add("source" to it.value) }
+            refundableType?.let { add("refundable_type" to it.value) }
+            refundableId?.let { add("refundable_id" to it.toString()) }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun listWithResponse(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        limit: Int? = null,
+        status: RefundsStatus? = null,
+        provider: RefundsProvider? = null,
+        source: RefundsSource? = null,
+        refundableType: RefundsRefundableType? = null,
+        refundableId: Long? = null,
+        requestOptions: RequestOptions? = null,
     ): RawResponse<Page<ListRefundsResponseValue200ApplicationJsonPropertyDataItem>> {
         var captured: RawResponse<Any?>? = null
         val capturingOptions =
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        list(capturingOptions)
+        list(page, limit, status, provider, source, refundableType, refundableId, capturingOptions)
         return captured
             as? RawResponse<Page<ListRefundsResponseValue200ApplicationJsonPropertyDataItem>>
             ?: error("Response metadata was not captured")
@@ -76,10 +117,26 @@ class Refunds(internal val sellapp: SellApp) {
      */
     @JvmName("listSuspend")
     suspend fun listSuspend(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        limit: Int? = null,
+        status: RefundsStatus? = null,
+        provider: RefundsProvider? = null,
+        source: RefundsSource? = null,
+        refundableType: RefundsRefundableType? = null,
+        refundableId: Long? = null,
+        requestOptions: RequestOptions? = null,
     ): Page<ListRefundsResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            list(requestOptions)
+            list(
+                page,
+                limit,
+                status,
+                provider,
+                source,
+                refundableType,
+                refundableId,
+                requestOptions,
+            )
         }
 
     /**
@@ -91,10 +148,26 @@ class Refunds(internal val sellapp: SellApp) {
      */
     @JvmName("listWithResponseSuspend")
     suspend fun listWithResponseSuspend(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        limit: Int? = null,
+        status: RefundsStatus? = null,
+        provider: RefundsProvider? = null,
+        source: RefundsSource? = null,
+        refundableType: RefundsRefundableType? = null,
+        refundableId: Long? = null,
+        requestOptions: RequestOptions? = null,
     ): RawResponse<Page<ListRefundsResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            listWithResponse(requestOptions)
+            listWithResponse(
+                page,
+                limit,
+                status,
+                provider,
+                source,
+                refundableType,
+                refundableId,
+                requestOptions,
+            )
         }
 
     /**

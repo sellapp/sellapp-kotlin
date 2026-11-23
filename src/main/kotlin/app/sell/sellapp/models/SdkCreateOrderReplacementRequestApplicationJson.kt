@@ -11,8 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode
 /** SdkCreateOrderReplacementRequestApplicationJson model. */
 data class SdkCreateOrderReplacementRequestApplicationJson(
     /** The product variants. */
-    @JsonProperty("product_variants")
-    val productVariants: CreateOrderReplacementRequestApplicationJsonPropertyProductVariants
+    @JsonProperty("product_variants") val productVariants: Any
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -25,7 +24,7 @@ data class SdkCreateOrderReplacementRequestApplicationJson(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"SdkCreateOrderReplacementRequestApplicationJson\",\"properties\":{\"product_variants\":{\"kind\":\"object\",\"modelName\":\"CreateOrderReplacementRequestApplicationJsonPropertyProductVariants\",\"properties\":{},\"required\":[],\"additionalProperties\":true}},\"required\":[\"product_variants\"],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"SdkCreateOrderReplacementRequestApplicationJson\",\"properties\":{\"product_variants\":{\"kind\":\"union\",\"variants\":[{\"kind\":\"primitive\",\"type\":\"integer\"},{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"integer\"}},{\"kind\":\"object\",\"modelName\":\"CreateOrderReplacementRequestApplicationJsonPropertyProductVariantsAnyOfValue3\",\"properties\":{},\"required\":[],\"additionalProperties\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\"}}}],\"composition\":\"anyOf\"}},\"required\":[\"product_variants\"],\"additionalProperties\":true}"
             )
     }
 }

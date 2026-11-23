@@ -15,14 +15,53 @@ constructor(
     companion object {
         /** Compatibility constant for callers that need an explicit unknown marker. */
         @JvmField val Unknown = Type("unknown")
-        @JvmField val Product = Type("product")
-        @JvmField val Order = Type("order")
+        @JvmField val TopUp = Type("TOP_UP")
+        @JvmField val TopUpBonus = Type("TOP_UP_BONUS")
+        @JvmField val Cashback = Type("CASHBACK")
+        @JvmField val CashbackClawback = Type("CASHBACK_CLAWBACK")
+        @JvmField val TopUpClawback = Type("TOP_UP_CLAWBACK")
+        @JvmField val Reward = Type("REWARD")
+        @JvmField val Refund = Type("REFUND")
+        @JvmField val PurchaseDebit = Type("PURCHASE_DEBIT")
+        @JvmField val ManualAdjustment = Type("MANUAL_ADJUSTMENT")
+        @JvmField val Reversal = Type("REVERSAL")
+        @JvmField val Expiration = Type("EXPIRATION")
         @JvmField val Null = Type("null")
 
-        private val knownValues = setOf(Product, Order, Null)
+        private val knownValues =
+            setOf(
+                TopUp,
+                TopUpBonus,
+                Cashback,
+                CashbackClawback,
+                TopUpClawback,
+                Reward,
+                Refund,
+                PurchaseDebit,
+                ManualAdjustment,
+                Reversal,
+                Expiration,
+                Null,
+            )
 
         /** Enum-compatible enumeration of generated constants. */
-        @JvmStatic fun values(): Array<Type> = arrayOf(Unknown, Product, Order, Null)
+        @JvmStatic
+        fun values(): Array<Type> =
+            arrayOf(
+                Unknown,
+                TopUp,
+                TopUpBonus,
+                Cashback,
+                CashbackClawback,
+                TopUpClawback,
+                Reward,
+                Refund,
+                PurchaseDebit,
+                ManualAdjustment,
+                Reversal,
+                Expiration,
+                Null,
+            )
     }
 
     /** Whether this value was known when this SDK version was generated. */

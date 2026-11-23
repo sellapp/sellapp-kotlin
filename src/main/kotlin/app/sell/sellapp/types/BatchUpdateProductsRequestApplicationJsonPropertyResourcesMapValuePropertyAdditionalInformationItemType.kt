@@ -4,6 +4,6 @@
 
 package app.sell.sellapp.types
 
-/** Alias for [CreateProductRequestApplicationJsonPropertyAdditionalInformationItemType]. */
+/** Alias for [CreateCheckoutFieldTemplateRequestApplicationJsonPropertyFieldsItemType]. */
 typealias BatchUpdateProductsRequestApplicationJsonPropertyResourcesMapValuePropertyAdditionalInformationItemType =
-    CreateProductRequestApplicationJsonPropertyAdditionalInformationItemType
+    CreateCheckoutFieldTemplateRequestApplicationJsonPropertyFieldsItemType

@@ -4,9 +4,6 @@
 
 package app.sell.sellapp.types
 
-/**
- * Alias for
- * [UpdateProductVariantPricingRequestApplicationJsonPropertyPricingPropertyPriceCurrency].
- */
+/** Alias for [SdkCreateBookingProductRequestApplicationJsonCurrency]. */
 typealias ReplaceProductVariantPricingRequestApplicationJsonPropertyPricingPropertyCompareAtPriceCurrency =
-    UpdateProductVariantPricingRequestApplicationJsonPropertyPricingPropertyPriceCurrency
+    SdkCreateBookingProductRequestApplicationJsonCurrency

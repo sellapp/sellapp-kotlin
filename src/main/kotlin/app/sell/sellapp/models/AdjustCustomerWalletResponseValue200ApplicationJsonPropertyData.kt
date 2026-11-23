@@ -3,7 +3,7 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
-import app.sell.sellapp.types.AdjustCustomerWalletResponseValue200ApplicationJsonPropertyDataType
+import app.sell.sellapp.types.WalletType
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -19,8 +19,7 @@ data class AdjustCustomerWalletResponseValue200ApplicationJsonPropertyData(
     @JsonProperty("wallet_id") val walletId: Long,
 
     /** The type. */
-    @JsonProperty("type")
-    val type: AdjustCustomerWalletResponseValue200ApplicationJsonPropertyDataType,
+    @JsonProperty("type") val type: WalletType,
 
     /** Signed USD cents: positive credits increase the balance; negative debits decrease it. */
     @JsonProperty("amount_cents") val amountCents: Long,

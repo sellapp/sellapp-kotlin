@@ -158,7 +158,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
-    val result = client.orders.search(filters = listOf(ObjectMapperFactory.read("{\"field\":\"transaction_id\",\"operator\":\"contains\",\"value\":\"pi_3Example\"}", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyFiltersItem::class.java), ObjectMapperFactory.read("{\"field\":\"status\",\"operator\":\"in\",\"value\":[\"COMPLETED\"]}", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyFiltersItem::class.java)), sort = listOf(ObjectMapperFactory.read("{\"field\":\"created_at\",\"direction\":\"desc\"}", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertySortItem::class.java)), pagination = ObjectMapperFactory.read("{\"page\":1,\"limit\":25}", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyPagination::class.java))
+    val result = client.orders.search(filters = listOf(ObjectMapperFactory.read("{\"field\":\"created_at\",\"operator\":\"gte\",\"value\":\"2026-07-01T00:00:00Z\"}", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyFiltersItem::class.java), ObjectMapperFactory.read("{\"field\":\"created_at\",\"operator\":\"lte\",\"value\":\"2026-07-31T23:59:59Z\"}", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyFiltersItem::class.java), ObjectMapperFactory.read("{\"field\":\"total\",\"operator\":\"gte\",\"value\":1000}", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyFiltersItem::class.java), ObjectMapperFactory.read("{\"field\":\"currency\",\"operator\":\"eq\",\"value\":\"USD\"}", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyFiltersItem::class.java), ObjectMapperFactory.read("{\"field\":\"status\",\"operator\":\"in\",\"value\":[\"COMPLETED\"]}", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyFiltersItem::class.java)), sort = listOf(ObjectMapperFactory.read("{\"field\":\"created_at\",\"direction\":\"desc\"}", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertySortItem::class.java)), pagination = ObjectMapperFactory.read("{\"page\":1,\"limit\":25}", app.sell.sellapp.models.SearchOrdersRequestApplicationJsonPropertyPagination::class.java))
     println(result)
 }
 ```
@@ -249,6 +249,7 @@ fun updateStatus(
         order: String,
         status: SdkUpdateOrderStatusRequestApplicationJsonStatus,
         expectedStatus: PatchField<ExpectedStatus?> = PatchField.Absent,
+        paymentReceived: PatchField<Boolean> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateOrderStatusResponseValue200ApplicationJson
 ```
@@ -258,6 +259,7 @@ fun updateStatus(
 | order | `String` | Yes |
 | status | `SdkUpdateOrderStatusRequestApplicationJsonStatus` | Yes |
 | expectedStatus | `PatchField<ExpectedStatus?>` | No |
+| paymentReceived | `PatchField<Boolean>` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkUpdateOrderStatusResponseValue200ApplicationJson`.
@@ -359,7 +361,7 @@ Issue replacements
 ```kotlin
 fun createReplacement(
         order: String,
-        productVariants: CreateOrderReplacementRequestApplicationJsonPropertyProductVariants,
+        productVariants: Any,
         requestOptions: RequestOptions? = null,
     ): SdkCreateOrderReplacementResponseValue200ApplicationJson
 ```
@@ -367,7 +369,7 @@ fun createReplacement(
 | Argument | Native type | Required |
 | --- | --- | --- |
 | order | `String` | Yes |
-| productVariants | `CreateOrderReplacementRequestApplicationJsonPropertyProductVariants` | Yes |
+| productVariants | `Any` | Yes |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkCreateOrderReplacementResponseValue200ApplicationJson`.
@@ -378,7 +380,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
-    val result = client.orders.createReplacement(order = "9001", productVariants = ObjectMapperFactory.read("[4321]", app.sell.sellapp.models.CreateOrderReplacementRequestApplicationJsonPropertyProductVariants::class.java), requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
+    val result = client.orders.createReplacement(order = "9001", productVariants = listOf(4321), requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
     println(result)
 }
 ```
@@ -415,6 +417,7 @@ Refund an order
 fun createRefund(
         order: String,
         amount: String? = null,
+        expectedRefundedTotalCents: Long? = null,
         requestOptions: RequestOptions? = null,
     ): SdkCreateOrderRefundResponseValue200ApplicationJson
 ```
@@ -423,6 +426,7 @@ fun createRefund(
 | --- | --- | --- |
 | order | `String` | Yes |
 | amount | `String?` | No |
+| expectedRefundedTotalCents | `Long?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `SdkCreateOrderRefundResponseValue200ApplicationJson`.
@@ -433,7 +437,7 @@ import app.sell.sellapp.common.json.ObjectMapperFactory
 
 fun main() {
     val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
-    val result = client.orders.createRefund(order = "9001", amount = "5.00", requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
+    val result = client.orders.createRefund(order = "9001", amount = "5.00", expectedRefundedTotalCents = 0L, requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
     println(result)
 }
 ```
@@ -624,6 +628,61 @@ Supported credential alternatives (each object is one alternative):
 ```
 
 Documented HTTP responses: 200, 400, 401, 403, 404, 409, 410, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## regenerateTelegramInvite
+
+Create a Telegram invite link
+
+[API reference](https://sell.app/docs/api/orders/create-a-telegram-invite-link) · Effect: **consequential**
+
+```kotlin
+fun regenerateTelegramInvite(
+        order: String,
+        variantId: Long? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkRegenerateOrderTelegramInviteResponseValue201ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| order | `String` | Yes |
+| variantId | `Long?` | No |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkRegenerateOrderTelegramInviteResponseValue201ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.orders.regenerateTelegramInvite(order = "9001", variantId = 4321L, requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 201, 400, 401, 403, 404, 409, 410, 422, 429, 500. See the API reference for field-level validation and consequences.
 
 [Response access, transport controls, pagination, and typed errors](../usage.md)
 

@@ -2,6 +2,116 @@
 
 [All resources](../methods.md)
 
+## preview
+
+Preview variant buyer notification
+
+[API reference](https://sell.app/docs/api/product-variants/notify-variant-buyers) · Effect: **read**
+
+```kotlin
+fun preview(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkPreviewVariantBuyerNotificationResponseValue200ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| product | `String` | Yes |
+| variant | `String` | Yes |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkPreviewVariantBuyerNotificationResponseValue200ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.variantDeliverables.preview(product = "1", variant = "2")
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 200, 400, 401, 403, 404, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
+## notify
+
+Notify variant buyers
+
+[API reference](https://sell.app/docs/api/product-variants/notify-variant-buyers) · Effect: **write**
+
+```kotlin
+fun notify(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkNotifyVariantBuyersResponseValue202ApplicationJson
+```
+
+| Argument | Native type | Required |
+| --- | --- | --- |
+| product | `String` | Yes |
+| variant | `String` | Yes |
+| requestOptions | `RequestOptions?` | No |
+
+Returns: `SdkNotifyVariantBuyersResponseValue202ApplicationJson`.
+
+```kt
+import app.sell.sellapp.SellApp
+import app.sell.sellapp.common.json.ObjectMapperFactory
+
+fun main() {
+    val client = SellApp(baseUrl = System.getenv("SELLAPP_API_BASE_URL"), apiKey = System.getenv("SELLAPP_API_KEY"), store = System.getenv("SELLAPP_STORE"))
+    val result = client.variantDeliverables.notify(product = "1", variant = "2", requestOptions = app.sell.sellapp.common.http.RequestOptions(idempotencyKey = "example-mutation-001"))
+    println(result)
+}
+```
+
+### Authentication and errors
+
+Supported credential alternatives (each object is one alternative):
+
+```json
+[
+  {
+    "bearerAuth": []
+  },
+  {
+    "oauthAccessToken": [
+      "admin"
+    ],
+    "storeAuth": []
+  }
+]
+```
+
+Documented HTTP responses: 202, 400, 401, 403, 404, 409, 422, 429, 500. See the API reference for field-level validation and consequences.
+
+[Response access, transport controls, pagination, and typed errors](../usage.md)
+
 ## get
 
 Retrieve variant deliverable configuration

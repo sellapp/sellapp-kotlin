@@ -3,6 +3,8 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.types.CatalogVisibility
+import app.sell.sellapp.types.Stock
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -11,12 +13,15 @@ import com.fasterxml.jackson.databind.JsonNode
 
 /** SdkSearchProductsRequestApplicationJson model. */
 data class SdkSearchProductsRequestApplicationJson(
-    /** The filters. */
+    /**
+     * Not supported for products: no field can be filtered this way, so any entry returns `422` on
+     * `filters`. Use the price, stock, visibility, and sales fields instead.
+     */
     @JsonProperty("filters")
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
     val filters: List<SearchProductsRequestApplicationJsonPropertyFiltersItem>? = null,
 
-    /** The sort. */
+    /** Not supported for products: any entry returns `422` on `sort`. */
     @JsonProperty("sort")
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
     val sort: List<SearchProductsRequestApplicationJsonPropertySortItem>? = null,
@@ -26,10 +31,57 @@ data class SdkSearchProductsRequestApplicationJson(
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
     val search: SearchProductsRequestApplicationJsonPropertySearch? = null,
 
-    /** The includes. */
+    /** Only `variants` is accepted, and variants are always included. */
     @JsonProperty("includes")
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
     val includes: List<SearchProductsRequestApplicationJsonPropertyIncludesItem>? = null,
+
+    /**
+     * Only products whose every priced variant costs at least this much, in integer minor units of
+     * that variant's own currency: `999` means $9.99 for a USD variant. Draft variants count. A
+     * product without a priced variant never matches a price filter. Must not be greater than
+     * `max_price`.
+     */
+    @JsonProperty("min_price") val minPrice: Long? = null,
+
+    /**
+     * Only products whose every priced variant costs at most this much, in integer minor units of
+     * that variant's own currency: `2500` means $25.00 for a USD variant. Draft variants count. A
+     * product without a priced variant never matches a price filter.
+     */
+    @JsonProperty("max_price") val maxPrice: Long? = null,
+
+    /**
+     * Filter by stock, draft variants included. `in_stock`: at least one variant can be bought
+     * (unlimited stock, or at least its minimum purchase quantity left). `sold_out`: no variant can
+     * be bought. `any_variant_sold_out`: at least one variant with a stock count is sold out.
+     * `limited`: at least one variant has a stock count. `unlimited`: no variant has a stock count.
+     */
+    @JsonProperty("stock") val stock: Stock? = null,
+
+    /**
+     * Only products with one of these visibilities. A single string such as `"HIDDEN"` is also
+     * accepted.
+     */
+    @JsonProperty("visibility")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val visibility: List<CatalogVisibility>? = null,
+
+    /**
+     * `true` for products with at least one completed sale, `false` for products without one. Only
+     * purchase line items with status `COMPLETED` count, so pending or refunded ones do not.
+     */
+    @JsonProperty("has_sales") val hasSales: Boolean? = null,
+
+    /** Include draft products alongside published products. */
+    @JsonProperty("with_drafts")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val withDrafts: Boolean? = null,
+
+    /** Return only draft products. */
+    @JsonProperty("only_drafts")
+    @get:JsonInclude(JsonInclude.Include.NON_NULL)
+    val onlyDrafts: Boolean? = null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -42,7 +94,7 @@ data class SdkSearchProductsRequestApplicationJson(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"SdkSearchProductsRequestApplicationJson\",\"properties\":{\"filters\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"SearchProductsRequestApplicationJsonPropertyFiltersItem\",\"properties\":{\"field\":{\"kind\":\"primitive\",\"type\":\"string\"},\"operator\":{\"kind\":\"primitive\",\"type\":\"string\"},\"value\":{\"kind\":\"primitive\",\"type\":\"unknown\"},\"type\":{\"kind\":\"enum\",\"values\":[\"and\",\"or\"]},\"nested\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"SearchProductsRequestApplicationJsonPropertyFiltersItemPropertyNestedItem\",\"properties\":{},\"required\":[],\"additionalProperties\":true}}},\"required\":[],\"additionalProperties\":true}},\"sort\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"SearchProductsRequestApplicationJsonPropertySortItem\",\"properties\":{\"field\":{\"kind\":\"primitive\",\"type\":\"string\"},\"direction\":{\"kind\":\"enum\",\"values\":[\"asc\",\"desc\"]}},\"required\":[\"field\"],\"additionalProperties\":true}},\"search\":{\"kind\":\"object\",\"modelName\":\"SearchProductsRequestApplicationJsonPropertySearch\",\"properties\":{\"value\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"case_sensitive\":{\"kind\":\"primitive\",\"type\":\"boolean\"}},\"required\":[],\"additionalProperties\":true},\"includes\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"SearchProductsRequestApplicationJsonPropertyIncludesItem\",\"properties\":{\"relation\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"required\":[\"relation\"],\"additionalProperties\":true}}},\"required\":[],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"SdkSearchProductsRequestApplicationJson\",\"properties\":{\"filters\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"SearchProductsRequestApplicationJsonPropertyFiltersItem\",\"properties\":{\"field\":{\"kind\":\"primitive\",\"type\":\"string\"},\"operator\":{\"kind\":\"primitive\",\"type\":\"string\"},\"value\":{\"kind\":\"primitive\",\"type\":\"unknown\"},\"type\":{\"kind\":\"enum\",\"values\":[\"and\",\"or\"]},\"nested\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"SearchProductsRequestApplicationJsonPropertyFiltersItemPropertyNestedItem\",\"properties\":{},\"required\":[],\"additionalProperties\":true}}},\"required\":[],\"additionalProperties\":true}},\"sort\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"SearchProductsRequestApplicationJsonPropertySortItem\",\"properties\":{\"field\":{\"kind\":\"primitive\",\"type\":\"string\"},\"direction\":{\"kind\":\"enum\",\"values\":[\"asc\",\"desc\"]}},\"required\":[\"field\"],\"additionalProperties\":true}},\"search\":{\"kind\":\"object\",\"modelName\":\"SearchProductsRequestApplicationJsonPropertySearch\",\"properties\":{\"value\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}}},\"required\":[],\"additionalProperties\":true},\"includes\":{\"kind\":\"array\",\"items\":{\"kind\":\"object\",\"modelName\":\"SearchProductsRequestApplicationJsonPropertyIncludesItem\",\"properties\":{\"relation\":{\"kind\":\"literal\",\"value\":\"variants\"}},\"required\":[\"relation\"],\"additionalProperties\":true}},\"min_price\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}}},\"max_price\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}}},\"stock\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"enum\",\"values\":[\"in_stock\",\"sold_out\",\"any_variant_sold_out\",\"limited\",\"unlimited\",\"null\"]}},\"visibility\":{\"kind\":\"array\",\"items\":{\"kind\":\"enum\",\"values\":[\"PUBLIC\",\"ON_HOLD\",\"HIDDEN\",\"PRIVATE\"]},\"constraints\":{\"minItems\":1,\"uniqueItems\":true}},\"has_sales\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"boolean\"}},\"with_drafts\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"only_drafts\":{\"kind\":\"primitive\",\"type\":\"boolean\"}},\"required\":[],\"additionalProperties\":true}"
             )
     }
 }

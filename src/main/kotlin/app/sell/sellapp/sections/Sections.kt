@@ -1374,6 +1374,8 @@ class Sections(internal val sellapp: SellApp) {
      * v2 route is store-scoped. OAuth callers use the admin grant and select a store with X-STORE.
      * Current membership and role permissions apply to every request.
      *
+     * @param limit Number of items to return per page.
+     * @param page Page number to return.
      * @param filters the filters of the request.
      * @param sort the sort of the request.
      * @param search the search of the request.
@@ -1383,6 +1385,8 @@ class Sections(internal val sellapp: SellApp) {
      */
     @JvmOverloads
     fun v2SearchSections(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchSectionsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchSectionsRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchSectionsRequestApplicationJsonPropertySearch? = null,
@@ -1405,11 +1409,16 @@ class Sections(internal val sellapp: SellApp) {
                     .runtimeSchema,
             before = null,
             after = null,
-        ) {}
+        ) {
+            limit?.let { add("limit" to it.toString()) }
+            page?.let { add("page" to it.toString()) }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun v2SearchSectionsWithResponse(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchSectionsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchSectionsRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchSectionsRequestApplicationJsonPropertySearch? = null,
@@ -1421,7 +1430,7 @@ class Sections(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        v2SearchSections(filters, sort, search, includes, capturingOptions)
+        v2SearchSections(limit, page, filters, sort, search, includes, capturingOptions)
         return captured
             as? RawResponse<Page<V2SearchSectionsResponseValue200ApplicationJsonPropertyDataItem>>
             ?: error("Response metadata was not captured")
@@ -1436,6 +1445,8 @@ class Sections(internal val sellapp: SellApp) {
      */
     @JvmName("v2SearchSectionsSuspend")
     suspend fun v2SearchSectionsSuspend(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchSectionsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchSectionsRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchSectionsRequestApplicationJsonPropertySearch? = null,
@@ -1443,7 +1454,7 @@ class Sections(internal val sellapp: SellApp) {
         requestOptions: RequestOptions? = null,
     ): Page<V2SearchSectionsResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            v2SearchSections(filters, sort, search, includes, requestOptions)
+            v2SearchSections(limit, page, filters, sort, search, includes, requestOptions)
         }
 
     /**
@@ -1455,6 +1466,8 @@ class Sections(internal val sellapp: SellApp) {
      */
     @JvmName("v2SearchSectionsWithResponseSuspend")
     suspend fun v2SearchSectionsWithResponseSuspend(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchSectionsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchSectionsRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchSectionsRequestApplicationJsonPropertySearch? = null,
@@ -1462,7 +1475,15 @@ class Sections(internal val sellapp: SellApp) {
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<V2SearchSectionsResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            v2SearchSectionsWithResponse(filters, sort, search, includes, requestOptions)
+            v2SearchSectionsWithResponse(
+                limit,
+                page,
+                filters,
+                sort,
+                search,
+                includes,
+                requestOptions,
+            )
         }
 
     /**

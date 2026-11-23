@@ -7,14 +7,18 @@ import app.sell.sellapp.common.http.Page
 import app.sell.sellapp.common.http.RawResponse
 import app.sell.sellapp.common.http.RequestConfig
 import app.sell.sellapp.common.http.RequestOptions
+import app.sell.sellapp.common.http.addIfNotNull
+import app.sell.sellapp.common.http.bodyOf
 import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.http.patchBodyOf
 import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.models.ListAffiliatePayoutsResponseValue200ApplicationJsonPropertyDataItem
 import app.sell.sellapp.models.SdkCreateAffiliatePayoutResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkGetAffiliatePayoutResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkMarkAffiliatePayoutsPaidResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkUpdateAffiliatePayoutStatusResponseValue200ApplicationJson
 import app.sell.sellapp.types.AffiliatePayoutsStatus
+import app.sell.sellapp.types.AffiliatesPayoutMethod
 import com.fasterxml.jackson.core.type.TypeReference
 
 /**
@@ -29,13 +33,18 @@ class AffiliatePayouts(internal val sellapp: SellApp) {
     /**
      * List affiliate payouts
      *
-     * List merchant-managed affiliate payout records. These record commission payments arranged by
-     * the merchant; SellApp does not transfer or hold the funds. Requires the `affiliate`
-     * credential ability. OAuth callers use the admin grant and select a store with X-STORE.
-     * Current membership and role permissions apply to every request.
+     * List merchant-managed affiliate payout records, newest first, 15 per page by default. These
+     * record commission payments arranged by the merchant; SellApp does not transfer or hold the
+     * funds. Requires the `affiliate` credential ability. A `status` or `payout_method` value the
+     * API does not know returns `422`. OAuth callers use the admin grant and select a store with
+     * X-STORE. Current membership and role permissions apply to every request.
      *
      * @param affiliateId Filter by affiliate ID.
      * @param status Filter by payout status.
+     * @param payoutMethod List only payouts recorded for this payout method. Uppercase, as returned
+     *   in `payout_method`; `paypal` returns `422`.
+     * @param search The start of the affiliate's email address, such as `alex` or `alex.morgan@`.
+     *   It matches from the first character only, and `%` and `_` match themselves.
      * @param limit Number of items to return per page.
      * @param page Page number to return.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
@@ -45,6 +54,8 @@ class AffiliatePayouts(internal val sellapp: SellApp) {
     fun list(
         affiliateId: Long? = null,
         status: AffiliatePayoutsStatus? = null,
+        payoutMethod: AffiliatesPayoutMethod? = null,
+        search: String? = null,
         limit: Int? = null,
         page: Long? = null,
         requestOptions: RequestOptions? = null,
@@ -70,6 +81,8 @@ class AffiliatePayouts(internal val sellapp: SellApp) {
         ) {
             affiliateId?.let { add("affiliate_id" to it.toString()) }
             status?.let { add("status" to it.value) }
+            payoutMethod?.let { add("payout_method" to it.value) }
+            addIfNotNull("search", search)
             limit?.let { add("limit" to it.toString()) }
             page?.let { add("page" to it.toString()) }
         }
@@ -79,6 +92,8 @@ class AffiliatePayouts(internal val sellapp: SellApp) {
     fun listWithResponse(
         affiliateId: Long? = null,
         status: AffiliatePayoutsStatus? = null,
+        payoutMethod: AffiliatesPayoutMethod? = null,
+        search: String? = null,
         limit: Int? = null,
         page: Long? = null,
         requestOptions: RequestOptions? = null,
@@ -88,7 +103,7 @@ class AffiliatePayouts(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        list(affiliateId, status, limit, page, capturingOptions)
+        list(affiliateId, status, payoutMethod, search, limit, page, capturingOptions)
         return captured
             as?
             RawResponse<Page<ListAffiliatePayoutsResponseValue200ApplicationJsonPropertyDataItem>>
@@ -105,12 +120,14 @@ class AffiliatePayouts(internal val sellapp: SellApp) {
     suspend fun listSuspend(
         affiliateId: Long? = null,
         status: AffiliatePayoutsStatus? = null,
+        payoutMethod: AffiliatesPayoutMethod? = null,
+        search: String? = null,
         limit: Int? = null,
         page: Long? = null,
         requestOptions: RequestOptions? = null,
     ): Page<ListAffiliatePayoutsResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            list(affiliateId, status, limit, page, requestOptions)
+            list(affiliateId, status, payoutMethod, search, limit, page, requestOptions)
         }
 
     /**
@@ -124,12 +141,14 @@ class AffiliatePayouts(internal val sellapp: SellApp) {
     suspend fun listWithResponseSuspend(
         affiliateId: Long? = null,
         status: AffiliatePayoutsStatus? = null,
+        payoutMethod: AffiliatesPayoutMethod? = null,
+        search: String? = null,
         limit: Int? = null,
         page: Long? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<ListAffiliatePayoutsResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            listWithResponse(affiliateId, status, limit, page, requestOptions)
+            listWithResponse(affiliateId, status, payoutMethod, search, limit, page, requestOptions)
         }
 
     /**
@@ -386,5 +405,119 @@ class AffiliatePayouts(internal val sellapp: SellApp) {
     ): RawResponse<SdkUpdateAffiliatePayoutStatusResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
             updateWithResponse(payout, status, requestOptions)
+        }
+
+    /**
+     * Mark affiliate payouts paid
+     *
+     * Record up to 20 due affiliate payouts as paid in one request, after you have paid the
+     * affiliates yourself. No money moves: SellApp only records the payment. Each payout marked
+     * paid also marks its referrals paid and emails that affiliate that the payout was paid. Send
+     * the payout IDs and `expected_total_usd_cents`, the sum of their `amount_usd_cents` as you
+     * read them, in integer USD cents (`4250` means $42.50). Every payout is checked first, and
+     * nothing changes when one of them is unknown in your store, is not `due`, or has referrals
+     * that no longer add up to it or can no longer be paid (`422` on `payout_ids`, one message per
+     * payout), or when the amounts add up to another total (`422` on `expected_total_usd_cents`).
+     * Then each payout is marked in the order sent, and `data` reports one `outcome` per payout:
+     * `paid`, `skipped`, or `failed`. A payout that changes between the check and its turn is
+     * skipped or fails without affecting the others. Requires the `affiliate` and
+     * `affiliate:payout` API-key abilities, and the staff member who owns the key needs the
+     * affiliate and affiliate payout permissions. There is no idempotency key, but sending the same
+     * batch again is refused with `422` on `payout_ids`, because those payouts are no longer due,
+     * so nobody is emailed twice. After a lost response, list the payouts with `GET
+     * /v2/affiliate-payouts?status=due` and send only those still due, with their new total. The
+     * emails cannot be taken back; to reopen a payout recorded by mistake, set it back to `due`
+     * with `PATCH /v2/affiliate-payouts/{payout}/status`. OAuth callers use the admin grant and
+     * select a store with X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param payoutIds The due payouts to record as paid, at most 20, each once. They are marked in
+     *   this order.
+     * @param expectedTotalUsdCents The sum of the payouts' `amount_usd_cents`, in integer USD
+     *   cents, as you read them. If they add up to anything else, nothing is marked.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkMarkAffiliatePayoutsPaidResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun markPaid(
+        payoutIds: List<Long>,
+        expectedTotalUsdCents: Long,
+        requestOptions: RequestOptions? = null,
+    ): SdkMarkAffiliatePayoutsPaidResponseValue200ApplicationJson {
+        val body =
+            bodyOf(
+                "payout_ids" to payoutIds,
+                "expected_total_usd_cents" to expectedTotalUsdCents,
+            )
+        body["payout_ids"] = payoutIds
+        body["expected_total_usd_cents"] = expectedTotalUsdCents
+        val config =
+            RequestConfig(
+                method = "POST",
+                path = "/v2/affiliate-payouts/mark-paid",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkMarkAffiliatePayoutsPaidRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkMarkAffiliatePayoutsPaidResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "markAffiliatePayoutsPaid",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkMarkAffiliatePayoutsPaidResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun markPaidWithResponse(
+        payoutIds: List<Long>,
+        expectedTotalUsdCents: Long,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkMarkAffiliatePayoutsPaidResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        markPaid(payoutIds, expectedTotalUsdCents, capturingOptions)
+        return captured as? RawResponse<SdkMarkAffiliatePayoutsPaidResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [markPaid]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [markPaid] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("markPaidSuspend")
+    suspend fun markPaidSuspend(
+        payoutIds: List<Long>,
+        expectedTotalUsdCents: Long,
+        requestOptions: RequestOptions? = null,
+    ): SdkMarkAffiliatePayoutsPaidResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            markPaid(payoutIds, expectedTotalUsdCents, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [markPaidWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [markPaidWithResponse] under `withContext(Dispatchers.IO)`, so this
+     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("markPaidWithResponseSuspend")
+    suspend fun markPaidWithResponseSuspend(
+        payoutIds: List<Long>,
+        expectedTotalUsdCents: Long,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkMarkAffiliatePayoutsPaidResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            markPaidWithResponse(payoutIds, expectedTotalUsdCents, requestOptions)
         }
 }

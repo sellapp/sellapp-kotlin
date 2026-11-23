@@ -600,10 +600,13 @@ class TicketsMessages(internal val sellapp: SellApp) {
      * Search ticket messages
      *
      * Search a ticket's messages using JSON body filters, search terms, includes, and sort
-     * instructions. This v2 route is store-scoped. OAuth callers use the admin grant and select a
-     * store with X-STORE. Current membership and role permissions apply to every request.
+     * instructions. This v2 route is store-scoped. Page through results with `limit` (1 to 100,
+     * default 15; a larger value returns `422`) and `page`. OAuth callers use the admin grant and
+     * select a store with X-STORE. Current membership and role permissions apply to every request.
      *
      * @param ticket The ticket path parameter.
+     * @param limit Number of items to return per page.
+     * @param page Page number to return.
      * @param filters the filters of the request.
      * @param sort the sort of the request.
      * @param search the search of the request.
@@ -614,6 +617,8 @@ class TicketsMessages(internal val sellapp: SellApp) {
     @JvmOverloads
     fun v2SearchTicketMessages(
         ticket: String,
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchTicketMessagesRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchTicketMessagesRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchTicketMessagesRequestApplicationJsonPropertySearch? = null,
@@ -638,12 +643,17 @@ class TicketsMessages(internal val sellapp: SellApp) {
                     .runtimeSchema,
             before = null,
             after = null,
-        ) {}
+        ) {
+            limit?.let { add("limit" to it.toString()) }
+            page?.let { add("page" to it.toString()) }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun v2SearchTicketMessagesWithResponse(
         ticket: String,
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchTicketMessagesRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchTicketMessagesRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchTicketMessagesRequestApplicationJsonPropertySearch? = null,
@@ -655,7 +665,16 @@ class TicketsMessages(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        v2SearchTicketMessages(ticket, filters, sort, search, includes, capturingOptions)
+        v2SearchTicketMessages(
+            ticket,
+            limit,
+            page,
+            filters,
+            sort,
+            search,
+            includes,
+            capturingOptions,
+        )
         return captured
             as?
             RawResponse<Page<V2SearchTicketMessagesResponseValue200ApplicationJsonPropertyDataItem>>
@@ -672,6 +691,8 @@ class TicketsMessages(internal val sellapp: SellApp) {
     @JvmName("v2SearchTicketMessagesSuspend")
     suspend fun v2SearchTicketMessagesSuspend(
         ticket: String,
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchTicketMessagesRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchTicketMessagesRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchTicketMessagesRequestApplicationJsonPropertySearch? = null,
@@ -679,7 +700,16 @@ class TicketsMessages(internal val sellapp: SellApp) {
         requestOptions: RequestOptions? = null,
     ): Page<V2SearchTicketMessagesResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            v2SearchTicketMessages(ticket, filters, sort, search, includes, requestOptions)
+            v2SearchTicketMessages(
+                ticket,
+                limit,
+                page,
+                filters,
+                sort,
+                search,
+                includes,
+                requestOptions,
+            )
         }
 
     /**
@@ -693,6 +723,8 @@ class TicketsMessages(internal val sellapp: SellApp) {
     @JvmName("v2SearchTicketMessagesWithResponseSuspend")
     suspend fun v2SearchTicketMessagesWithResponseSuspend(
         ticket: String,
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchTicketMessagesRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchTicketMessagesRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchTicketMessagesRequestApplicationJsonPropertySearch? = null,
@@ -702,6 +734,8 @@ class TicketsMessages(internal val sellapp: SellApp) {
         sellapp.baseClient.runCancellable {
             v2SearchTicketMessagesWithResponse(
                 ticket,
+                limit,
+                page,
                 filters,
                 sort,
                 search,

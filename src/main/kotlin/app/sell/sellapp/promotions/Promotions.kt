@@ -17,6 +17,7 @@ import app.sell.sellapp.models.ReplacePromotionRequestApplicationJsonPropertyPha
 import app.sell.sellapp.models.RestorePromotionRequestApplicationJsonPropertyPhasesItem
 import app.sell.sellapp.models.SdkCreatePromotionResponseValue201ApplicationJson
 import app.sell.sellapp.models.SdkGetPromotionResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkGetPromotionUsageResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkListPromotionsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkReplacePromotionResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkRestorePromotionResponseValue200ApplicationJson
@@ -1348,5 +1349,102 @@ class Promotions(internal val sellapp: SellApp) {
                 productVariants,
                 requestOptions,
             )
+        }
+
+    /**
+     * Retrieve promotion usage
+     *
+     * Count the completed orders that used a promotion, across all of its phases and its whole
+     * life, and list the newest of them. Only orders whose status is `COMPLETED` count; pending and
+     * refunded orders do not. A promotion from another store returns `404`, and so does a deleted
+     * one unless you send `with_trashed=true`. Requires the `promotion` API-key ability and the
+     * promotion permission in your team role. OAuth callers use the admin grant and select a store
+     * with X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param promotion The promotion ID.
+     * @param withTrashed Set to `true` to also find a deleted promotion.
+     * @param onlyTrashed Set to `true` to find only a deleted promotion. Ignored when
+     *   `with_trashed` is `true`.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkGetPromotionUsageResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun getUsage(
+        promotion: String,
+        withTrashed: Boolean? = null,
+        onlyTrashed: Boolean? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkGetPromotionUsageResponseValue200ApplicationJson {
+        val params = mutableListOf<Pair<String, String>>()
+        withTrashed?.let { params += "with_trashed" to it.toString() }
+        onlyTrashed?.let { params += "only_trashed" to it.toString() }
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/promotions/${encodePathSegment(promotion)}/usage",
+                queryParams = params,
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models.SdkGetPromotionUsageResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "getPromotionUsage",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkGetPromotionUsageResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getUsageWithResponse(
+        promotion: String,
+        withTrashed: Boolean? = null,
+        onlyTrashed: Boolean? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkGetPromotionUsageResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        getUsage(promotion, withTrashed, onlyTrashed, capturingOptions)
+        return captured as? RawResponse<SdkGetPromotionUsageResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [getUsage]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [getUsage] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getUsageSuspend")
+    suspend fun getUsageSuspend(
+        promotion: String,
+        withTrashed: Boolean? = null,
+        onlyTrashed: Boolean? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkGetPromotionUsageResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            getUsage(promotion, withTrashed, onlyTrashed, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [getUsageWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [getUsageWithResponse] under `withContext(Dispatchers.IO)`, so this
+     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getUsageWithResponseSuspend")
+    suspend fun getUsageWithResponseSuspend(
+        promotion: String,
+        withTrashed: Boolean? = null,
+        onlyTrashed: Boolean? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkGetPromotionUsageResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            getUsageWithResponse(promotion, withTrashed, onlyTrashed, requestOptions)
         }
 }

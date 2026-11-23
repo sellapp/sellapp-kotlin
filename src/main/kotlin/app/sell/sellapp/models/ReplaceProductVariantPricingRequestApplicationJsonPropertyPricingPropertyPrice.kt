@@ -3,7 +3,7 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
-import app.sell.sellapp.types.UpdateProductVariantPricingRequestApplicationJsonPropertyPricingPropertyPriceCurrency
+import app.sell.sellapp.types.SdkCreateBookingProductRequestApplicationJsonCurrency
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -15,9 +15,7 @@ data class ReplaceProductVariantPricingRequestApplicationJsonPropertyPricingProp
     @JsonProperty("price") val price: Long,
 
     /** The currency. */
-    @JsonProperty("currency")
-    val currency:
-        UpdateProductVariantPricingRequestApplicationJsonPropertyPricingPropertyPriceCurrency,
+    @JsonProperty("currency") val currency: SdkCreateBookingProductRequestApplicationJsonCurrency,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()

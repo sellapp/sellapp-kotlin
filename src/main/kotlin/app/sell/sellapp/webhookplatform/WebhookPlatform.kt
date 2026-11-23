@@ -7,12 +7,14 @@ import app.sell.sellapp.common.http.Page
 import app.sell.sellapp.common.http.RawResponse
 import app.sell.sellapp.common.http.RequestConfig
 import app.sell.sellapp.common.http.RequestOptions
+import app.sell.sellapp.common.http.addIfNotNull
 import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.models.ListWebhookDeliveriesResponseValue200ApplicationJsonPropertyDataItem
 import app.sell.sellapp.models.SdkGetWebhookDeliveryResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkListWebhookEventTypesResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkReplayWebhookDeliveryResponseValue201ApplicationJson
+import app.sell.sellapp.types.WebhookPlatformStatus
 import com.fasterxml.jackson.core.type.TypeReference
 
 /**
@@ -101,16 +103,28 @@ class WebhookPlatform(internal val sellapp: SellApp) {
     /**
      * List webhook deliveries
      *
-     * Destination origin only; response bodies are redacted and capped. OAuth callers use the admin
-     * grant and select a store with X-STORE. Current membership and role permissions apply to every
-     * request.
+     * List your store's outbound webhook deliveries, newest first, 25 per page by default. Each
+     * delivery shows only the destination origin; response bodies are redacted and capped. Filter
+     * by `event_type` or `status`; both must match exactly, and a value that matches nothing
+     * returns an empty page rather than an error. OAuth callers use the admin grant and select a
+     * store with X-STORE. Current membership and role permissions apply to every request.
      *
+     * @param page Page number, starting at 1.
+     * @param limit Deliveries per page. Values below 1 are read as 1 and values above 100 as 100.
+     * @param eventType Keep deliveries of this event type, as listed by `GET
+     *   /v2/webhook-event-types`.
+     * @param status Keep deliveries in this state: `pending`, `retrying`, `succeeded`, `failed`, or
+     *   `disabled`.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return a [app.sell.sellapp.common.http.Page] of results
      */
     @JvmOverloads
     fun listDeliveries(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        limit: Int? = null,
+        eventType: String? = null,
+        status: WebhookPlatformStatus? = null,
+        requestOptions: RequestOptions? = null,
     ): Page<ListWebhookDeliveriesResponseValue200ApplicationJsonPropertyDataItem> {
         val itemType =
             object :
@@ -130,19 +144,28 @@ class WebhookPlatform(internal val sellapp: SellApp) {
                     .runtimeSchema,
             before = null,
             after = null,
-        ) {}
+        ) {
+            page?.let { add("page" to it.toString()) }
+            limit?.let { add("limit" to it.toString()) }
+            addIfNotNull("event_type", eventType)
+            status?.let { add("status" to it.value) }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun listDeliveriesWithResponse(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        limit: Int? = null,
+        eventType: String? = null,
+        status: WebhookPlatformStatus? = null,
+        requestOptions: RequestOptions? = null,
     ): RawResponse<Page<ListWebhookDeliveriesResponseValue200ApplicationJsonPropertyDataItem>> {
         var captured: RawResponse<Any?>? = null
         val capturingOptions =
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        listDeliveries(capturingOptions)
+        listDeliveries(page, limit, eventType, status, capturingOptions)
         return captured
             as?
             RawResponse<Page<ListWebhookDeliveriesResponseValue200ApplicationJsonPropertyDataItem>>
@@ -158,10 +181,14 @@ class WebhookPlatform(internal val sellapp: SellApp) {
      */
     @JvmName("listDeliveriesSuspend")
     suspend fun listDeliveriesSuspend(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        limit: Int? = null,
+        eventType: String? = null,
+        status: WebhookPlatformStatus? = null,
+        requestOptions: RequestOptions? = null,
     ): Page<ListWebhookDeliveriesResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            listDeliveries(requestOptions)
+            listDeliveries(page, limit, eventType, status, requestOptions)
         }
 
     /**
@@ -173,10 +200,14 @@ class WebhookPlatform(internal val sellapp: SellApp) {
      */
     @JvmName("listDeliveriesWithResponseSuspend")
     suspend fun listDeliveriesWithResponseSuspend(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        limit: Int? = null,
+        eventType: String? = null,
+        status: WebhookPlatformStatus? = null,
+        requestOptions: RequestOptions? = null,
     ): RawResponse<Page<ListWebhookDeliveriesResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            listDeliveriesWithResponse(requestOptions)
+            listDeliveriesWithResponse(page, limit, eventType, status, requestOptions)
         }
 
     /**

@@ -214,6 +214,7 @@ List all feedback
 fun v2ListFeedback(
         limit: Long? = null,
         page: Long? = null,
+        replyState: FeedbackReplyState? = null,
         requestOptions: RequestOptions? = null,
     ): Page<V2ListFeedbackResponseValue200ApplicationJsonPropertyDataItem>
 ```
@@ -222,6 +223,7 @@ fun v2ListFeedback(
 | --- | --- | --- |
 | limit | `Long?` | No |
 | page | `Long?` | No |
+| replyState | `FeedbackReplyState?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<V2ListFeedbackResponseValue200ApplicationJsonPropertyDataItem>`.
@@ -267,20 +269,26 @@ Search feedback
 
 ```kotlin
 fun v2SearchFeedback(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchFeedbackRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchFeedbackRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchFeedbackRequestApplicationJsonPropertySearch? = null,
         includes: List<V2SearchFeedbackRequestApplicationJsonPropertyIncludesItem>? = null,
+        replyState: ReplyState? = null,
         requestOptions: RequestOptions? = null,
     ): Page<V2SearchFeedbackResponseValue200ApplicationJsonPropertyDataItem>
 ```
 
 | Argument | Native type | Required |
 | --- | --- | --- |
+| limit | `Long?` | No |
+| page | `Long?` | No |
 | filters | `List<V2SearchFeedbackRequestApplicationJsonPropertyFiltersItem>?` | No |
 | sort | `List<V2SearchFeedbackRequestApplicationJsonPropertySortItem>?` | No |
 | search | `V2SearchFeedbackRequestApplicationJsonPropertySearch?` | No |
 | includes | `List<V2SearchFeedbackRequestApplicationJsonPropertyIncludesItem>?` | No |
+| replyState | `ReplyState?` | No |
 | requestOptions | `RequestOptions?` | No |
 
 Returns: `Page<V2SearchFeedbackResponseValue200ApplicationJsonPropertyDataItem>`.

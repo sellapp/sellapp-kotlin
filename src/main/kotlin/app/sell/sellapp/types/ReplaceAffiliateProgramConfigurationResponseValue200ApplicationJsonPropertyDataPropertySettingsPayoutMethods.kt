@@ -4,9 +4,6 @@
 
 package app.sell.sellapp.types
 
-/**
- * Alias for
- * [ReplaceAffiliateProgramConfigurationRequestApplicationJsonPropertySettingsPayoutMethods].
- */
+/** Alias for [AffiliatesPayoutMethod]. */
 typealias ReplaceAffiliateProgramConfigurationResponseValue200ApplicationJsonPropertyDataPropertySettingsPayoutMethods =
-    ReplaceAffiliateProgramConfigurationRequestApplicationJsonPropertySettingsPayoutMethods
+    AffiliatesPayoutMethod

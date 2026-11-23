@@ -23,13 +23,15 @@ constructor(
         @JvmField
         val Contains = SearchOrdersRequestApplicationJsonPropertyFiltersItemOperator("contains")
         @JvmField val In = SearchOrdersRequestApplicationJsonPropertyFiltersItemOperator("in")
+        @JvmField val Gte = SearchOrdersRequestApplicationJsonPropertyFiltersItemOperator("gte")
+        @JvmField val Lte = SearchOrdersRequestApplicationJsonPropertyFiltersItemOperator("lte")
 
-        private val knownValues = setOf(Eq, Contains, In)
+        private val knownValues = setOf(Eq, Contains, In, Gte, Lte)
 
         /** Enum-compatible enumeration of generated constants. */
         @JvmStatic
         fun values(): Array<SearchOrdersRequestApplicationJsonPropertyFiltersItemOperator> =
-            arrayOf(Unknown, Eq, Contains, In)
+            arrayOf(Unknown, Eq, Contains, In, Gte, Lte)
     }
 
     /** Whether this value was known when this SDK version was generated. */

@@ -2,6 +2,65 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [GetWebhookChannelResponseValue200ApplicationJsonPropertyData]. */
-typealias ListWebhookChannelsResponseValue200ApplicationJsonPropertyDataItem =
-    GetWebhookChannelResponseValue200ApplicationJsonPropertyData
+import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.types.Event
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
+
+/**
+ * A seller-configured outbound webhook destination. IDs are stable UUIDs and are not reused when
+ * another channel is deleted. List and search results also report how deliveries to the destination
+ * are going.
+ */
+data class ListWebhookChannelsResponseValue200ApplicationJsonPropertyDataItem(
+    /** Stable identifier for this webhook channel. */
+    @JsonProperty("id") val id: String,
+
+    /** Optional seller-facing reference name. */
+    @JsonProperty("name") val name: String?,
+
+    /**
+     * Public HTTP or HTTPS destination. Local, private, reserved, link-local, metadata,
+     * credential-bearing, and Discord webhook URLs are rejected. Delivery resolves and pins a
+     * public address and does not follow redirects.
+     */
+    @JsonProperty("url") val url: String,
+
+    /**
+     * Complete set of public webhook event names enabled for this destination. Updating this field
+     * replaces the previous filter.
+     */
+    @JsonProperty("allowed_notifications") val allowedNotifications: List<Event>,
+
+    /**
+     * Whether the store has an outbound webhook signing secret. The stored secret is never
+     * returned.
+     */
+    @JsonProperty("signing_secret_configured") val signingSecretConfigured: Boolean,
+
+    /** The health. */
+    @JsonProperty("health")
+    val health: ListWebhookChannelsResponseValue200ApplicationJsonPropertyDataItemPropertyHealth,
+
+    /** The last delivery. */
+    @JsonProperty("last_delivery")
+    val lastDelivery:
+        ListWebhookChannelsResponseValue200ApplicationJsonPropertyDataItemPropertyLastDelivery?,
+) {
+    /** Additive response fields retained verbatim for forward compatibility. */
+    @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
+
+    @JsonAnySetter
+    fun setAdditionalProperty(name: String, value: JsonNode) {
+        additionalProperties[name] = value
+    }
+
+    companion object {
+        internal val runtimeSchema =
+            runtimeSchema(
+                "{\"kind\":\"object\",\"modelName\":\"ListWebhookChannelsResponseValue200ApplicationJsonPropertyDataItem\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"uuid\"},\"name\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\"}},\"url\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"uri\"},\"allowed_notifications\":{\"kind\":\"array\",\"items\":{\"kind\":\"enum\",\"values\":[\"booking.cancelled\",\"booking.rescheduled\",\"cash_app.payment_requires_attention\",\"charge.completed\",\"charge.created\",\"charge.disputed\",\"charge.partial_paid\",\"charge.review\",\"feedback.created\",\"order.completed\",\"order.created\",\"order.disputed\",\"order.manual_payment_completed\",\"order.paid\",\"order.partial_paid\",\"product.created\",\"product.trashed\",\"product.updated\",\"subscription.action\",\"subscription.cancelled\",\"subscription.created\",\"subscription.plan_change_needs_attention\",\"subscription.renewal_needs_attention\",\"subscription.renewed\",\"subscription.signup_needs_attention\",\"ticket_message.created\",\"variant.created\",\"variant.sold_out\",\"variant.updated\"]},\"constraints\":{\"uniqueItems\":true}},\"signing_secret_configured\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"health\":{\"kind\":\"object\",\"modelName\":\"ListWebhookChannelsResponseValue200ApplicationJsonPropertyDataItemPropertyHealth\",\"properties\":{\"state\":{\"kind\":\"enum\",\"values\":[\"active\",\"failing\",\"disabled\"]},\"last_success_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"last_failure_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}}},\"required\":[\"state\",\"last_success_at\",\"last_failure_at\"],\"additionalProperties\":true},\"last_delivery\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"object\",\"modelName\":\"ListWebhookChannelsResponseValue200ApplicationJsonPropertyDataItemPropertyLastDelivery\",\"properties\":{\"id\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"uuid\"},\"event_type\":{\"kind\":\"primitive\",\"type\":\"string\"},\"status\":{\"kind\":\"enum\",\"values\":[\"pending\",\"retrying\",\"succeeded\",\"failed\",\"disabled\"]},\"created_at\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}}},\"required\":[\"id\",\"event_type\",\"status\",\"created_at\"],\"additionalProperties\":true}}},\"required\":[\"id\",\"name\",\"url\",\"allowed_notifications\",\"signing_secret_configured\",\"health\",\"last_delivery\"],\"additionalProperties\":true}"
+            )
+    }
+}

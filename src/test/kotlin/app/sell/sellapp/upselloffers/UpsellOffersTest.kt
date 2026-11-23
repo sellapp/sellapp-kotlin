@@ -116,6 +116,18 @@ class UpsellOffersTest : TestBase() {
     }
 
     @Test
+    fun `getPerformance returns a typed response`() {
+        stubResponse(
+            "GET",
+            "/v2/upsell-offers/sample-arg/performance",
+            200,
+            "{\"data\": {\"upsell_offer_id\": 0, \"impressions\": 0, \"checkout_starts\": 0, \"accepts\": 0, \"revenue_usd_cents\": 0}}",
+        )
+        val result = api().getPerformance("sample-arg")
+        assertNotNull(result)
+    }
+
+    @Test
     fun `list translates 401 to UnauthorizedException`() {
         stubResponse("GET", "/v2/upsell-offers", 401)
         assertThrows(UnauthorizedException::class.java) {

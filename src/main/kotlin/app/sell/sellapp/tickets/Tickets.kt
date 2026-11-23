@@ -8,12 +8,15 @@ import app.sell.sellapp.common.http.PatchField
 import app.sell.sellapp.common.http.RawResponse
 import app.sell.sellapp.common.http.RequestConfig
 import app.sell.sellapp.common.http.RequestOptions
+import app.sell.sellapp.common.http.addIfNotNull
 import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.http.patchBodyOf
 import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.models.ListTicketsResponseValue200ApplicationJsonPropertyDataItem
+import app.sell.sellapp.models.SdkBatchUpdateTicketsResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkGetTicketResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkUpdateTicketResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkV2GetTicketContextResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkV2GetTicketResponseValue200ApplicationJson
 import app.sell.sellapp.models.SearchTicketsRequestApplicationJsonPropertyFiltersItem
 import app.sell.sellapp.models.SearchTicketsRequestApplicationJsonPropertyIncludesItem
@@ -26,7 +29,11 @@ import app.sell.sellapp.models.V2SearchTicketsRequestApplicationJsonPropertyIncl
 import app.sell.sellapp.models.V2SearchTicketsRequestApplicationJsonPropertySearch
 import app.sell.sellapp.models.V2SearchTicketsRequestApplicationJsonPropertySortItem
 import app.sell.sellapp.models.V2SearchTicketsResponseValue200ApplicationJsonPropertyDataItem
+import app.sell.sellapp.types.SdkBatchUpdateTicketsRequestApplicationJsonAction
+import app.sell.sellapp.types.SdkUpdateTicketRequestApplicationJsonOutcome
 import app.sell.sellapp.types.SdkUpdateTicketRequestApplicationJsonStatus
+import app.sell.sellapp.types.TicketsWaitingOn
+import app.sell.sellapp.types.WaitingOn
 import com.fasterxml.jackson.core.type.TypeReference
 
 /**
@@ -299,11 +306,20 @@ class Tickets(internal val sellapp: SellApp) {
      * List all tickets
      *
      * List your store's support tickets, 15 per page by default. This v2 route is store-scoped.
-     * OAuth callers use the admin grant and select a store with X-STORE. Current membership and
-     * role permissions apply to every request.
+     * Narrow the results with `waiting_on`, `reason` and `customer_email`; they combine with each
+     * other and with any other filters. An unknown `waiting_on` or `reason`, or a `customer_email`
+     * longer than 255 characters, returns `422`. OAuth callers use the admin grant and select a
+     * store with X-STORE. Current membership and role permissions apply to every request.
      *
      * @param limit Number of items to return per page.
      * @param page Page number to return.
+     * @param waitingOn `store`: the latest message is from the customer, so the ticket waits on
+     *   you. `customer`: the latest message is yours. A ticket without messages matches neither.
+     * @param reason A ticket reason by its label (as tickets show it in `reason`), its key such as
+     *   `platform:refund_request`, or its code; case does not matter. A reason the store does not
+     *   have returns `422` on `reason`, listing the store's reasons.
+     * @param customerEmail Part of the customer's email, case-insensitive. `%` and `_` match those
+     *   characters literally.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return a [app.sell.sellapp.common.http.Page] of results
      */
@@ -311,6 +327,9 @@ class Tickets(internal val sellapp: SellApp) {
     fun v2ListTickets(
         limit: Long? = null,
         page: Long? = null,
+        waitingOn: TicketsWaitingOn? = null,
+        reason: String? = null,
+        customerEmail: String? = null,
         requestOptions: RequestOptions? = null,
     ): Page<V2ListTicketsResponseValue200ApplicationJsonPropertyDataItem> {
         val itemType =
@@ -331,6 +350,9 @@ class Tickets(internal val sellapp: SellApp) {
         ) {
             limit?.let { add("limit" to it.toString()) }
             page?.let { add("page" to it.toString()) }
+            waitingOn?.let { add("waiting_on" to it.value) }
+            addIfNotNull("reason", reason)
+            addIfNotNull("customer_email", customerEmail)
         }
     }
 
@@ -338,6 +360,9 @@ class Tickets(internal val sellapp: SellApp) {
     fun v2ListTicketsWithResponse(
         limit: Long? = null,
         page: Long? = null,
+        waitingOn: TicketsWaitingOn? = null,
+        reason: String? = null,
+        customerEmail: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<V2ListTicketsResponseValue200ApplicationJsonPropertyDataItem>> {
         var captured: RawResponse<Any?>? = null
@@ -345,7 +370,7 @@ class Tickets(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        v2ListTickets(limit, page, capturingOptions)
+        v2ListTickets(limit, page, waitingOn, reason, customerEmail, capturingOptions)
         return captured
             as? RawResponse<Page<V2ListTicketsResponseValue200ApplicationJsonPropertyDataItem>>
             ?: error("Response metadata was not captured")
@@ -362,10 +387,13 @@ class Tickets(internal val sellapp: SellApp) {
     suspend fun v2ListTicketsSuspend(
         limit: Long? = null,
         page: Long? = null,
+        waitingOn: TicketsWaitingOn? = null,
+        reason: String? = null,
+        customerEmail: String? = null,
         requestOptions: RequestOptions? = null,
     ): Page<V2ListTicketsResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            v2ListTickets(limit, page, requestOptions)
+            v2ListTickets(limit, page, waitingOn, reason, customerEmail, requestOptions)
         }
 
     /**
@@ -379,32 +407,53 @@ class Tickets(internal val sellapp: SellApp) {
     suspend fun v2ListTicketsWithResponseSuspend(
         limit: Long? = null,
         page: Long? = null,
+        waitingOn: TicketsWaitingOn? = null,
+        reason: String? = null,
+        customerEmail: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<V2ListTicketsResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            v2ListTicketsWithResponse(limit, page, requestOptions)
+            v2ListTicketsWithResponse(limit, page, waitingOn, reason, customerEmail, requestOptions)
         }
 
     /**
      * Search tickets
      *
      * Search tickets using JSON body filters, search terms, includes, and sort instructions. This
-     * v2 route is store-scoped. OAuth callers use the admin grant and select a store with X-STORE.
-     * Current membership and role permissions apply to every request.
+     * v2 route is store-scoped. Narrow the results with `waiting_on`, `reason` and
+     * `customer_email`; they combine with each other and with any other filters. An unknown
+     * `waiting_on` or `reason`, or a `customer_email` longer than 255 characters, returns `422`.
+     * Page through results with `limit` (1 to 100, default 15; a larger value returns `422`) and
+     * `page`. OAuth callers use the admin grant and select a store with X-STORE. Current membership
+     * and role permissions apply to every request.
      *
+     * @param limit Number of items to return per page.
+     * @param page Page number to return.
      * @param filters the filters of the request.
      * @param sort the sort of the request.
      * @param search the search of the request.
      * @param includes the includes of the request.
+     * @param waitingOn `store`: the latest message is from the customer, so the ticket waits on
+     *   you. `customer`: the latest message is yours. A ticket without messages matches neither.
+     * @param reason A ticket reason by its label (as tickets show it in `reason`), its key such as
+     *   `platform:refund_request`, or its code; case does not matter. A reason the store does not
+     *   have returns `422` on `reason`, listing the store's reasons.
+     * @param customerEmail Part of the customer's email, case-insensitive. `%` and `_` match those
+     *   characters literally.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return a [app.sell.sellapp.common.http.Page] of results
      */
     @JvmOverloads
     fun v2SearchTickets(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchTicketsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchTicketsRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchTicketsRequestApplicationJsonPropertySearch? = null,
         includes: List<V2SearchTicketsRequestApplicationJsonPropertyIncludesItem>? = null,
+        waitingOn: WaitingOn? = null,
+        reason: String? = null,
+        customerEmail: String? = null,
         requestOptions: RequestOptions? = null,
     ): Page<V2SearchTicketsResponseValue200ApplicationJsonPropertyDataItem> {
         val itemType =
@@ -423,15 +472,23 @@ class Tickets(internal val sellapp: SellApp) {
                     .runtimeSchema,
             before = null,
             after = null,
-        ) {}
+        ) {
+            limit?.let { add("limit" to it.toString()) }
+            page?.let { add("page" to it.toString()) }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun v2SearchTicketsWithResponse(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchTicketsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchTicketsRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchTicketsRequestApplicationJsonPropertySearch? = null,
         includes: List<V2SearchTicketsRequestApplicationJsonPropertyIncludesItem>? = null,
+        waitingOn: WaitingOn? = null,
+        reason: String? = null,
+        customerEmail: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<V2SearchTicketsResponseValue200ApplicationJsonPropertyDataItem>> {
         var captured: RawResponse<Any?>? = null
@@ -439,7 +496,18 @@ class Tickets(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        v2SearchTickets(filters, sort, search, includes, capturingOptions)
+        v2SearchTickets(
+            limit,
+            page,
+            filters,
+            sort,
+            search,
+            includes,
+            waitingOn,
+            reason,
+            customerEmail,
+            capturingOptions,
+        )
         return captured
             as? RawResponse<Page<V2SearchTicketsResponseValue200ApplicationJsonPropertyDataItem>>
             ?: error("Response metadata was not captured")
@@ -454,14 +522,30 @@ class Tickets(internal val sellapp: SellApp) {
      */
     @JvmName("v2SearchTicketsSuspend")
     suspend fun v2SearchTicketsSuspend(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchTicketsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchTicketsRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchTicketsRequestApplicationJsonPropertySearch? = null,
         includes: List<V2SearchTicketsRequestApplicationJsonPropertyIncludesItem>? = null,
+        waitingOn: WaitingOn? = null,
+        reason: String? = null,
+        customerEmail: String? = null,
         requestOptions: RequestOptions? = null,
     ): Page<V2SearchTicketsResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            v2SearchTickets(filters, sort, search, includes, requestOptions)
+            v2SearchTickets(
+                limit,
+                page,
+                filters,
+                sort,
+                search,
+                includes,
+                waitingOn,
+                reason,
+                customerEmail,
+                requestOptions,
+            )
         }
 
     /**
@@ -473,14 +557,30 @@ class Tickets(internal val sellapp: SellApp) {
      */
     @JvmName("v2SearchTicketsWithResponseSuspend")
     suspend fun v2SearchTicketsWithResponseSuspend(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<V2SearchTicketsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<V2SearchTicketsRequestApplicationJsonPropertySortItem>? = null,
         search: V2SearchTicketsRequestApplicationJsonPropertySearch? = null,
         includes: List<V2SearchTicketsRequestApplicationJsonPropertyIncludesItem>? = null,
+        waitingOn: WaitingOn? = null,
+        reason: String? = null,
+        customerEmail: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<V2SearchTicketsResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            v2SearchTicketsWithResponse(filters, sort, search, includes, requestOptions)
+            v2SearchTicketsWithResponse(
+                limit,
+                page,
+                filters,
+                sort,
+                search,
+                includes,
+                waitingOn,
+                reason,
+                customerEmail,
+                requestOptions,
+            )
         }
 
     /**
@@ -566,17 +666,24 @@ class Tickets(internal val sellapp: SellApp) {
     /**
      * Close, reopen, or archive a ticket
      *
-     * Change ticket status or archive state in the selected store. Requires the ticket API-key
-     * ability and store ticket permission. Send status OPEN to reopen or CLOSED to close; closing
-     * sends the existing customer notification only when the status changes. Send archived true to
-     * archive or false to restore. You may send both fields together; omitted fields stay
-     * unchanged. Use the same optional Idempotency-Key and identical body after a lost response.
-     * OAuth callers use the admin grant and select a store with X-STORE. Current membership and
-     * role permissions apply to every request.
+     * Close, reopen, archive or restore a ticket in the selected store. Send `status` `CLOSED` to
+     * close or `OPEN` to reopen, and `archived` `true` to archive or `false` to restore; you may
+     * send both, and omitted fields stay unchanged. When you close a ticket you can record why with
+     * `outcome`, which is accepted only together with `status` `CLOSED`. Closing emails the
+     * customer that the ticket was closed, at most once an hour per ticket: reopening and closing
+     * again within the hour sends no second email. A closed ticket keeps its outcome. Sending the
+     * outcome it already has changes nothing; a different outcome, or an outcome for a ticket that
+     * was closed without one, returns `422` on `outcome` and nothing in the request is applied, so
+     * reopen the ticket first. Requires the `ticket` API-key ability and the ticket permission in
+     * your team role. Use the same optional Idempotency-Key and identical body after a lost
+     * response. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * membership and role permissions apply to every request.
      *
      * @param ticket the ticket of the request.
      * @param status the status of the request.
      * @param archived the archived of the request.
+     * @param outcome Why the ticket was closed: `refunded`, `refunded_partial` (partly refunded),
+     *   `delivered`, `no_action`, `duplicate` or `other`. Only with `status` `CLOSED`.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkUpdateTicketResponseValue200ApplicationJson
      */
@@ -585,12 +692,14 @@ class Tickets(internal val sellapp: SellApp) {
         ticket: String,
         status: PatchField<SdkUpdateTicketRequestApplicationJsonStatus> = PatchField.Absent,
         archived: PatchField<Boolean> = PatchField.Absent,
+        outcome: PatchField<SdkUpdateTicketRequestApplicationJsonOutcome> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateTicketResponseValue200ApplicationJson {
         val body =
             patchBodyOf(
                 "status" to status,
                 "archived" to archived,
+                "outcome" to outcome,
             )
         val config =
             RequestConfig(
@@ -617,6 +726,7 @@ class Tickets(internal val sellapp: SellApp) {
         ticket: String,
         status: PatchField<SdkUpdateTicketRequestApplicationJsonStatus> = PatchField.Absent,
         archived: PatchField<Boolean> = PatchField.Absent,
+        outcome: PatchField<SdkUpdateTicketRequestApplicationJsonOutcome> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkUpdateTicketResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -624,7 +734,7 @@ class Tickets(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        update(ticket, status, archived, capturingOptions)
+        update(ticket, status, archived, outcome, capturingOptions)
         return captured as? RawResponse<SdkUpdateTicketResponseValue200ApplicationJson>
             ?: error("Response metadata was not captured")
     }
@@ -640,10 +750,11 @@ class Tickets(internal val sellapp: SellApp) {
         ticket: String,
         status: PatchField<SdkUpdateTicketRequestApplicationJsonStatus> = PatchField.Absent,
         archived: PatchField<Boolean> = PatchField.Absent,
+        outcome: PatchField<SdkUpdateTicketRequestApplicationJsonOutcome> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateTicketResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
-            update(ticket, status, archived, requestOptions)
+            update(ticket, status, archived, outcome, requestOptions)
         }
 
     /**
@@ -658,9 +769,210 @@ class Tickets(internal val sellapp: SellApp) {
         ticket: String,
         status: PatchField<SdkUpdateTicketRequestApplicationJsonStatus> = PatchField.Absent,
         archived: PatchField<Boolean> = PatchField.Absent,
+        outcome: PatchField<SdkUpdateTicketRequestApplicationJsonOutcome> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkUpdateTicketResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
-            updateWithResponse(ticket, status, archived, requestOptions)
+            updateWithResponse(ticket, status, archived, outcome, requestOptions)
+        }
+
+    /**
+     * Update several tickets
+     *
+     * Close, reopen, archive, restore or mark as unread up to 50 tickets in one request, and get
+     * one result per ticket in the order you sent them. Every ID must be a ticket of the selected
+     * store: one unknown ID returns `404` and changes nothing. Each ticket is then changed on its
+     * own, so one refusal does not undo the others. `close` needs an `outcome`, which is recorded
+     * on every ticket it closes, and emails each customer that the ticket was closed, at most once
+     * an hour per ticket. `mark_unread` marks the ticket unread for your store (`read_status.store`
+     * becomes `false`). Requires the `ticket` API-key ability and the ticket permission in your
+     * team role. Repeating the same request is safe: a ticket already in the requested state comes
+     * back as `skipped`. Send an optional `Idempotency-Key` with an identical body to get the
+     * original response back after a lost connection. OAuth callers use the admin grant and select
+     * a store with X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param action What to do with every listed ticket. `restore` takes a ticket out of the
+     *   archive.
+     * @param resources Between 1 and 50 different ticket IDs.
+     * @param outcome Why the ticket was closed: `refunded`, `refunded_partial` (partly refunded),
+     *   `delivered`, `no_action`, `duplicate` or `other`. Required for `close` and refused for
+     *   every other action.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkBatchUpdateTicketsResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun batchUpdate(
+        action: SdkBatchUpdateTicketsRequestApplicationJsonAction,
+        resources: List<Long>,
+        outcome: PatchField<SdkUpdateTicketRequestApplicationJsonOutcome> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkBatchUpdateTicketsResponseValue200ApplicationJson {
+        val body =
+            patchBodyOf(
+                "action" to action,
+                "resources" to resources,
+                "outcome" to outcome,
+            )
+        body["action"] = action
+        body["resources"] = resources
+        val config =
+            RequestConfig(
+                method = "PATCH",
+                path = "/v2/tickets/batch",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkBatchUpdateTicketsRequestApplicationJson
+                        .runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models.SdkBatchUpdateTicketsResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "batchUpdateTickets",
+                supportsIdempotency = true,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkBatchUpdateTicketsResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun batchUpdateWithResponse(
+        action: SdkBatchUpdateTicketsRequestApplicationJsonAction,
+        resources: List<Long>,
+        outcome: PatchField<SdkUpdateTicketRequestApplicationJsonOutcome> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkBatchUpdateTicketsResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        batchUpdate(action, resources, outcome, capturingOptions)
+        return captured as? RawResponse<SdkBatchUpdateTicketsResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [batchUpdate]. Use this from a `suspend` function or coroutine
+     * scope.
+     *
+     * Delegates to the blocking [batchUpdate] under `withContext(Dispatchers.IO)`, so this is safe
+     * to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("batchUpdateSuspend")
+    suspend fun batchUpdateSuspend(
+        action: SdkBatchUpdateTicketsRequestApplicationJsonAction,
+        resources: List<Long>,
+        outcome: PatchField<SdkUpdateTicketRequestApplicationJsonOutcome> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): SdkBatchUpdateTicketsResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            batchUpdate(action, resources, outcome, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [batchUpdateWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [batchUpdateWithResponse] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("batchUpdateWithResponseSuspend")
+    suspend fun batchUpdateWithResponseSuspend(
+        action: SdkBatchUpdateTicketsRequestApplicationJsonAction,
+        resources: List<Long>,
+        outcome: PatchField<SdkUpdateTicketRequestApplicationJsonOutcome> = PatchField.Absent,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkBatchUpdateTicketsResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            batchUpdateWithResponse(action, resources, outcome, requestOptions)
+        }
+
+    /**
+     * Retrieve a ticket's customer and refund context
+     *
+     * Read what you need beside a ticket's conversation in one call: the resolution, the customer's
+     * order history in this store, the linked order, what can still be refunded to the customer's
+     * wallet, and the latest 20 support activity entries, newest first. `refund_options` has the
+     * same items as the ticket's wallet refund options. The customer figures count the store's
+     * completed orders whose customer or order email is the ticket's email. Requires the `ticket`
+     * API-key ability and the ticket permission in your team role. The response includes the
+     * customer's email, order count and lifetime spend, so give a key with this ability only to
+     * people and tools that may see them. Amounts are integer USD cents: `1999` means $19.99. OAuth
+     * callers use the admin grant and select a store with X-STORE. Current membership and role
+     * permissions apply to every request.
+     *
+     * @param ticket The ticket ID in the selected store.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkV2GetTicketContextResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun getContext(
+        ticket: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkV2GetTicketContextResponseValue200ApplicationJson {
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/tickets/${encodePathSegment(ticket)}/context",
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models.SdkV2GetTicketContextResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "v2GetTicketContext",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkV2GetTicketContextResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getContextWithResponse(
+        ticket: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkV2GetTicketContextResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        getContext(ticket, capturingOptions)
+        return captured as? RawResponse<SdkV2GetTicketContextResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [getContext]. Use this from a `suspend` function or coroutine
+     * scope.
+     *
+     * Delegates to the blocking [getContext] under `withContext(Dispatchers.IO)`, so this is safe
+     * to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getContextSuspend")
+    suspend fun getContextSuspend(
+        ticket: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkV2GetTicketContextResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            getContext(ticket, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [getContextWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [getContextWithResponse] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getContextWithResponseSuspend")
+    suspend fun getContextWithResponseSuspend(
+        ticket: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkV2GetTicketContextResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            getContextWithResponse(ticket, requestOptions)
         }
 }

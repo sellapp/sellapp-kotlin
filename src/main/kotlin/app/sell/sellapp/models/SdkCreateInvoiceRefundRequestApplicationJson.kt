@@ -11,10 +11,21 @@ import com.fasterxml.jackson.databind.JsonNode
 /** SdkCreateInvoiceRefundRequestApplicationJson model. */
 data class SdkCreateInvoiceRefundRequestApplicationJson(
     /**
-     * Optional partial refund amount in major currency units. Omit for the full remaining
-     * refundable amount.
+     * Optional partial refund amount in major units of the invoice's `payment.refund_currency`.
+     * Omit for the full remaining refundable amount.
      */
-    @JsonProperty("amount") val amount: String? = null
+    @JsonProperty("amount") val amount: String? = null,
+
+    /**
+     * The refunded total you expect, in integer minor units of the invoice's
+     * `payment.refund_currency`, which can differ from the invoice currency: `500` means $5.00 in
+     * USD. Read it from `payment.refunded_total_cents` on the invoice and send it unchanged; it is
+     * `0` before the first refund. After a refund, `data.invoice.payment.refunded_total_cents` in
+     * the response is the value to send with the next one. With this field, the refund goes out
+     * only while the refunded total still equals it and no other refund on the order is pending.
+     * Omit it or send null to refund without the check.
+     */
+    @JsonProperty("expected_refunded_total_cents") val expectedRefundedTotalCents: Long? = null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -27,7 +38,7 @@ data class SdkCreateInvoiceRefundRequestApplicationJson(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"SdkCreateInvoiceRefundRequestApplicationJson\",\"properties\":{\"amount\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":32,\"pattern\":\"^\\\\d+(\\\\.\\\\d+)?\$\"}}}},\"required\":[],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"SdkCreateInvoiceRefundRequestApplicationJson\",\"properties\":{\"amount\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":32,\"pattern\":\"^\\\\d+(\\\\.\\\\d+)?\$\"}}},\"expected_refunded_total_cents\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}}}},\"required\":[],\"additionalProperties\":true}"
             )
     }
 }

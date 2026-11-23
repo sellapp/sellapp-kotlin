@@ -15,6 +15,7 @@ import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.models.CreateUpsellOfferRequestApplicationJsonPropertyItemsItem
 import app.sell.sellapp.models.ReplaceUpsellOfferRequestApplicationJsonPropertyItemsItem
 import app.sell.sellapp.models.SdkCreateUpsellOfferResponseValue201ApplicationJson
+import app.sell.sellapp.models.SdkGetUpsellOfferPerformanceResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkGetUpsellOfferResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkListUpsellOffersResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkReplaceUpsellOfferResponseValue200ApplicationJson
@@ -40,10 +41,10 @@ class UpsellOffers(internal val sellapp: SellApp) {
     /**
      * List upsell offers
      *
-     * List the authenticated store's ordered post-purchase offers. Requires a Sanctum token with
-     * the `upsell` ability and the Upsells role for the store selected by `X-STORE`. OAuth callers
-     * use the admin grant and select a store with X-STORE. Current membership and role permissions
-     * apply to every request.
+     * List the authenticated store's ordered post-purchase offers. Requires the `upsell` API-key
+     * ability and the Upsells role for the store selected by `X-STORE`. OAuth callers use the admin
+     * grant and select a store with X-STORE. Current membership and role permissions apply to every
+     * request.
      *
      * @param limit Number of items to return per page.
      * @param page Page number to return.
@@ -136,10 +137,9 @@ class UpsellOffers(internal val sellapp: SellApp) {
      * Create an upsell offer
      *
      * Create an ordered post-purchase offer. Every product and variant ID is checked against the
-     * selected store and expected parent product. Requires a Sanctum token with the `upsell`
-     * ability and the Upsells role for the store selected by `X-STORE`. OAuth callers use the admin
-     * grant and select a store with X-STORE. Current membership and role permissions apply to every
-     * request.
+     * selected store and expected parent product. Requires the `upsell` API-key ability and the
+     * Upsells role for the store selected by `X-STORE`. OAuth callers use the admin grant and
+     * select a store with X-STORE. Current membership and role permissions apply to every request.
      *
      * @param name the name of the request.
      * @param isActive the is active of the request.
@@ -349,9 +349,9 @@ class UpsellOffers(internal val sellapp: SellApp) {
      * Search upsell offers
      *
      * Search offer names and descriptions and compose supported filters and sort instructions.
-     * Requires a Sanctum token with the `upsell` ability and the Upsells role for the store
-     * selected by `X-STORE`. OAuth callers use the admin grant and select a store with X-STORE.
-     * Current membership and role permissions apply to every request.
+     * Requires the `upsell` API-key ability and the Upsells role for the store selected by
+     * `X-STORE`. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * membership and role permissions apply to every request.
      *
      * @param limit Number of items to return per page.
      * @param page Page number to return.
@@ -472,10 +472,10 @@ class UpsellOffers(internal val sellapp: SellApp) {
     /**
      * Retrieve an upsell offer
      *
-     * Retrieve one store-scoped upsell offer and its ordered target items. Requires a Sanctum token
-     * with the `upsell` ability and the Upsells role for the store selected by `X-STORE`. OAuth
-     * callers use the admin grant and select a store with X-STORE. Current membership and role
-     * permissions apply to every request.
+     * Retrieve one store-scoped upsell offer and its ordered target items. Requires the `upsell`
+     * API-key ability and the Upsells role for the store selected by `X-STORE`. OAuth callers use
+     * the admin grant and select a store with X-STORE. Current membership and role permissions
+     * apply to every request.
      *
      * @param upsellOffer The upsellOffer path parameter.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
@@ -553,9 +553,9 @@ class UpsellOffers(internal val sellapp: SellApp) {
      * Update an upsell offer
      *
      * Update supplied fields. When items are supplied, they replace the complete ordered
-     * target-item set. Requires a Sanctum token with the `upsell` ability and the Upsells role for
-     * the store selected by `X-STORE`. OAuth callers use the admin grant and select a store with
-     * X-STORE. Current membership and role permissions apply to every request.
+     * target-item set. Requires the `upsell` API-key ability and the Upsells role for the store
+     * selected by `X-STORE`. OAuth callers use the admin grant and select a store with X-STORE.
+     * Current membership and role permissions apply to every request.
      *
      * @param upsellOffer The upsellOffer path parameter.
      * @param expectedVersion Required optimistic concurrency token for updates. Use the version
@@ -770,9 +770,9 @@ class UpsellOffers(internal val sellapp: SellApp) {
      * Update an upsell offer
      *
      * Update supplied fields. When items are supplied, they replace the complete ordered
-     * target-item set. Requires a Sanctum token with the `upsell` ability and the Upsells role for
-     * the store selected by `X-STORE`. OAuth callers use the admin grant and select a store with
-     * X-STORE. Current membership and role permissions apply to every request.
+     * target-item set. Requires the `upsell` API-key ability and the Upsells role for the store
+     * selected by `X-STORE`. OAuth callers use the admin grant and select a store with X-STORE.
+     * Current membership and role permissions apply to every request.
      *
      * @param upsellOffer The upsellOffer path parameter.
      * @param expectedVersion Required optimistic concurrency token for updates. Use the version
@@ -990,10 +990,10 @@ class UpsellOffers(internal val sellapp: SellApp) {
     /**
      * Delete an upsell offer
      *
-     * Soft-delete an upsell offer while preserving checkout and reporting attribution. Requires a
-     * Sanctum token with the `upsell` ability and the Upsells role for the store selected by
-     * `X-STORE`. OAuth callers use the admin grant and select a store with X-STORE. Current
-     * membership and role permissions apply to every request.
+     * Soft-delete an upsell offer while preserving checkout and reporting attribution. Requires the
+     * `upsell` API-key ability and the Upsells role for the store selected by `X-STORE`. OAuth
+     * callers use the admin grant and select a store with X-STORE. Current membership and role
+     * permissions apply to every request.
      *
      * @param upsellOffer The upsellOffer path parameter.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
@@ -1060,5 +1060,104 @@ class UpsellOffers(internal val sellapp: SellApp) {
     ): RawResponse<Unit> =
         sellapp.baseClient.runCancellable {
             deleteWithResponse(upsellOffer, requestOptions)
+        }
+
+    /**
+     * Retrieve upsell offer performance
+     *
+     * Report how an upsell offer has performed over its whole life: how often customers saw it,
+     * started its checkout, and bought it, and the revenue those purchases brought. An offer from
+     * another store returns `404`, and so does a deleted one unless you send `with_trashed=true`.
+     * Requires the `upsell` API-key ability and the Upsells role for the store selected by
+     * `X-STORE`. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * membership and role permissions apply to every request.
+     *
+     * @param upsellOffer The upsell offer ID.
+     * @param withTrashed Set to `true` to also find a deleted upsell offer.
+     * @param onlyTrashed Set to `true` to find only a deleted upsell offer. Ignored when
+     *   `with_trashed` is `true`.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkGetUpsellOfferPerformanceResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun getPerformance(
+        upsellOffer: String,
+        withTrashed: Boolean? = null,
+        onlyTrashed: Boolean? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkGetUpsellOfferPerformanceResponseValue200ApplicationJson {
+        val params = mutableListOf<Pair<String, String>>()
+        withTrashed?.let { params += "with_trashed" to it.toString() }
+        onlyTrashed?.let { params += "only_trashed" to it.toString() }
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/upsell-offers/${encodePathSegment(upsellOffer)}/performance",
+                queryParams = params,
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkGetUpsellOfferPerformanceResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "getUpsellOfferPerformance",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkGetUpsellOfferPerformanceResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getPerformanceWithResponse(
+        upsellOffer: String,
+        withTrashed: Boolean? = null,
+        onlyTrashed: Boolean? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkGetUpsellOfferPerformanceResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        getPerformance(upsellOffer, withTrashed, onlyTrashed, capturingOptions)
+        return captured as? RawResponse<SdkGetUpsellOfferPerformanceResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [getPerformance]. Use this from a `suspend` function or coroutine
+     * scope.
+     *
+     * Delegates to the blocking [getPerformance] under `withContext(Dispatchers.IO)`, so this is
+     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getPerformanceSuspend")
+    suspend fun getPerformanceSuspend(
+        upsellOffer: String,
+        withTrashed: Boolean? = null,
+        onlyTrashed: Boolean? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkGetUpsellOfferPerformanceResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            getPerformance(upsellOffer, withTrashed, onlyTrashed, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [getPerformanceWithResponse]. Use this from a `suspend` function
+     * or coroutine scope.
+     *
+     * Delegates to the blocking [getPerformanceWithResponse] under `withContext(Dispatchers.IO)`,
+     * so this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getPerformanceWithResponseSuspend")
+    suspend fun getPerformanceWithResponseSuspend(
+        upsellOffer: String,
+        withTrashed: Boolean? = null,
+        onlyTrashed: Boolean? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkGetUpsellOfferPerformanceResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            getPerformanceWithResponse(upsellOffer, withTrashed, onlyTrashed, requestOptions)
         }
 }

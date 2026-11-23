@@ -3,7 +3,7 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
-import app.sell.sellapp.types.CreateOrderRefundResponseValue200ApplicationJsonPropertyDataPropertyRefundStatus
+import app.sell.sellapp.types.RefundsStatus
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -12,8 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode
 /** CreateInvoiceRefundResponseValue200ApplicationJsonPropertyDataPropertyRefund model. */
 data class CreateInvoiceRefundResponseValue200ApplicationJsonPropertyDataPropertyRefund(
     /** The status. */
-    @JsonProperty("status")
-    val status: CreateOrderRefundResponseValue200ApplicationJsonPropertyDataPropertyRefundStatus,
+    @JsonProperty("status") val status: RefundsStatus,
 
     /** The provider. */
     @JsonProperty("provider") val provider: String?,

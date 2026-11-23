@@ -4,7 +4,7 @@ package app.sell.sellapp.models
 
 /**
  * Alias for
- * [GetAffiliateProgramConfigurationResponseValue200ApplicationJsonPropertyDataPropertyProductsItemPropertyCommission].
+ * [GetAffiliateProductsResponseValue200ApplicationJsonPropertyDataPropertyProductsItemPropertyCommission].
  */
 typealias ReplaceAffiliateProgramConfigurationResponseValue200ApplicationJsonPropertyDataPropertyProductsItemPropertyCommission =
-    GetAffiliateProgramConfigurationResponseValue200ApplicationJsonPropertyDataPropertyProductsItemPropertyCommission
+    GetAffiliateProductsResponseValue200ApplicationJsonPropertyDataPropertyProductsItemPropertyCommission

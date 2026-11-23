@@ -26,7 +26,7 @@ class ProductVariantsPricingTest : TestBase() {
                 "\"minimum_purchase_quantity\": 0, \"maximum_purchase_quantity\": null, \"bulk_discount\": null, \"payment_methods\": [], " +
                 "\"other_settings\": {\"quantity_increments\": 0, \"discord_data_required\": false}, \"order\": null, \"created_at\": " +
                 "\"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"deleted_at\": null, \"product\": " +
-                "{\"additional_information\": []}}}",
+                "{\"additional_information\": []}, \"is_draft\": false}}",
         )
         val result = api().update("sample-arg", "sample-arg")
         assertNotNull(result)

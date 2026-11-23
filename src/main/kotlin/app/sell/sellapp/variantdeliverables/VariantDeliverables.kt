@@ -11,6 +11,8 @@ import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.models.ReplaceVariantDeliverableConfigurationRequestApplicationJsonPropertyData
 import app.sell.sellapp.models.SdkGetVariantDeliverableConfigurationResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkNotifyVariantBuyersResponseValue202ApplicationJson
+import app.sell.sellapp.models.SdkPreviewVariantBuyerNotificationResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkReplaceVariantDeliverableConfigurationResponseValue200ApplicationJson
 import app.sell.sellapp.types.CreateProductVariantRequestApplicationJsonPropertyDeliverableTypes
 import java.time.OffsetDateTime
@@ -24,6 +26,195 @@ import java.time.OffsetDateTime
  * dispatcher (including `Dispatchers.Main`).
  */
 class VariantDeliverables(internal val sellapp: SellApp) {
+    /**
+     * Preview variant buyer notification
+     *
+     * See who would be emailed if you told this variant's buyers about new downloadable files,
+     * without sending anything. Use it before `POST` on the same path to check the numbers. Works
+     * for any variant, drafts included. Requires the `listing` API-key ability and the `listing`
+     * permission in your team role. OAuth callers use the admin grant and select a store with
+     * X-STORE. Current membership and role permissions apply to every request.
+     *
+     * @param product The product path parameter.
+     * @param variant The variant path parameter.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkPreviewVariantBuyerNotificationResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun preview(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkPreviewVariantBuyerNotificationResponseValue200ApplicationJson {
+        val config =
+            RequestConfig(
+                method = "GET",
+                path =
+                    "/v2/products/${encodePathSegment(product)}/variants/${encodePathSegment(variant)}/deliverable/buyer-notification",
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkPreviewVariantBuyerNotificationResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "previewVariantBuyerNotification",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkPreviewVariantBuyerNotificationResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun previewWithResponse(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkPreviewVariantBuyerNotificationResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        preview(product, variant, capturingOptions)
+        return captured
+            as? RawResponse<SdkPreviewVariantBuyerNotificationResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [preview]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [preview] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("previewSuspend")
+    suspend fun previewSuspend(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkPreviewVariantBuyerNotificationResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            preview(product, variant, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [previewWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [previewWithResponse] under `withContext(Dispatchers.IO)`, so this
+     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("previewWithResponseSuspend")
+    suspend fun previewWithResponseSuspend(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkPreviewVariantBuyerNotificationResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            previewWithResponse(product, variant, requestOptions)
+        }
+
+    /**
+     * Notify variant buyers
+     *
+     * Email your customers that this variant has new content: every completed order that delivered
+     * its downloadable files gets one email. The emails are queued, so `202` means they were
+     * queued, not delivered. It sends only for a published variant with at least one file, at least
+     * one such order, and no upload in progress. The buyers of one variant can be emailed this way
+     * at most once an hour, whichever API key or team member sends it, and each team member can
+     * send at most 3 times a minute per variant. Requires the `listing` API-key ability and the
+     * `listing` permission in your team role. Send an `Idempotency-Key` header; requests without
+     * one return `400`. A retry with the same key and an empty body returns the first response with
+     * `Idempotent-Replayed: true` and sends nothing new. Use a new key for every send you intend,
+     * including a new attempt after a `422`. The same key while the first request is still running
+     * returns `409`. Every refusal is `422` on `variant`: a draft variant, a variant without files,
+     * a variant nobody has bought, an upload still in progress, the hourly limit (the message says
+     * how many minutes are left), the per-minute limit, or another send for the same variant at the
+     * same moment. Check `GET` on the same path first to see the numbers. A variant of another
+     * product returns `404`. OAuth callers use the admin grant and select a store with X-STORE.
+     * Current membership and role permissions apply to every request.
+     *
+     * @param product The product path parameter.
+     * @param variant The variant path parameter.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkNotifyVariantBuyersResponseValue202ApplicationJson
+     */
+    @JvmOverloads
+    fun notify(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkNotifyVariantBuyersResponseValue202ApplicationJson {
+        val body = linkedMapOf<String, Any?>()
+        val config =
+            RequestConfig(
+                method = "POST",
+                path =
+                    "/v2/products/${encodePathSegment(product)}/variants/${encodePathSegment(variant)}/deliverable/buyer-notification",
+                body = body,
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models.SdkNotifyVariantBuyersResponseValue202ApplicationJson
+                        .runtimeSchema,
+                operationId = "notifyVariantBuyers",
+                supportsIdempotency = true,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkNotifyVariantBuyersResponseValue202ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun notifyWithResponse(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkNotifyVariantBuyersResponseValue202ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        notify(product, variant, capturingOptions)
+        return captured as? RawResponse<SdkNotifyVariantBuyersResponseValue202ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [notify]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [notify] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("notifySuspend")
+    suspend fun notifySuspend(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): SdkNotifyVariantBuyersResponseValue202ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            notify(product, variant, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [notifyWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [notifyWithResponse] under `withContext(Dispatchers.IO)`, so this
+     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("notifyWithResponseSuspend")
+    suspend fun notifyWithResponseSuspend(
+        product: String,
+        variant: String,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkNotifyVariantBuyersResponseValue202ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            notifyWithResponse(product, variant, requestOptions)
+        }
+
     /**
      * Retrieve variant deliverable configuration
      *

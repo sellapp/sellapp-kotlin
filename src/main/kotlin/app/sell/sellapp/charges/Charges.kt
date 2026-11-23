@@ -7,6 +7,7 @@ import app.sell.sellapp.common.http.Page
 import app.sell.sellapp.common.http.RawResponse
 import app.sell.sellapp.common.http.RequestConfig
 import app.sell.sellapp.common.http.RequestOptions
+import app.sell.sellapp.common.http.addIfNotNull
 import app.sell.sellapp.common.http.bodyOf
 import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.json.runtimeSchema
@@ -15,8 +16,11 @@ import app.sell.sellapp.models.CreateChargeRequestApplicationJsonPropertyMetadat
 import app.sell.sellapp.models.ListChargesResponseValue200ApplicationJsonPropertyDataItem
 import app.sell.sellapp.models.SdkCreateChargeResponseValue201ApplicationJson
 import app.sell.sellapp.models.SdkGetChargeResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkGetChargeSummaryResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkMarkPendingChargeCompletedResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkMarkPendingChargeVoidedResponseValue200ApplicationJson
+import app.sell.sellapp.types.ChargesPreset
+import app.sell.sellapp.types.ChargesStatus
 import app.sell.sellapp.types.PaymentMethod
 import com.fasterxml.jackson.core.type.TypeReference
 
@@ -32,11 +36,25 @@ class Charges(internal val sellapp: SellApp) {
     /**
      * List all charges
      *
-     * Retrieve a paginated list of charges for your store. OAuth callers use the admin grant and
+     * List your store's charges, 15 per page by default. Failed charges are never listed. Filter by
+     * `status`, part of the customer email, or the day a charge was created; the date filters read
+     * whole days in the store's time zone and include both ends. An unknown filter value,
+     * `status=FAILED`, or a `created_before` earlier than `created_after` returns `422` on that
+     * parameter. Requires the `charge` API-key ability. OAuth callers use the admin grant and
      * select a store with X-STORE. Current membership and role permissions apply to every request.
      *
      * @param limit Number of items to return per page.
      * @param page Page number to return.
+     * @param status Keep charges in this status: `PENDING`, `REVERSED`, `PARTIAL`, `VOIDED`,
+     *   `REFUNDED`, `PAID`, `COMPLETED`, `DISPUTING`, or `REVIEW`. `FAILED` is not accepted,
+     *   because failed charges are never listed.
+     * @param customerEmail Keep charges whose customer email contains this text.
+     * @param createdAfter Keep charges created on or after this moment. A date such as `2026-08-01`
+     *   starts at midnight of that day in the store's time zone; a date-time without an offset is
+     *   also read in the store's time zone. Inclusive.
+     * @param createdBefore Keep charges created on or before this moment. A date such as
+     *   `2026-08-31` runs to the last second of that day in the store's time zone; a date-time
+     *   without an offset is also read in the store's time zone. Inclusive.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return a [app.sell.sellapp.common.http.Page] of results
      */
@@ -44,6 +62,10 @@ class Charges(internal val sellapp: SellApp) {
     fun list(
         limit: Int? = null,
         page: Long? = null,
+        status: ChargesStatus? = null,
+        customerEmail: String? = null,
+        createdAfter: String? = null,
+        createdBefore: String? = null,
         requestOptions: RequestOptions? = null,
     ): Page<ListChargesResponseValue200ApplicationJsonPropertyDataItem> {
         val itemType =
@@ -63,6 +85,10 @@ class Charges(internal val sellapp: SellApp) {
         ) {
             limit?.let { add("limit" to it.toString()) }
             page?.let { add("page" to it.toString()) }
+            status?.let { add("status" to it.value) }
+            addIfNotNull("customer_email", customerEmail)
+            addIfNotNull("created_after", createdAfter)
+            addIfNotNull("created_before", createdBefore)
         }
     }
 
@@ -70,6 +96,10 @@ class Charges(internal val sellapp: SellApp) {
     fun listWithResponse(
         limit: Int? = null,
         page: Long? = null,
+        status: ChargesStatus? = null,
+        customerEmail: String? = null,
+        createdAfter: String? = null,
+        createdBefore: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<ListChargesResponseValue200ApplicationJsonPropertyDataItem>> {
         var captured: RawResponse<Any?>? = null
@@ -77,7 +107,7 @@ class Charges(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        list(limit, page, capturingOptions)
+        list(limit, page, status, customerEmail, createdAfter, createdBefore, capturingOptions)
         return captured
             as? RawResponse<Page<ListChargesResponseValue200ApplicationJsonPropertyDataItem>>
             ?: error("Response metadata was not captured")
@@ -93,10 +123,14 @@ class Charges(internal val sellapp: SellApp) {
     suspend fun listSuspend(
         limit: Int? = null,
         page: Long? = null,
+        status: ChargesStatus? = null,
+        customerEmail: String? = null,
+        createdAfter: String? = null,
+        createdBefore: String? = null,
         requestOptions: RequestOptions? = null,
     ): Page<ListChargesResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            list(limit, page, requestOptions)
+            list(limit, page, status, customerEmail, createdAfter, createdBefore, requestOptions)
         }
 
     /**
@@ -110,17 +144,29 @@ class Charges(internal val sellapp: SellApp) {
     suspend fun listWithResponseSuspend(
         limit: Int? = null,
         page: Long? = null,
+        status: ChargesStatus? = null,
+        customerEmail: String? = null,
+        createdAfter: String? = null,
+        createdBefore: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<ListChargesResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            listWithResponse(limit, page, requestOptions)
+            listWithResponse(
+                limit,
+                page,
+                status,
+                customerEmail,
+                createdAfter,
+                createdBefore,
+                requestOptions,
+            )
         }
 
     /**
      * Create a charge
      *
-     * Create a standalone charge for payment or a free claim. Requires the charge API ability and
-     * store permission. The total is an integer in the currency's minor units: 1999 USD means
+     * Create a standalone charge for payment or a free claim. Requires the charge API-key ability
+     * and store permission. The total is an integer in the currency's minor units: 1999 USD means
      * $19.99. Supplying currency requires total. For a positive paid charge, choose enabled
      * payment_method/payment_methods or use_all_payment_methods; availability depends on the store
      * and currency. CUSTOM_PAYMENT_METHOD is supported: preselection requires
@@ -455,7 +501,7 @@ class Charges(internal val sellapp: SellApp) {
      * credit the deposit plus any snapshotted bonus exactly once. Other wallet gateways cannot be
      * completed manually, and voided custom top-ups cannot be revived. Completion emits
      * charge.completed webhooks and store notifications and records applicable platform fees.
-     * Requires the charge API ability and update permission. A charge already completed returns
+     * Requires the charge API-key ability and update permission. A charge already completed returns
      * 422; retrieve its state before retrying. OAuth callers use the admin grant and select a store
      * with X-STORE. Current membership and role permissions apply to every request.
      *
@@ -541,7 +587,7 @@ class Charges(internal val sellapp: SellApp) {
      *
      * Void a PENDING charge or a custom-payment charge in REVIEW. This cancels the internal charge,
      * releases an applicable redeemed reward coupon, and emits charge.voided; it does not refund a
-     * payment. Requires the charge API ability and update permission. Other states return 422,
+     * payment. Requires the charge API-key ability and update permission. Other states return 422,
      * including a repeat after successful voiding; retrieve its state before retrying. OAuth
      * callers use the admin grant and select a store with X-STORE. Current membership and role
      * permissions apply to every request.
@@ -620,5 +666,116 @@ class Charges(internal val sellapp: SellApp) {
     ): RawResponse<SdkMarkPendingChargeVoidedResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
             markVoidedWithResponse(chargeId, requestOptions)
+        }
+
+    /**
+     * Retrieve the charge summary
+     *
+     * Total your store's completed charges for a date range and compare them with the period of the
+     * same length just before it, as the charges analytics page does. Only `COMPLETED` charges
+     * count, dated by when they completed; pending, voided, and failed charges are left out.
+     * `revenue` is in integer minor units of the store currency, converted from each charge's USD
+     * total: `12450` means $124.50 in USD. Send `start_date` and `end_date` as `YYYY-MM-DD` days in
+     * the store's time zone, both included, or a `preset`; dates take precedence over `preset`, and
+     * without either the summary covers `last_30_days`. An unknown `preset` or a date not in
+     * `YYYY-MM-DD` form returns `422` on that parameter, and a range that ends before it starts
+     * returns `422` on `start_date` when you sent `start_date`, otherwise `end_date`. Requires the
+     * `charge` API-key ability and the charge permission in your team role. OAuth callers use the
+     * admin grant and select a store with X-STORE. Current membership and role permissions apply to
+     * every request.
+     *
+     * @param preset A named range in the store's time zone: `today`, `yesterday`, `this_week`,
+     *   `last_week`, `this_month`, `last_month`, `last_7_days`, `last_30_days` (the default), or
+     *   `all_time`. `this_week`, `this_month`, and the `last_*_days` presets end today. `all_time`
+     *   starts on the day the store was created or took its first order, whichever is earlier.
+     *   Ignored when `start_date` or `end_date` is sent.
+     * @param startDate First day of the range, `YYYY-MM-DD`, in the store's time zone. Inclusive.
+     *   Sent without `end_date`, the range runs to the end of today.
+     * @param endDate Last day of the range, `YYYY-MM-DD`, in the store's time zone. Inclusive. Sent
+     *   without `start_date`, the range starts on the day the store was created or took its first
+     *   order, whichever is earlier.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkGetChargeSummaryResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun getSummary(
+        preset: ChargesPreset? = null,
+        startDate: String? = null,
+        endDate: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkGetChargeSummaryResponseValue200ApplicationJson {
+        val params = mutableListOf<Pair<String, String>>()
+        preset?.let { params += "preset" to it.value }
+        params.addIfNotNull("start_date", startDate)
+        params.addIfNotNull("end_date", endDate)
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/charges/summary",
+                queryParams = params,
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models.SdkGetChargeSummaryResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "getChargeSummary",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkGetChargeSummaryResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getSummaryWithResponse(
+        preset: ChargesPreset? = null,
+        startDate: String? = null,
+        endDate: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkGetChargeSummaryResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        getSummary(preset, startDate, endDate, capturingOptions)
+        return captured as? RawResponse<SdkGetChargeSummaryResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [getSummary]. Use this from a `suspend` function or coroutine
+     * scope.
+     *
+     * Delegates to the blocking [getSummary] under `withContext(Dispatchers.IO)`, so this is safe
+     * to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getSummarySuspend")
+    suspend fun getSummarySuspend(
+        preset: ChargesPreset? = null,
+        startDate: String? = null,
+        endDate: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkGetChargeSummaryResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            getSummary(preset, startDate, endDate, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [getSummaryWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [getSummaryWithResponse] under `withContext(Dispatchers.IO)`, so
+     * this is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getSummaryWithResponseSuspend")
+    suspend fun getSummaryWithResponseSuspend(
+        preset: ChargesPreset? = null,
+        startDate: String? = null,
+        endDate: String? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkGetChargeSummaryResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            getSummaryWithResponse(preset, startDate, endDate, requestOptions)
         }
 }

@@ -12,7 +12,9 @@ import app.sell.sellapp.common.http.bodyOf
 import app.sell.sellapp.common.http.encodePathSegment
 import app.sell.sellapp.common.http.patchBodyOf
 import app.sell.sellapp.common.json.runtimeSchema
+import app.sell.sellapp.models.SdkCreateCourseResponseValue201ApplicationJson
 import app.sell.sellapp.models.SdkGetCourseResponseValue200ApplicationJson
+import app.sell.sellapp.models.SdkGetCourseStudentSummaryResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkListCoursesResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkReplaceCourseResponseValue200ApplicationJson
 import app.sell.sellapp.models.SdkSearchCoursesResponseValue200ApplicationJson
@@ -23,8 +25,8 @@ import app.sell.sellapp.models.SearchRewardRulesRequestApplicationJsonPropertySe
 import app.sell.sellapp.models.SearchRewardRulesRequestApplicationJsonPropertySortItem
 import app.sell.sellapp.types.CatalogVisibility
 import app.sell.sellapp.types.Category
-import app.sell.sellapp.types.SdkUpdateCourseRequestApplicationJsonAccessType
-import app.sell.sellapp.types.SdkUpdateCourseRequestApplicationJsonLevel
+import app.sell.sellapp.types.SdkCreateCourseRequestApplicationJsonAccessType
+import app.sell.sellapp.types.SdkCreateCourseRequestApplicationJsonLevel
 import com.fasterxml.jackson.core.type.TypeReference
 import java.time.OffsetDateTime
 
@@ -127,6 +129,257 @@ class Courses(internal val sellapp: SellApp) {
     ): RawResponse<Page<SdkListCoursesResponseValue200ApplicationJson>> =
         sellapp.baseClient.runCancellable {
             listWithResponse(limit, page, pagination, requestOptions)
+        }
+
+    /**
+     * Create a course
+     *
+     * Create a course as a draft that customers cannot buy yet, whatever `visibility` you send:
+     * `visibility`, `HIDDEN` by default, applies once the course is published. It starts with no
+     * sections and one draft option named `Default`, priced at 0 USD: set the price with the
+     * product variant endpoints, add sections and lessons, then publish it with `POST
+     * /v2/products/{product}/publish`, where `{product}` is the course `id`. Each successful call
+     * creates another course, so do not retry blindly after a lost response: search courses for the
+     * title first. Requires the `listing` API-key ability and the `listing` permission in your team
+     * role. OAuth callers use the admin grant and select a store with X-STORE. Current membership
+     * and role permissions apply to every request.
+     *
+     * @param title The course name customers see.
+     * @param category the category of the request.
+     * @param level the level of the request.
+     * @param language the language of the request.
+     * @param subtitle the subtitle of the request.
+     * @param author the author of the request.
+     * @param subcategory the subcategory of the request.
+     * @param whatYouLearn the what you learn of the request.
+     * @param requirements the requirements of the request.
+     * @param certificateEnabled the certificate enabled of the request.
+     * @param accessType the access type of the request.
+     * @param accessDurationDays Required when access_type is limited; cleared otherwise.
+     * @param enrollmentLimit the enrollment limit of the request.
+     * @param deliveryText the delivery text of the request.
+     * @param slug The last part of the course's storefront URL: lowercase letters and numbers in
+     *   words joined by single hyphens, such as `design-foundations`. It must be unused by every
+     *   other product in the store, or the request returns `422` on `slug`. When you leave it out,
+     *   SellApp makes one from the title.
+     * @param description The course description as HTML, at least 5 characters long and at most
+     *   2000 characters of visible text. Leave it out, or send null, to start without one; a course
+     *   needs a description before it is published.
+     * @param visibility the visibility of the request.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkCreateCourseResponseValue201ApplicationJson
+     */
+    @JvmOverloads
+    fun create(
+        title: String,
+        category: Category? = null,
+        level: SdkCreateCourseRequestApplicationJsonLevel? = null,
+        language: String? = null,
+        subtitle: String? = null,
+        author: String? = null,
+        subcategory: String? = null,
+        whatYouLearn: List<String>? = null,
+        requirements: List<String>? = null,
+        certificateEnabled: Boolean? = null,
+        accessType: SdkCreateCourseRequestApplicationJsonAccessType? = null,
+        accessDurationDays: Long? = null,
+        enrollmentLimit: Long? = null,
+        deliveryText: String? = null,
+        slug: String? = null,
+        description: String? = null,
+        visibility: CatalogVisibility? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkCreateCourseResponseValue201ApplicationJson {
+        val body =
+            bodyOf(
+                "title" to title,
+                "category" to category,
+                "level" to level,
+                "language" to language,
+                "subtitle" to subtitle,
+                "author" to author,
+                "subcategory" to subcategory,
+                "what_you_learn" to whatYouLearn,
+                "requirements" to requirements,
+                "certificate_enabled" to certificateEnabled,
+                "access_type" to accessType,
+                "access_duration_days" to accessDurationDays,
+                "enrollment_limit" to enrollmentLimit,
+                "delivery_text" to deliveryText,
+                "slug" to slug,
+                "description" to description,
+                "visibility" to visibility,
+            )
+        body["title"] = title
+        val config =
+            RequestConfig(
+                method = "POST",
+                path = "/v2/courses",
+                body = body,
+                requestOptions = requestOptions,
+                requestSchema =
+                    app.sell.sellapp.models.SdkCreateCourseRequestApplicationJson.runtimeSchema,
+                responseSchema =
+                    app.sell.sellapp.models.SdkCreateCourseResponseValue201ApplicationJson
+                        .runtimeSchema,
+                operationId = "createCourse",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkCreateCourseResponseValue201ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun createWithResponse(
+        title: String,
+        category: Category? = null,
+        level: SdkCreateCourseRequestApplicationJsonLevel? = null,
+        language: String? = null,
+        subtitle: String? = null,
+        author: String? = null,
+        subcategory: String? = null,
+        whatYouLearn: List<String>? = null,
+        requirements: List<String>? = null,
+        certificateEnabled: Boolean? = null,
+        accessType: SdkCreateCourseRequestApplicationJsonAccessType? = null,
+        accessDurationDays: Long? = null,
+        enrollmentLimit: Long? = null,
+        deliveryText: String? = null,
+        slug: String? = null,
+        description: String? = null,
+        visibility: CatalogVisibility? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkCreateCourseResponseValue201ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        create(
+            title,
+            category,
+            level,
+            language,
+            subtitle,
+            author,
+            subcategory,
+            whatYouLearn,
+            requirements,
+            certificateEnabled,
+            accessType,
+            accessDurationDays,
+            enrollmentLimit,
+            deliveryText,
+            slug,
+            description,
+            visibility,
+            capturingOptions,
+        )
+        return captured as? RawResponse<SdkCreateCourseResponseValue201ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [create]. Use this from a `suspend` function or coroutine scope.
+     *
+     * Delegates to the blocking [create] under `withContext(Dispatchers.IO)`, so this is safe to
+     * call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("createSuspend")
+    suspend fun createSuspend(
+        title: String,
+        category: Category? = null,
+        level: SdkCreateCourseRequestApplicationJsonLevel? = null,
+        language: String? = null,
+        subtitle: String? = null,
+        author: String? = null,
+        subcategory: String? = null,
+        whatYouLearn: List<String>? = null,
+        requirements: List<String>? = null,
+        certificateEnabled: Boolean? = null,
+        accessType: SdkCreateCourseRequestApplicationJsonAccessType? = null,
+        accessDurationDays: Long? = null,
+        enrollmentLimit: Long? = null,
+        deliveryText: String? = null,
+        slug: String? = null,
+        description: String? = null,
+        visibility: CatalogVisibility? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkCreateCourseResponseValue201ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            create(
+                title,
+                category,
+                level,
+                language,
+                subtitle,
+                author,
+                subcategory,
+                whatYouLearn,
+                requirements,
+                certificateEnabled,
+                accessType,
+                accessDurationDays,
+                enrollmentLimit,
+                deliveryText,
+                slug,
+                description,
+                visibility,
+                requestOptions,
+            )
+        }
+
+    /**
+     * Coroutine-aware variant of [createWithResponse]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [createWithResponse] under `withContext(Dispatchers.IO)`, so this
+     * is safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("createWithResponseSuspend")
+    suspend fun createWithResponseSuspend(
+        title: String,
+        category: Category? = null,
+        level: SdkCreateCourseRequestApplicationJsonLevel? = null,
+        language: String? = null,
+        subtitle: String? = null,
+        author: String? = null,
+        subcategory: String? = null,
+        whatYouLearn: List<String>? = null,
+        requirements: List<String>? = null,
+        certificateEnabled: Boolean? = null,
+        accessType: SdkCreateCourseRequestApplicationJsonAccessType? = null,
+        accessDurationDays: Long? = null,
+        enrollmentLimit: Long? = null,
+        deliveryText: String? = null,
+        slug: String? = null,
+        description: String? = null,
+        visibility: CatalogVisibility? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkCreateCourseResponseValue201ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            createWithResponse(
+                title,
+                category,
+                level,
+                language,
+                subtitle,
+                author,
+                subcategory,
+                whatYouLearn,
+                requirements,
+                certificateEnabled,
+                accessType,
+                accessDurationDays,
+                enrollmentLimit,
+                deliveryText,
+                slug,
+                description,
+                visibility,
+                requestOptions,
+            )
         }
 
     /**
@@ -333,10 +586,16 @@ class Courses(internal val sellapp: SellApp) {
     /**
      * Update a course
      *
-     * Update course metadata, access configuration, delivery copy, or publication visibility.
-     * Public visibility requires a ready promotional video and at least one published lesson. OAuth
-     * callers use the admin grant and select a store with X-STORE. Current membership and role
-     * permissions apply to every request.
+     * Update a course's title, URL slug, description, details, access rules, delivery message, or
+     * visibility. Only the fields you send change, and PUT behaves exactly like PATCH. Sending the
+     * course's current `visibility` changes nothing; a different `visibility` also publishes a
+     * draft course. `PUBLIC` first checks that the course has a ready promotional video and at
+     * least one published lesson, and otherwise returns `422` on `promo_video` or `curriculum`
+     * without changing anything. Every successful update moves `updated_at` forward, even one that
+     * changes nothing, so retrying with the same `expected_updated_at` after a success returns
+     * `422`: retrieve the course again first. Requires the `listing` API-key ability and the
+     * `listing` permission in your team role. OAuth callers use the admin grant and select a store
+     * with X-STORE. Current membership and role permissions apply to every request.
      *
      * @param course The course path parameter.
      * @param category the category of the request.
@@ -353,7 +612,17 @@ class Courses(internal val sellapp: SellApp) {
      * @param enrollmentLimit the enrollment limit of the request.
      * @param deliveryText the delivery text of the request.
      * @param visibility the visibility of the request.
-     * @param expectedUpdatedAt the expected updated at of the request.
+     * @param expectedUpdatedAt The `updated_at` you last read. If the course changed since, the
+     *   request returns `422` on `expected_updated_at` and changes nothing. It is checked even when
+     *   the request changes nothing else.
+     * @param title The course name customers see.
+     * @param slug The last part of the course's storefront URL: lowercase letters and numbers in
+     *   words joined by single hyphens, such as `design-foundations`. It must be unused by every
+     *   other product in the store, or the request returns `422` on `slug`.
+     * @param description The course description as HTML, at least 5 characters long and at most
+     *   2000 characters of visible text. `null` keeps the current description. To clear the
+     *   description of a draft course, send an empty element such as `<p></p>`; a published course
+     *   must keep one, so clearing it returns `422` on `description`.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkReplaceCourseResponseValue200ApplicationJson
      */
@@ -361,7 +630,7 @@ class Courses(internal val sellapp: SellApp) {
     fun replace(
         course: String,
         category: Category? = null,
-        level: SdkUpdateCourseRequestApplicationJsonLevel? = null,
+        level: SdkCreateCourseRequestApplicationJsonLevel? = null,
         language: String? = null,
         subtitle: String? = null,
         author: String? = null,
@@ -369,12 +638,15 @@ class Courses(internal val sellapp: SellApp) {
         whatYouLearn: List<String>? = null,
         requirements: List<String>? = null,
         certificateEnabled: Boolean? = null,
-        accessType: SdkUpdateCourseRequestApplicationJsonAccessType? = null,
+        accessType: SdkCreateCourseRequestApplicationJsonAccessType? = null,
         accessDurationDays: Long? = null,
         enrollmentLimit: Long? = null,
         deliveryText: String? = null,
         visibility: CatalogVisibility? = null,
         expectedUpdatedAt: OffsetDateTime? = null,
+        title: String? = null,
+        slug: String? = null,
+        description: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkReplaceCourseResponseValue200ApplicationJson {
         val body =
@@ -394,6 +666,9 @@ class Courses(internal val sellapp: SellApp) {
                 "delivery_text" to deliveryText,
                 "visibility" to visibility,
                 "expected_updated_at" to expectedUpdatedAt,
+                "title" to title,
+                "slug" to slug,
+                "description" to description,
             )
         val config =
             RequestConfig(
@@ -419,7 +694,7 @@ class Courses(internal val sellapp: SellApp) {
     fun replaceWithResponse(
         course: String,
         category: Category? = null,
-        level: SdkUpdateCourseRequestApplicationJsonLevel? = null,
+        level: SdkCreateCourseRequestApplicationJsonLevel? = null,
         language: String? = null,
         subtitle: String? = null,
         author: String? = null,
@@ -427,12 +702,15 @@ class Courses(internal val sellapp: SellApp) {
         whatYouLearn: List<String>? = null,
         requirements: List<String>? = null,
         certificateEnabled: Boolean? = null,
-        accessType: SdkUpdateCourseRequestApplicationJsonAccessType? = null,
+        accessType: SdkCreateCourseRequestApplicationJsonAccessType? = null,
         accessDurationDays: Long? = null,
         enrollmentLimit: Long? = null,
         deliveryText: String? = null,
         visibility: CatalogVisibility? = null,
         expectedUpdatedAt: OffsetDateTime? = null,
+        title: String? = null,
+        slug: String? = null,
+        description: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkReplaceCourseResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -457,6 +735,9 @@ class Courses(internal val sellapp: SellApp) {
             deliveryText,
             visibility,
             expectedUpdatedAt,
+            title,
+            slug,
+            description,
             capturingOptions,
         )
         return captured as? RawResponse<SdkReplaceCourseResponseValue200ApplicationJson>
@@ -473,7 +754,7 @@ class Courses(internal val sellapp: SellApp) {
     suspend fun replaceSuspend(
         course: String,
         category: Category? = null,
-        level: SdkUpdateCourseRequestApplicationJsonLevel? = null,
+        level: SdkCreateCourseRequestApplicationJsonLevel? = null,
         language: String? = null,
         subtitle: String? = null,
         author: String? = null,
@@ -481,12 +762,15 @@ class Courses(internal val sellapp: SellApp) {
         whatYouLearn: List<String>? = null,
         requirements: List<String>? = null,
         certificateEnabled: Boolean? = null,
-        accessType: SdkUpdateCourseRequestApplicationJsonAccessType? = null,
+        accessType: SdkCreateCourseRequestApplicationJsonAccessType? = null,
         accessDurationDays: Long? = null,
         enrollmentLimit: Long? = null,
         deliveryText: String? = null,
         visibility: CatalogVisibility? = null,
         expectedUpdatedAt: OffsetDateTime? = null,
+        title: String? = null,
+        slug: String? = null,
+        description: String? = null,
         requestOptions: RequestOptions? = null,
     ): SdkReplaceCourseResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -507,6 +791,9 @@ class Courses(internal val sellapp: SellApp) {
                 deliveryText,
                 visibility,
                 expectedUpdatedAt,
+                title,
+                slug,
+                description,
                 requestOptions,
             )
         }
@@ -522,7 +809,7 @@ class Courses(internal val sellapp: SellApp) {
     suspend fun replaceWithResponseSuspend(
         course: String,
         category: Category? = null,
-        level: SdkUpdateCourseRequestApplicationJsonLevel? = null,
+        level: SdkCreateCourseRequestApplicationJsonLevel? = null,
         language: String? = null,
         subtitle: String? = null,
         author: String? = null,
@@ -530,12 +817,15 @@ class Courses(internal val sellapp: SellApp) {
         whatYouLearn: List<String>? = null,
         requirements: List<String>? = null,
         certificateEnabled: Boolean? = null,
-        accessType: SdkUpdateCourseRequestApplicationJsonAccessType? = null,
+        accessType: SdkCreateCourseRequestApplicationJsonAccessType? = null,
         accessDurationDays: Long? = null,
         enrollmentLimit: Long? = null,
         deliveryText: String? = null,
         visibility: CatalogVisibility? = null,
         expectedUpdatedAt: OffsetDateTime? = null,
+        title: String? = null,
+        slug: String? = null,
+        description: String? = null,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkReplaceCourseResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -556,6 +846,9 @@ class Courses(internal val sellapp: SellApp) {
                 deliveryText,
                 visibility,
                 expectedUpdatedAt,
+                title,
+                slug,
+                description,
                 requestOptions,
             )
         }
@@ -563,10 +856,16 @@ class Courses(internal val sellapp: SellApp) {
     /**
      * Update a course
      *
-     * Update course metadata, access configuration, delivery copy, or publication visibility.
-     * Public visibility requires a ready promotional video and at least one published lesson. OAuth
-     * callers use the admin grant and select a store with X-STORE. Current membership and role
-     * permissions apply to every request.
+     * Update a course's title, URL slug, description, details, access rules, delivery message, or
+     * visibility. Only the fields you send change, and PUT behaves exactly like PATCH. Sending the
+     * course's current `visibility` changes nothing; a different `visibility` also publishes a
+     * draft course. `PUBLIC` first checks that the course has a ready promotional video and at
+     * least one published lesson, and otherwise returns `422` on `promo_video` or `curriculum`
+     * without changing anything. Every successful update moves `updated_at` forward, even one that
+     * changes nothing, so retrying with the same `expected_updated_at` after a success returns
+     * `422`: retrieve the course again first. Requires the `listing` API-key ability and the
+     * `listing` permission in your team role. OAuth callers use the admin grant and select a store
+     * with X-STORE. Current membership and role permissions apply to every request.
      *
      * @param course The course path parameter.
      * @param category the category of the request.
@@ -583,7 +882,17 @@ class Courses(internal val sellapp: SellApp) {
      * @param enrollmentLimit the enrollment limit of the request.
      * @param deliveryText the delivery text of the request.
      * @param visibility the visibility of the request.
-     * @param expectedUpdatedAt the expected updated at of the request.
+     * @param expectedUpdatedAt The `updated_at` you last read. If the course changed since, the
+     *   request returns `422` on `expected_updated_at` and changes nothing. It is checked even when
+     *   the request changes nothing else.
+     * @param title The course name customers see.
+     * @param slug The last part of the course's storefront URL: lowercase letters and numbers in
+     *   words joined by single hyphens, such as `design-foundations`. It must be unused by every
+     *   other product in the store, or the request returns `422` on `slug`.
+     * @param description The course description as HTML, at least 5 characters long and at most
+     *   2000 characters of visible text. `null` keeps the current description. To clear the
+     *   description of a draft course, send an empty element such as `<p></p>`; a published course
+     *   must keep one, so clearing it returns `422` on `description`.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return the SdkUpdateCourseResponseValue200ApplicationJson
      */
@@ -591,7 +900,7 @@ class Courses(internal val sellapp: SellApp) {
     fun update(
         course: String,
         category: PatchField<Category?> = PatchField.Absent,
-        level: PatchField<SdkUpdateCourseRequestApplicationJsonLevel> = PatchField.Absent,
+        level: PatchField<SdkCreateCourseRequestApplicationJsonLevel> = PatchField.Absent,
         language: PatchField<String> = PatchField.Absent,
         subtitle: PatchField<String?> = PatchField.Absent,
         author: PatchField<String?> = PatchField.Absent,
@@ -599,12 +908,15 @@ class Courses(internal val sellapp: SellApp) {
         whatYouLearn: PatchField<List<String>> = PatchField.Absent,
         requirements: PatchField<List<String>> = PatchField.Absent,
         certificateEnabled: PatchField<Boolean> = PatchField.Absent,
-        accessType: PatchField<SdkUpdateCourseRequestApplicationJsonAccessType> = PatchField.Absent,
+        accessType: PatchField<SdkCreateCourseRequestApplicationJsonAccessType> = PatchField.Absent,
         accessDurationDays: PatchField<Long?> = PatchField.Absent,
         enrollmentLimit: PatchField<Long?> = PatchField.Absent,
         deliveryText: PatchField<String?> = PatchField.Absent,
         visibility: PatchField<CatalogVisibility> = PatchField.Absent,
         expectedUpdatedAt: PatchField<OffsetDateTime> = PatchField.Absent,
+        title: PatchField<String> = PatchField.Absent,
+        slug: PatchField<String> = PatchField.Absent,
+        description: PatchField<String?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateCourseResponseValue200ApplicationJson {
         val body =
@@ -624,6 +936,9 @@ class Courses(internal val sellapp: SellApp) {
                 "delivery_text" to deliveryText,
                 "visibility" to visibility,
                 "expected_updated_at" to expectedUpdatedAt,
+                "title" to title,
+                "slug" to slug,
+                "description" to description,
             )
         val config =
             RequestConfig(
@@ -649,7 +964,7 @@ class Courses(internal val sellapp: SellApp) {
     fun updateWithResponse(
         course: String,
         category: PatchField<Category?> = PatchField.Absent,
-        level: PatchField<SdkUpdateCourseRequestApplicationJsonLevel> = PatchField.Absent,
+        level: PatchField<SdkCreateCourseRequestApplicationJsonLevel> = PatchField.Absent,
         language: PatchField<String> = PatchField.Absent,
         subtitle: PatchField<String?> = PatchField.Absent,
         author: PatchField<String?> = PatchField.Absent,
@@ -657,12 +972,15 @@ class Courses(internal val sellapp: SellApp) {
         whatYouLearn: PatchField<List<String>> = PatchField.Absent,
         requirements: PatchField<List<String>> = PatchField.Absent,
         certificateEnabled: PatchField<Boolean> = PatchField.Absent,
-        accessType: PatchField<SdkUpdateCourseRequestApplicationJsonAccessType> = PatchField.Absent,
+        accessType: PatchField<SdkCreateCourseRequestApplicationJsonAccessType> = PatchField.Absent,
         accessDurationDays: PatchField<Long?> = PatchField.Absent,
         enrollmentLimit: PatchField<Long?> = PatchField.Absent,
         deliveryText: PatchField<String?> = PatchField.Absent,
         visibility: PatchField<CatalogVisibility> = PatchField.Absent,
         expectedUpdatedAt: PatchField<OffsetDateTime> = PatchField.Absent,
+        title: PatchField<String> = PatchField.Absent,
+        slug: PatchField<String> = PatchField.Absent,
+        description: PatchField<String?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkUpdateCourseResponseValue200ApplicationJson> {
         var captured: RawResponse<Any?>? = null
@@ -687,6 +1005,9 @@ class Courses(internal val sellapp: SellApp) {
             deliveryText,
             visibility,
             expectedUpdatedAt,
+            title,
+            slug,
+            description,
             capturingOptions,
         )
         return captured as? RawResponse<SdkUpdateCourseResponseValue200ApplicationJson>
@@ -703,7 +1024,7 @@ class Courses(internal val sellapp: SellApp) {
     suspend fun updateSuspend(
         course: String,
         category: PatchField<Category?> = PatchField.Absent,
-        level: PatchField<SdkUpdateCourseRequestApplicationJsonLevel> = PatchField.Absent,
+        level: PatchField<SdkCreateCourseRequestApplicationJsonLevel> = PatchField.Absent,
         language: PatchField<String> = PatchField.Absent,
         subtitle: PatchField<String?> = PatchField.Absent,
         author: PatchField<String?> = PatchField.Absent,
@@ -711,12 +1032,15 @@ class Courses(internal val sellapp: SellApp) {
         whatYouLearn: PatchField<List<String>> = PatchField.Absent,
         requirements: PatchField<List<String>> = PatchField.Absent,
         certificateEnabled: PatchField<Boolean> = PatchField.Absent,
-        accessType: PatchField<SdkUpdateCourseRequestApplicationJsonAccessType> = PatchField.Absent,
+        accessType: PatchField<SdkCreateCourseRequestApplicationJsonAccessType> = PatchField.Absent,
         accessDurationDays: PatchField<Long?> = PatchField.Absent,
         enrollmentLimit: PatchField<Long?> = PatchField.Absent,
         deliveryText: PatchField<String?> = PatchField.Absent,
         visibility: PatchField<CatalogVisibility> = PatchField.Absent,
         expectedUpdatedAt: PatchField<OffsetDateTime> = PatchField.Absent,
+        title: PatchField<String> = PatchField.Absent,
+        slug: PatchField<String> = PatchField.Absent,
+        description: PatchField<String?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): SdkUpdateCourseResponseValue200ApplicationJson =
         sellapp.baseClient.runCancellable {
@@ -737,6 +1061,9 @@ class Courses(internal val sellapp: SellApp) {
                 deliveryText,
                 visibility,
                 expectedUpdatedAt,
+                title,
+                slug,
+                description,
                 requestOptions,
             )
         }
@@ -752,7 +1079,7 @@ class Courses(internal val sellapp: SellApp) {
     suspend fun updateWithResponseSuspend(
         course: String,
         category: PatchField<Category?> = PatchField.Absent,
-        level: PatchField<SdkUpdateCourseRequestApplicationJsonLevel> = PatchField.Absent,
+        level: PatchField<SdkCreateCourseRequestApplicationJsonLevel> = PatchField.Absent,
         language: PatchField<String> = PatchField.Absent,
         subtitle: PatchField<String?> = PatchField.Absent,
         author: PatchField<String?> = PatchField.Absent,
@@ -760,12 +1087,15 @@ class Courses(internal val sellapp: SellApp) {
         whatYouLearn: PatchField<List<String>> = PatchField.Absent,
         requirements: PatchField<List<String>> = PatchField.Absent,
         certificateEnabled: PatchField<Boolean> = PatchField.Absent,
-        accessType: PatchField<SdkUpdateCourseRequestApplicationJsonAccessType> = PatchField.Absent,
+        accessType: PatchField<SdkCreateCourseRequestApplicationJsonAccessType> = PatchField.Absent,
         accessDurationDays: PatchField<Long?> = PatchField.Absent,
         enrollmentLimit: PatchField<Long?> = PatchField.Absent,
         deliveryText: PatchField<String?> = PatchField.Absent,
         visibility: PatchField<CatalogVisibility> = PatchField.Absent,
         expectedUpdatedAt: PatchField<OffsetDateTime> = PatchField.Absent,
+        title: PatchField<String> = PatchField.Absent,
+        slug: PatchField<String> = PatchField.Absent,
+        description: PatchField<String?> = PatchField.Absent,
         requestOptions: RequestOptions? = null,
     ): RawResponse<SdkUpdateCourseResponseValue200ApplicationJson> =
         sellapp.baseClient.runCancellable {
@@ -786,7 +1116,122 @@ class Courses(internal val sellapp: SellApp) {
                 deliveryText,
                 visibility,
                 expectedUpdatedAt,
+                title,
+                slug,
+                description,
                 requestOptions,
             )
+        }
+
+    /**
+     * Retrieve a course student summary
+     *
+     * Summarize who bought your courses in a date range: totals for students, purchases, units, and
+     * orders, plus the top students and the top courses. A purchase counts when it is paid or
+     * completed and was made within the range; refunded and pending purchases do not count. A
+     * student is a customer, or the order email when a purchase has no customer record. The
+     * response contains customer email addresses, so handle it as personal data. Requires the
+     * `invoice` API-key ability and the invoice permission in your team role. OAuth callers use the
+     * admin grant and select a store with X-STORE. Current membership and role permissions apply to
+     * every request.
+     *
+     * @param startDate The first day to include, as `YYYY-MM-DD` in the store's timezone.
+     * @param endDate The last day to include, as `YYYY-MM-DD` in the store's timezone. It must not
+     *   be before `start_date`, and the range can cover at most 366 days; otherwise the request
+     *   returns `422` on `end_date`.
+     * @param courseId Count one course only: the course `id` from `/v2/courses`. Another product, a
+     *   deleted course, or another store's course returns `422` on `course_id`.
+     * @param limit How many rows `students` and `courses` each return: 10 by default, at most 20. A
+     *   larger value returns `422` on `limit`. The `summary` totals always cover everything.
+     * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
+     * @return the SdkGetCourseStudentSummaryResponseValue200ApplicationJson
+     */
+    @JvmOverloads
+    fun getStudentSummary(
+        startDate: String,
+        endDate: String,
+        courseId: Long? = null,
+        limit: Long? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkGetCourseStudentSummaryResponseValue200ApplicationJson {
+        val params = mutableListOf<Pair<String, String>>()
+        params += "start_date" to startDate
+        params += "end_date" to endDate
+        courseId?.let { params += "course_id" to it.toString() }
+        limit?.let { params += "limit" to it.toString() }
+        val config =
+            RequestConfig(
+                method = "GET",
+                path = "/v2/course-students",
+                queryParams = params,
+                requestOptions = requestOptions,
+                responseSchema =
+                    app.sell.sellapp.models
+                        .SdkGetCourseStudentSummaryResponseValue200ApplicationJson
+                        .runtimeSchema,
+                operationId = "getCourseStudentSummary",
+                supportsIdempotency = false,
+            )
+        return sellapp.baseClient.request(
+            config,
+            SdkGetCourseStudentSummaryResponseValue200ApplicationJson::class.java,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getStudentSummaryWithResponse(
+        startDate: String,
+        endDate: String,
+        courseId: Long? = null,
+        limit: Long? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkGetCourseStudentSummaryResponseValue200ApplicationJson> {
+        var captured: RawResponse<Any?>? = null
+        val capturingOptions =
+            (requestOptions?.copy() ?: RequestOptions()).also { options ->
+                options.responseCapture = { response -> captured = response }
+            }
+        getStudentSummary(startDate, endDate, courseId, limit, capturingOptions)
+        return captured as? RawResponse<SdkGetCourseStudentSummaryResponseValue200ApplicationJson>
+            ?: error("Response metadata was not captured")
+    }
+
+    /**
+     * Coroutine-aware variant of [getStudentSummary]. Use this from a `suspend` function or
+     * coroutine scope.
+     *
+     * Delegates to the blocking [getStudentSummary] under `withContext(Dispatchers.IO)`, so this is
+     * safe to call from any coroutine dispatcher (including `Dispatchers.Main`).
+     */
+    @JvmName("getStudentSummarySuspend")
+    suspend fun getStudentSummarySuspend(
+        startDate: String,
+        endDate: String,
+        courseId: Long? = null,
+        limit: Long? = null,
+        requestOptions: RequestOptions? = null,
+    ): SdkGetCourseStudentSummaryResponseValue200ApplicationJson =
+        sellapp.baseClient.runCancellable {
+            getStudentSummary(startDate, endDate, courseId, limit, requestOptions)
+        }
+
+    /**
+     * Coroutine-aware variant of [getStudentSummaryWithResponse]. Use this from a `suspend`
+     * function or coroutine scope.
+     *
+     * Delegates to the blocking [getStudentSummaryWithResponse] under
+     * `withContext(Dispatchers.IO)`, so this is safe to call from any coroutine dispatcher
+     * (including `Dispatchers.Main`).
+     */
+    @JvmName("getStudentSummaryWithResponseSuspend")
+    suspend fun getStudentSummaryWithResponseSuspend(
+        startDate: String,
+        endDate: String,
+        courseId: Long? = null,
+        limit: Long? = null,
+        requestOptions: RequestOptions? = null,
+    ): RawResponse<SdkGetCourseStudentSummaryResponseValue200ApplicationJson> =
+        sellapp.baseClient.runCancellable {
+            getStudentSummaryWithResponse(startDate, endDate, courseId, limit, requestOptions)
         }
 }

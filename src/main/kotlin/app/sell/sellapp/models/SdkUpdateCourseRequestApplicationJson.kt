@@ -5,8 +5,8 @@ package app.sell.sellapp.models
 import app.sell.sellapp.common.json.runtimeSchema
 import app.sell.sellapp.types.CatalogVisibility
 import app.sell.sellapp.types.Category
-import app.sell.sellapp.types.SdkUpdateCourseRequestApplicationJsonAccessType
-import app.sell.sellapp.types.SdkUpdateCourseRequestApplicationJsonLevel
+import app.sell.sellapp.types.SdkCreateCourseRequestApplicationJsonAccessType
+import app.sell.sellapp.types.SdkCreateCourseRequestApplicationJsonLevel
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -22,7 +22,7 @@ data class SdkUpdateCourseRequestApplicationJson(
     /** The level. */
     @JsonProperty("level")
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
-    val level: SdkUpdateCourseRequestApplicationJsonLevel? = null,
+    val level: SdkCreateCourseRequestApplicationJsonLevel? = null,
 
     /** The language. */
     @JsonProperty("language")
@@ -56,7 +56,7 @@ data class SdkUpdateCourseRequestApplicationJson(
     /** The access type. */
     @JsonProperty("access_type")
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
-    val accessType: SdkUpdateCourseRequestApplicationJsonAccessType? = null,
+    val accessType: SdkCreateCourseRequestApplicationJsonAccessType? = null,
 
     /** Required when access_type is limited; cleared otherwise. */
     @JsonProperty("access_duration_days") val accessDurationDays: Long? = null,
@@ -72,10 +72,32 @@ data class SdkUpdateCourseRequestApplicationJson(
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
     val visibility: CatalogVisibility? = null,
 
-    /** The expected updated at. */
+    /**
+     * The `updated_at` you last read. If the course changed since, the request returns `422` on
+     * `expected_updated_at` and changes nothing. It is checked even when the request changes
+     * nothing else.
+     */
     @JsonProperty("expected_updated_at")
     @get:JsonInclude(JsonInclude.Include.NON_NULL)
     val expectedUpdatedAt: OffsetDateTime? = null,
+
+    /** The course name customers see. */
+    @JsonProperty("title") @get:JsonInclude(JsonInclude.Include.NON_NULL) val title: String? = null,
+
+    /**
+     * The last part of the course's storefront URL: lowercase letters and numbers in words joined
+     * by single hyphens, such as `design-foundations`. It must be unused by every other product in
+     * the store, or the request returns `422` on `slug`.
+     */
+    @JsonProperty("slug") @get:JsonInclude(JsonInclude.Include.NON_NULL) val slug: String? = null,
+
+    /**
+     * The course description as HTML, at least 5 characters long and at most 2000 characters of
+     * visible text. `null` keeps the current description. To clear the description of a draft
+     * course, send an empty element such as `<p></p>`; a published course must keep one, so
+     * clearing it returns `422` on `description`.
+     */
+    @JsonProperty("description") val description: String? = null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -88,7 +110,7 @@ data class SdkUpdateCourseRequestApplicationJson(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"SdkUpdateCourseRequestApplicationJson\",\"properties\":{\"category\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"enum\",\"values\":[\"development\",\"business\",\"marketing\",\"design\",\"finance\",\"it-software\",\"personal-development\",\"productivity\",\"other\",\"null\"]}},\"level\":{\"kind\":\"enum\",\"values\":[\"all_levels\",\"beginner\",\"intermediate\",\"advanced\"]},\"language\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}},\"subtitle\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":120}}},\"author\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":120}}},\"subcategory\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}},\"what_you_learn\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}},\"constraints\":{\"maxItems\":50}},\"requirements\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}},\"constraints\":{\"maxItems\":50}},\"certificate_enabled\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"access_type\":{\"kind\":\"enum\",\"values\":[\"lifetime\",\"limited\"]},\"access_duration_days\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":1,\"maximum\":3650}}},\"enrollment_limit\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":1}}},\"delivery_text\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":65535}}},\"visibility\":{\"kind\":\"enum\",\"values\":[\"PUBLIC\",\"ON_HOLD\",\"HIDDEN\",\"PRIVATE\"]},\"expected_updated_at\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"}},\"required\":[],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"SdkUpdateCourseRequestApplicationJson\",\"properties\":{\"category\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"enum\",\"values\":[\"development\",\"business\",\"marketing\",\"design\",\"finance\",\"it-software\",\"personal-development\",\"productivity\",\"other\",\"null\"]}},\"level\":{\"kind\":\"enum\",\"values\":[\"all_levels\",\"beginner\",\"intermediate\",\"advanced\"]},\"language\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}},\"subtitle\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":120}}},\"author\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":120}}},\"subcategory\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}}},\"what_you_learn\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}},\"constraints\":{\"maxItems\":50}},\"requirements\":{\"kind\":\"array\",\"items\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255}},\"constraints\":{\"maxItems\":50}},\"certificate_enabled\":{\"kind\":\"primitive\",\"type\":\"boolean\"},\"access_type\":{\"kind\":\"enum\",\"values\":[\"lifetime\",\"limited\"]},\"access_duration_days\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":1,\"maximum\":3650}}},\"enrollment_limit\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":1}}},\"delivery_text\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":65535}}},\"visibility\":{\"kind\":\"enum\",\"values\":[\"PUBLIC\",\"ON_HOLD\",\"HIDDEN\",\"PRIVATE\"]},\"expected_updated_at\":{\"kind\":\"primitive\",\"type\":\"string\",\"format\":\"date-time\"},\"title\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"minLength\":1,\"maxLength\":255}},\"slug\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":255,\"pattern\":\"^[a-z0-9]+(?:-[a-z0-9]+)*\$\"}},\"description\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"minLength\":5}}}},\"required\":[],\"additionalProperties\":true}"
             )
     }
 }

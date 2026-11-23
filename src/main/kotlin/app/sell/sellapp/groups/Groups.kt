@@ -505,10 +505,12 @@ class Groups(internal val sellapp: SellApp) {
     /**
      * Search groups
      *
-     * Search groups using JSON body filters, search terms, includes, and sort instructions. OAuth
-     * callers use the admin grant and select a store with X-STORE. Current membership and role
-     * permissions apply to every request.
+     * Search groups using JSON body filters, search terms, includes, and sort instructions, 15 per
+     * page by default. OAuth callers use the admin grant and select a store with X-STORE. Current
+     * membership and role permissions apply to every request.
      *
+     * @param limit Number of items to return per page.
+     * @param page Page number to return.
      * @param filters the filters of the request.
      * @param sort the sort of the request.
      * @param search the search of the request.
@@ -518,6 +520,8 @@ class Groups(internal val sellapp: SellApp) {
      */
     @JvmOverloads
     fun search(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<SearchGroupsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchGroupsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchGroupsRequestApplicationJsonPropertySearch? = null,
@@ -538,11 +542,16 @@ class Groups(internal val sellapp: SellApp) {
                     .runtimeSchema,
             before = null,
             after = null,
-        ) {}
+        ) {
+            limit?.let { add("limit" to it.toString()) }
+            page?.let { add("page" to it.toString()) }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun searchWithResponse(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<SearchGroupsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchGroupsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchGroupsRequestApplicationJsonPropertySearch? = null,
@@ -554,7 +563,7 @@ class Groups(internal val sellapp: SellApp) {
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        search(filters, sort, search, includes, capturingOptions)
+        search(limit, page, filters, sort, search, includes, capturingOptions)
         return captured
             as? RawResponse<Page<SearchGroupsResponseValue200ApplicationJsonPropertyDataItem>>
             ?: error("Response metadata was not captured")
@@ -568,6 +577,8 @@ class Groups(internal val sellapp: SellApp) {
      */
     @JvmName("searchSuspend")
     suspend fun searchSuspend(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<SearchGroupsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchGroupsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchGroupsRequestApplicationJsonPropertySearch? = null,
@@ -575,7 +586,7 @@ class Groups(internal val sellapp: SellApp) {
         requestOptions: RequestOptions? = null,
     ): Page<SearchGroupsResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            search(filters, sort, search, includes, requestOptions)
+            search(limit, page, filters, sort, search, includes, requestOptions)
         }
 
     /**
@@ -587,6 +598,8 @@ class Groups(internal val sellapp: SellApp) {
      */
     @JvmName("searchWithResponseSuspend")
     suspend fun searchWithResponseSuspend(
+        limit: Long? = null,
+        page: Long? = null,
         filters: List<SearchGroupsRequestApplicationJsonPropertyFiltersItem>? = null,
         sort: List<SearchGroupsRequestApplicationJsonPropertySortItem>? = null,
         search: SearchGroupsRequestApplicationJsonPropertySearch? = null,
@@ -594,6 +607,6 @@ class Groups(internal val sellapp: SellApp) {
         requestOptions: RequestOptions? = null,
     ): RawResponse<Page<SearchGroupsResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            searchWithResponse(filters, sort, search, includes, requestOptions)
+            searchWithResponse(limit, page, filters, sort, search, includes, requestOptions)
         }
 }

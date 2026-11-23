@@ -3,7 +3,7 @@
 package app.sell.sellapp.models
 
 import app.sell.sellapp.common.json.runtimeSchema
-import app.sell.sellapp.types.ReplaceAffiliateProgramConfigurationRequestApplicationJsonPropertySettingsPayoutMethods
+import app.sell.sellapp.types.AffiliatesPayoutMethod
 import app.sell.sellapp.types.ReplaceAffiliateProgramConfigurationRequestApplicationJsonPropertySettingsReferrerType
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -44,11 +44,7 @@ data class GetAffiliateProgramConfigurationResponseValue200ApplicationJsonProper
      * The payout methods affiliates may choose from. Empty until the store configures them;
      * configuration writes must include at least one.
      */
-    @JsonProperty("payout_methods")
-    val payoutMethods:
-        List<
-            ReplaceAffiliateProgramConfigurationRequestApplicationJsonPropertySettingsPayoutMethods
-        >,
+    @JsonProperty("payout_methods") val payoutMethods: List<AffiliatesPayoutMethod>,
 
     /** The enable hub. */
     @JsonProperty("enable_hub") val enableHub: Boolean,

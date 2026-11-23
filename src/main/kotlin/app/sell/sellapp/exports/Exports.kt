@@ -30,18 +30,20 @@ class Exports(internal val sellapp: SellApp) {
     /**
      * List exports
      *
-     * List permitted exports, 50 per page. OAuth callers use the admin grant and select a store
-     * with X-STORE. Current membership and role permissions apply to every request. Sales, tax and
-     * customer reports require invoice store permission. Affiliate payout reports require affiliate
-     * and affiliate:payout permissions. The category selects the applicable permission checks;
-     * listing returns only authorized categories.
+     * List permitted exports, newest first, 50 per page. OAuth callers use the admin grant and
+     * select a store with X-STORE. Current membership and role permissions apply to every request.
+     * Sales, tax and customer reports require invoice store permission. Affiliate payout reports
+     * require affiliate and affiliate:payout permissions. The category selects the applicable
+     * permission checks; listing returns only authorized categories.
      *
+     * @param page Page number, starting at 1.
      * @param requestOptions per-request overrides (idempotency key, API key, headers, timeout)
      * @return a [app.sell.sellapp.common.http.Page] of results
      */
     @JvmOverloads
     fun list(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        requestOptions: RequestOptions? = null,
     ): Page<ListExportsResponseValue200ApplicationJsonPropertyDataItem> {
         val itemType =
             object : TypeReference<ListExportsResponseValue200ApplicationJsonPropertyDataItem>() {}
@@ -57,19 +59,22 @@ class Exports(internal val sellapp: SellApp) {
                     .runtimeSchema,
             before = null,
             after = null,
-        ) {}
+        ) {
+            page?.let { add("page" to it.toString()) }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun listWithResponse(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        requestOptions: RequestOptions? = null,
     ): RawResponse<Page<ListExportsResponseValue200ApplicationJsonPropertyDataItem>> {
         var captured: RawResponse<Any?>? = null
         val capturingOptions =
             (requestOptions?.copy() ?: RequestOptions()).also { options ->
                 options.responseCapture = { response -> captured = response }
             }
-        list(capturingOptions)
+        list(page, capturingOptions)
         return captured
             as? RawResponse<Page<ListExportsResponseValue200ApplicationJsonPropertyDataItem>>
             ?: error("Response metadata was not captured")
@@ -83,10 +88,11 @@ class Exports(internal val sellapp: SellApp) {
      */
     @JvmName("listSuspend")
     suspend fun listSuspend(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        requestOptions: RequestOptions? = null,
     ): Page<ListExportsResponseValue200ApplicationJsonPropertyDataItem> =
         sellapp.baseClient.runCancellable {
-            list(requestOptions)
+            list(page, requestOptions)
         }
 
     /**
@@ -98,10 +104,11 @@ class Exports(internal val sellapp: SellApp) {
      */
     @JvmName("listWithResponseSuspend")
     suspend fun listWithResponseSuspend(
-        requestOptions: RequestOptions? = null
+        page: Long? = null,
+        requestOptions: RequestOptions? = null,
     ): RawResponse<Page<ListExportsResponseValue200ApplicationJsonPropertyDataItem>> =
         sellapp.baseClient.runCancellable {
-            listWithResponse(requestOptions)
+            listWithResponse(page, requestOptions)
         }
 
     /**

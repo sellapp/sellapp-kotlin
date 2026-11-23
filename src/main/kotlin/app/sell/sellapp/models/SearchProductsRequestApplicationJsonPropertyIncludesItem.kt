@@ -2,6 +2,29 @@
 
 package app.sell.sellapp.models
 
-/** Alias for [SearchAddOnsRequestApplicationJsonPropertyIncludesItem]. */
-typealias SearchProductsRequestApplicationJsonPropertyIncludesItem =
-    SearchAddOnsRequestApplicationJsonPropertyIncludesItem
+import app.sell.sellapp.common.json.runtimeSchema
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.JsonNode
+
+/** SearchProductsRequestApplicationJsonPropertyIncludesItem model. */
+data class SearchProductsRequestApplicationJsonPropertyIncludesItem(
+    /** Always `"variants"`. */
+    @JsonProperty("relation") val relation: String = "variants"
+) {
+    /** Additive response fields retained verbatim for forward compatibility. */
+    @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
+
+    @JsonAnySetter
+    fun setAdditionalProperty(name: String, value: JsonNode) {
+        additionalProperties[name] = value
+    }
+
+    companion object {
+        internal val runtimeSchema =
+            runtimeSchema(
+                "{\"kind\":\"object\",\"modelName\":\"SearchProductsRequestApplicationJsonPropertyIncludesItem\",\"properties\":{\"relation\":{\"kind\":\"literal\",\"value\":\"variants\"}},\"required\":[\"relation\"],\"additionalProperties\":true}"
+            )
+    }
+}

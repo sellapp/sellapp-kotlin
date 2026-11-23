@@ -2,6 +2,6 @@
 
 package app.sell.sellapp.types
 
-/** Alias for [SdkUpdateCourseRequestApplicationJsonAccessType]. */
+/** Alias for [SdkCreateCourseRequestApplicationJsonAccessType]. */
 typealias ReorderCourseSectionsResponseValue200ApplicationJsonPropertyDataAccessType =
-    SdkUpdateCourseRequestApplicationJsonAccessType
+    SdkCreateCourseRequestApplicationJsonAccessType

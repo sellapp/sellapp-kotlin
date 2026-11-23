@@ -11,11 +11,22 @@ import com.fasterxml.jackson.databind.JsonNode
 /** SdkCreateOrderRefundRequestApplicationJson model. */
 data class SdkCreateOrderRefundRequestApplicationJson(
     /**
-     * Decimal major-unit amount in the order currency, positive and no greater than remaining
-     * balance. Precision follows that currency. Omission/null/empty requests the full remaining
-     * balance.
+     * Decimal major-unit amount in the order's `totals.refund_currency`, positive and no greater
+     * than remaining balance. Precision follows that currency. Omission/null/empty requests the
+     * full remaining balance.
      */
-    @JsonProperty("amount") val amount: String? = null
+    @JsonProperty("amount") val amount: String? = null,
+
+    /**
+     * The refunded total you expect, in integer minor units of the order's
+     * `totals.refund_currency`, which can differ from the order currency: `500` means $5.00 in USD.
+     * Read it from `totals.refunded_total_cents` on the order and send it unchanged; it is `0`
+     * before the first refund. After a refund, `data.order.totals.refunded_total_cents` in the
+     * response is the value to send with the next one. With this field, the refund goes out only
+     * while the refunded total still equals it and no other refund on the order is pending. Omit it
+     * or send null to refund without the check.
+     */
+    @JsonProperty("expected_refunded_total_cents") val expectedRefundedTotalCents: Long? = null,
 ) {
     /** Additive response fields retained verbatim for forward compatibility. */
     @get:JsonAnyGetter val additionalProperties: MutableMap<String, JsonNode> = linkedMapOf()
@@ -28,7 +39,7 @@ data class SdkCreateOrderRefundRequestApplicationJson(
     companion object {
         internal val runtimeSchema =
             runtimeSchema(
-                "{\"kind\":\"object\",\"modelName\":\"SdkCreateOrderRefundRequestApplicationJson\",\"properties\":{\"amount\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":32}}}},\"required\":[],\"additionalProperties\":true}"
+                "{\"kind\":\"object\",\"modelName\":\"SdkCreateOrderRefundRequestApplicationJson\",\"properties\":{\"amount\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"string\",\"constraints\":{\"maxLength\":32}}},\"expected_refunded_total_cents\":{\"kind\":\"nullable\",\"inner\":{\"kind\":\"primitive\",\"type\":\"integer\",\"constraints\":{\"minimum\":0}}}},\"required\":[],\"additionalProperties\":true}"
             )
     }
 }
