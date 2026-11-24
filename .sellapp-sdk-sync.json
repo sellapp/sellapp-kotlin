@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "language": "kotlin",
   "repository": "sellapp/sellapp-kotlin",
-  "sourceSha": "77cf567815f22f4c07cf6b707ab25d4ca74877af",
-  "specSha256": "588138cc0421d9c2f8b7382d2924ce51982635c344b9e57f6f46b68e18ea4d69",
+  "sourceSha": "47e5b156f89777b62ae90a33cac16756b9830558",
+  "specSha256": "2319bc01512943c10a5788a130a1d189fbb2b14d76b0142e62a47b759c391662",
   "runId": "0",
   "runAttempt": "1",
-  "treeDigest": "965dcd57102a2fa7eb27fc9773a4d81907a2bc889ee34beaf472b9db995748ef",
-  "contentDigest": "9d6ad6b8ecde5c143c5d79fec40883cf7050cc635379e0fbc87fb7246c6c903d",
+  "treeDigest": "986c110fb8cc2fe3f8b56c6cd155939c73152a51f27b080e2149b57fbfc9efda",
+  "contentDigest": "e4f3d13375f404fabf382316f9f4a2ef07936f97e6e987108801c1e69f320d13",
   "files": [
     {
       "path": ".github/scripts/native-ci.mjs",
@@ -47,12 +47,12 @@
     {
       "path": "README.md",
       "mode": "100644",
-      "sha256": "2d88ccf7a63dd91be084dd6cae3211836ca9947f94b94acde3f39d0b321aacbe"
+      "sha256": "6cffecf00dc28920d2825017fec25b06b27c53b7f4627da9579e4f4d058bf44d"
     },
     {
       "path": "build.gradle.kts",
       "mode": "100644",
-      "sha256": "87e4acedf7984db5e3fa7c5490518ba27aa49d86ccef02af87d1a2135103997b"
+      "sha256": "85e34cef6fd3bf9958a602acd24dea94ee854b6806ed8dffe7e16bb9a6dc8e41"
     },
     {
       "path": "docs/methods.md",
@@ -62,7 +62,7 @@
     {
       "path": "docs/migration.md",
       "mode": "100644",
-      "sha256": "93cb5f3632ba41e91cbef0eca56536cabd6d525e748dc9aac4e736502807b09e"
+      "sha256": "2a2c9726edcf4a78185eac87a67824fed8e50054d5c67c18bd1d44255cb49c8f"
     },
     {
       "path": "docs/operation-examples.json",
@@ -582,12 +582,12 @@
     {
       "path": "examples/build.gradle.kts",
       "mode": "100644",
-      "sha256": "5da778619b0b1e0ecec5cab6999c826e22fa82cd473d0076203723fdfa5c9dfc"
+      "sha256": "7e71ddb4d46413f2be29a69720569c8eea080e7f7b33a7cefea7dda33193b177"
     },
     {
       "path": "examples/check-package.mjs",
       "mode": "100644",
-      "sha256": "d19eb0199d483c8188b26cce69b9b340b27d8880c935b88d341e3c1a7064d4d0"
+      "sha256": "ebc4849d393abaeee34f32e127072939f5a37d1e12792b53818b6e62d8680234"
     },
     {
       "path": "examples/gradle.properties",
@@ -622,12 +622,12 @@
     {
       "path": "generation-manifest.json",
       "mode": "100644",
-      "sha256": "4016c464a55e272e610f4f6d595ef9455bcc3c38679b18f19a78767c2d7593bf"
+      "sha256": "e6ac7b496e7c91b8d7decb63c4f4d81246428c28530850316d4867b9116fd3a4"
     },
     {
       "path": "gradle.properties",
       "mode": "100644",
-      "sha256": "144100e5ffe4fb1ac4937a1feaf13a508dc0d6f99941edefe335c6826794a687"
+      "sha256": "538f46a91f869500eefd482fe7c70a69e854ba8fb544848518e976f179ce87e3"
     },
     {
       "path": "gradle/wrapper/gradle-wrapper.properties",
@@ -747,7 +747,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/common/http/Runtime.kt",
       "mode": "100644",
-      "sha256": "e3eeb2f179dc0d84e76a25f9be2abc2f9f3d068685c491a97861de599737ac87"
+      "sha256": "25c312aaaeb388a9c012e251476c583e1626d92de551ce3ef419f90e891b4776"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/common/json/ObjectMapperFactory.kt",
@@ -1172,7 +1172,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/BatchCreateProductsResponseValue200ApplicationJsonPropertyDataItem.kt",
       "mode": "100644",
-      "sha256": "1b938722894182e59639ca5beaa2d264d7f15e8e19e72d82ecdde09340f7093c"
+      "sha256": "d4f9855e17cddea4b5cfe248eaaee0b1a7d2ffa3988c73b2026cb57471328105"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/BatchCreateProductsResponseValue200ApplicationJsonPropertyDataItemPropertyAdditionalInformationItem.kt",
@@ -1202,7 +1202,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/BatchCreateProductsResponseValue201ApplicationJsonPropertyDataItem.kt",
       "mode": "100644",
-      "sha256": "b8e0e8608c59e161793fceca2f8b75006c5415007452d040345f31526df72f2c"
+      "sha256": "30246d94ec63670bb93baaf595e5a3b4c57fbe2a7fb0da9df1e63341b4f3542f"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/BatchCreateProductsResponseValue201ApplicationJsonPropertyDataItemPropertyAdditionalInformationItem.kt",
@@ -1337,7 +1337,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/BatchDeleteProductsResponseValue200ApplicationJsonPropertyDataItem.kt",
       "mode": "100644",
-      "sha256": "c76270d24575006d3a225639a62dff7bf633e939718033fd4d55f0871507c613"
+      "sha256": "92cda23ea0048cffd869be37c1d894ab58101ad147ea9f726b1b94f60fb155c9"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/BatchDeleteProductsResponseValue200ApplicationJsonPropertyDataItemPropertyAdditionalInformationItem.kt",
@@ -1547,7 +1547,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/BatchUpdateProductsResponseValue200ApplicationJsonPropertyDataItem.kt",
       "mode": "100644",
-      "sha256": "17211143344b7a0659fa3e89994f12e7322253e9dd4b227bc51ba5e12c5c3bdc"
+      "sha256": "9274f42878d77065576916e04fe9558f522a7cf52c3435266a437b4c2a797672"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/BatchUpdateProductsResponseValue200ApplicationJsonPropertyDataItemPropertyAdditionalInformationItem.kt",
@@ -1857,7 +1857,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/CreateBookingProductResponseValue201ApplicationJsonPropertyData.kt",
       "mode": "100644",
-      "sha256": "c0a08681e5bb851df26a13f113a0f1b0bfffe955bca5b9215b93c1739e597c10"
+      "sha256": "95d06e1ded302bdffe8e0a0d4e7f62f1adab39458de01b492bdc7829dfedb2cd"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/CreateBookingProductResponseValue201ApplicationJsonPropertyDataPropertyAdditionalInformationItem.kt",
@@ -2967,7 +2967,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/CreateProductResponseValue201ApplicationJsonPropertyData.kt",
       "mode": "100644",
-      "sha256": "ccde63c5eb3b8238d17b843c8ec3caa9030c3b2812854fa38a3c10a8978a63b9"
+      "sha256": "dfe2d06a2c626ce9fc7d04df3373a637ecb08dbf3ae0d8ae0410478f76d03b7e"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/CreateProductResponseValue201ApplicationJsonPropertyDataPropertyAdditionalInformationItem.kt",
@@ -3522,7 +3522,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/DeleteProductResponseValue200ApplicationJsonPropertyData.kt",
       "mode": "100644",
-      "sha256": "5720507207238b0b20825966464b125ca213f10fcb0c15b84380106354704486"
+      "sha256": "7129a8f5561a3953e03de9a6dbc0f828b3bf2b2d7ab16ea12a4e27b2e44c6cfa"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/DeleteProductResponseValue200ApplicationJsonPropertyDataPropertyAdditionalInformationItem.kt",
@@ -3797,7 +3797,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/DuplicateProductResponseValue201ApplicationJsonPropertyData.kt",
       "mode": "100644",
-      "sha256": "24f9f0cfe7312b537bb7eeb89d4961b58ca3e72c5e7bc152f6642947101d537f"
+      "sha256": "15058051ab626a5951c5e722693ba5657a6f80a734d2022881661841f5afd0b2"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/DuplicateProductResponseValue201ApplicationJsonPropertyDataPropertyAdditionalInformationItem.kt",
@@ -4797,7 +4797,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/GetProductResponseValue200ApplicationJsonPropertyData.kt",
       "mode": "100644",
-      "sha256": "3548899bb4bb76444049823db3f7e4e2460b39407903c99448a17acbd83f8d72"
+      "sha256": "6c3d206af7f1abdcbc0ac1584de350229986725ecc8bceb1cefd76b9546d8340"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/GetProductResponseValue200ApplicationJsonPropertyDataPropertyAdditionalInformationItem.kt",
@@ -6397,7 +6397,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/ListProductsResponseValue200ApplicationJsonPropertyDataItem.kt",
       "mode": "100644",
-      "sha256": "3f184493fe939a6fefb94ca8802470ecf040b6c99d6bbe25bf96c45286b5337c"
+      "sha256": "66772a5c1a9b984d8bb7a1331af63e07630679cb38a8d23add259dcb47c8a013"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/ListProductsResponseValue200ApplicationJsonPropertyDataItemPropertyAdditionalInformationItem.kt",
@@ -6867,7 +6867,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/MoveProductResponseValue200ApplicationJsonPropertyData.kt",
       "mode": "100644",
-      "sha256": "e331a5277c8b1667e8aae543d755534bbd30016cb76e68a54296e0c8b0479538"
+      "sha256": "9fa0be6c55acfc4a824d29152922a4867d3186c535880d01e533272ac988055c"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/MoveProductResponseValue200ApplicationJsonPropertyDataPropertyAdditionalInformationItem.kt",
@@ -7052,7 +7052,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/PublishProductResponseValue200ApplicationJsonPropertyData.kt",
       "mode": "100644",
-      "sha256": "130438126da9b07fec4c631b092800aa18519d7fd47906381ac09ee6ca3979fd"
+      "sha256": "7d5dbd81dcbabc629b838d0dad1b168942b021b89265382c3f9b01756c7ad798"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/PublishProductResponseValue200ApplicationJsonPropertyDataPropertyAdditionalInformationItem.kt",
@@ -7972,7 +7972,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/ReplaceProductResponseValue200ApplicationJsonPropertyData.kt",
       "mode": "100644",
-      "sha256": "8eb5d977d65fd1be5668f59d3ba0a139c5c91d5104dd5c80e3391fcc0f3c1352"
+      "sha256": "e4cb4233a388da156bb7bb03de8507454f8c8790183a1699cb55501f91c44147"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/ReplaceProductResponseValue200ApplicationJsonPropertyDataPropertyAdditionalInformationItem.kt",
@@ -8837,12 +8837,12 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkBatchCreateProductsResponseValue200ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "2e309b84e96f47983ec01764912611f8bcbf84fbf3f252659310fbb562941535"
+      "sha256": "bf18ec384380b3b77856224c5dbabeaa56152156d7f5e385e7389b338e6787d3"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkBatchCreateProductsResponseValue201ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "3e9a6159f8b1ad54e92002707ba42b93c94383bf9aaf1106eadf7a86994cb29b"
+      "sha256": "21985a347586db4bbae723effa5f9006b94fbd1661c1ef6e59ddaa39dd2293ed"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkBatchCreateSectionsRequestApplicationJson.kt",
@@ -8882,7 +8882,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkBatchDeleteProductsResponseValue200ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "92bf5706541d66767f4b6ae4adadea33e043a565c351ce79833a2dc276a40a5f"
+      "sha256": "31537f93c294c12b112d272aac0930e5b943ba8aab1415459706ba788f5501ab"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkBatchDeleteSectionsResponseValue200ApplicationJson.kt",
@@ -8917,7 +8917,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkBatchUpdateProductsResponseValue200ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "ec53e2876f42b1aa554396c43fc35054d4de1ae07cfbe150b2cf978a699dfbc1"
+      "sha256": "2145965adc832f1152e3261a4a43bd06af99a67c6ca809835a981563e2c3b110"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkBatchUpdateSectionsRequestApplicationJson.kt",
@@ -9097,7 +9097,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkCreateBookingProductResponseValue201ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "05b07e3c29267c834519d17f157354dddcd0a1c64cced498899090217f1b01ee"
+      "sha256": "9a5fad4290426631b641683618a3cf05ee9762bbf794ebac37bd25d2e2a41df1"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkCreateCashbackRuleRequestApplicationJson.kt",
@@ -9362,7 +9362,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkCreateProductResponseValue201ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "575fd4b1b1651700ce43c53382feac185e5029e83dc88efc8ae9e5e0cbe722e2"
+      "sha256": "4a513cf9a00698426aa5bceff6cd3f23e2db050a80e33945c364c35c7537562d"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkCreateProductVariantRequestApplicationJson.kt",
@@ -9597,7 +9597,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkDeleteProductResponseValue200ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "7c7b21f2fe96be8633629996d30a89958828266bca7f30e5825d393894002251"
+      "sha256": "13d84035df31245f39df641cdf1f4677e821af0a2994706aea54ac2a67f60106"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkDeleteProductVariantRequestApplicationJson.kt",
@@ -9722,7 +9722,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkDuplicateProductResponseValue201ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "62bbea43233ff839b2e603b2d18447af965a3999c4721d9491739b85053fb4e3"
+      "sha256": "1a38776bf6150fc49cd73a2e1a03956d7d5ae6043b65fab312616b167f2dd38f"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkDuplicateProductVariantResponseValue201ApplicationJson.kt",
@@ -10007,7 +10007,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkGetProductResponseValue200ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "2fab88c0d85b41a3e62d832f6c80b5fbdfb3c4dfd22bf05cbd735cc7f3be212a"
+      "sha256": "fb761b026cc776203da1fa158518b44e9104934679043fb847340668dab6f168"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkGetProductVariantResponseValue200ApplicationJson.kt",
@@ -10502,7 +10502,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkListProductsResponseValue200ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "62c3b382c7a65acd04fa1f56a990c6bfedf397fd7f5bec4fbc3f29c3949ac74a"
+      "sha256": "3be5222928b8c0a2214d94f1706dfd09cb6cb1c6864d7d20e1efbf860f5a2f0d"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkListProductsWithinGroupResponseValue200ApplicationJson.kt",
@@ -10697,7 +10697,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkMoveProductResponseValue200ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "533c92c56c51d5cde74f8650f8fb48b3ed0e0f7c9c78964890918f4bc5fe3a0f"
+      "sha256": "c0474e31d99c5ef54e185bb2193e1fe274f2b7017ac0fa77693586ae723e8067"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkNotifyVariantBuyersResponseValue202ApplicationJson.kt",
@@ -10792,7 +10792,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkPublishProductResponseValue200ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "e5cd520ac94a5a0fa019287905e9c7b2991624639220fdbd03118769e5404c1a"
+      "sha256": "7efec44b89de2a4103245aad564f10f3b5f4f5cb3c4987421a51d430be6812b4"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkPublishProductVariantResponseValue200ApplicationJson.kt",
@@ -11207,7 +11207,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkReplaceProductResponseValue200ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "c7f6cc3b801e27f2225c0cb565686c4f4673feb85555514751e1db7f9f42df3e"
+      "sha256": "b6fd86519ab75dd4510454e54701ed2abf75e247dca126eb505d53acad8b7578"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkReplaceProductSAddOnsRequestApplicationJson.kt",
@@ -11757,7 +11757,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkSearchProductsResponseValue200ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "7d3c0f7384ca2ea54bd2522d56c604a42f1392894417e2bf4309bd42a93aa22e"
+      "sha256": "8c04d6f3f07152bade08423d608112e4795c26e4a06a91f1029d583b346d65d3"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkSearchProductsWithinGroupRequestApplicationJson.kt",
@@ -12262,7 +12262,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkUpdateProductResponseValue200ApplicationJson.kt",
       "mode": "100644",
-      "sha256": "6c7f0498cfb6fd7f94af61e18e41c1d14e0dba8f22bfda348e91369a930f11bb"
+      "sha256": "738f11fa7d048002be754ec525dc9345c831bc28724c9fc42999956af3db1cc0"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SdkUpdateProductVariantPricingRequestApplicationJson.kt",
@@ -13652,7 +13652,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SearchProductsResponseValue200ApplicationJsonPropertyDataItem.kt",
       "mode": "100644",
-      "sha256": "65568b474a00c64aebf324b214ec8539e62b875c4aa03726b7faf0a9aa09aa2b"
+      "sha256": "36147d773d7782decf837c58df0e40ccbf3830d811d085391046296950253538"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/SearchProductsResponseValue200ApplicationJsonPropertyDataItemPropertyAdditionalInformationItem.kt",
@@ -14827,7 +14827,7 @@
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/UpdateProductResponseValue200ApplicationJsonPropertyData.kt",
       "mode": "100644",
-      "sha256": "03193a36cdb7572f46ac0395047e18ded3189abd8c8d6b5d77564f53780889fe"
+      "sha256": "d18c216aed1192a82e5f49a93e18c800da5390a5e9c849912851035c4f821823"
     },
     {
       "path": "src/main/kotlin/app/sell/sellapp/models/UpdateProductResponseValue200ApplicationJsonPropertyDataPropertyAdditionalInformationItem.kt",
@@ -20407,7 +20407,7 @@
     {
       "path": "src/test/kotlin/app/sell/sellapp/DocumentationExamplesTest.kt",
       "mode": "100644",
-      "sha256": "b1a4dc5ab12ec839a73a34e125ca06a63141567a8b4233997544ab33c38c29c3"
+      "sha256": "dd0082b11446704415b6cb1ad73d57bad76571b643ce41400890d2b12ed869bf"
     },
     {
       "path": "src/test/kotlin/app/sell/sellapp/OperationContractTest.kt",
@@ -20472,7 +20472,7 @@
     {
       "path": "src/test/kotlin/app/sell/sellapp/bookings/BookingsTest.kt",
       "mode": "100644",
-      "sha256": "d1e33fce9532700643e350df87b5ebd280edeeed9f5d52d62ffee999477f4ea2"
+      "sha256": "33f662276587d4b350a49210f31e2deada491677caa24933102cb11cea283a59"
     },
     {
       "path": "src/test/kotlin/app/sell/sellapp/bookingscalendarevents/BookingsCalendarEventsTest.kt",
@@ -20697,7 +20697,7 @@
     {
       "path": "src/test/kotlin/app/sell/sellapp/products/ProductsTest.kt",
       "mode": "100644",
-      "sha256": "2789c371ffe692424a231c3e73b39913cb31c404a1862fbcaed64e946dd1c821"
+      "sha256": "869e15a9c5d3e14b7bff2bfed0b293e51b08670cd8c8b4b716da8c7d1077adfc"
     },
     {
       "path": "src/test/kotlin/app/sell/sellapp/productsaddons/ProductsAddonsTest.kt",

@@ -14,7 +14,7 @@ Use Java 17 or newer and Kotlin 2.1.20 or newer. Add Maven Central and the SDK d
 repositories { mavenCentral() }
 
 dependencies {
-    implementation("app.sell:sellapp:0.3.0")
+    implementation("app.sell:sellapp:0.3.1")
 }
 ```
 

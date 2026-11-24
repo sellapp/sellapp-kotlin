@@ -42,7 +42,8 @@ class ProductsTest : TestBase() {
                 "null, \"visibility\": \"sample\", \"delivery_text\": null, \"additional_information\": [], \"other_settings\": {\"faq\": [], " +
                 "\"video_url\": \"sample\", \"redirect_url\": \"sample\", \"product_title\": \"sample\", \"product_description\": \"sample\"}, " +
                 "\"deleted_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, " +
-                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\"}}",
+                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\", \"type\": " +
+                "\"sample\"}}",
         )
         val result =
             api()
@@ -71,7 +72,8 @@ class ProductsTest : TestBase() {
                 "null, \"visibility\": \"sample\", \"delivery_text\": null, \"additional_information\": [], \"other_settings\": {\"faq\": [], " +
                 "\"video_url\": \"sample\", \"redirect_url\": \"sample\", \"product_title\": \"sample\", \"product_description\": \"sample\"}, " +
                 "\"deleted_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, " +
-                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\"}}",
+                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\", \"type\": " +
+                "\"sample\"}}",
         )
         val result = api().get("sample-arg")
         assertNotNull(result)
@@ -87,7 +89,8 @@ class ProductsTest : TestBase() {
                 "null, \"visibility\": \"sample\", \"delivery_text\": null, \"additional_information\": [], \"other_settings\": {\"faq\": [], " +
                 "\"video_url\": \"sample\", \"redirect_url\": \"sample\", \"product_title\": \"sample\", \"product_description\": \"sample\"}, " +
                 "\"deleted_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, " +
-                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\"}}",
+                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\", \"type\": " +
+                "\"sample\"}}",
         )
         val result = api().replace("sample-arg")
         assertNotNull(result)
@@ -103,7 +106,8 @@ class ProductsTest : TestBase() {
                 "null, \"visibility\": \"sample\", \"delivery_text\": null, \"additional_information\": [], \"other_settings\": {\"faq\": [], " +
                 "\"video_url\": \"sample\", \"redirect_url\": \"sample\", \"product_title\": \"sample\", \"product_description\": \"sample\"}, " +
                 "\"deleted_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, " +
-                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\"}}",
+                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\", \"type\": " +
+                "\"sample\"}}",
         )
         val result = api().update("sample-arg")
         assertNotNull(result)
@@ -115,7 +119,7 @@ class ProductsTest : TestBase() {
             "DELETE",
             "/v2/products/sample-arg",
             204,
-            "{\"data\": {\"id\": 0, \"title\": \"sample\", \"slug\": \"sample\", \"description\": \"sample\", \"images\": [], \"order\": null, \"visibility\": \"sample\", \"delivery_text\": null, \"additional_information\": [], \"other_settings\": {\"faq\": [], \"video_url\": \"sample\", \"redirect_url\": \"sample\", \"product_title\": \"sample\", \"product_description\": \"sample\"}, \"deleted_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\"}}",
+            "{\"data\": {\"id\": 0, \"title\": \"sample\", \"slug\": \"sample\", \"description\": \"sample\", \"images\": [], \"order\": null, \"visibility\": \"sample\", \"delivery_text\": null, \"additional_information\": [], \"other_settings\": {\"faq\": [], \"video_url\": \"sample\", \"redirect_url\": \"sample\", \"product_title\": \"sample\", \"product_description\": \"sample\"}, \"deleted_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, \"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\", \"type\": \"sample\"}}",
         )
         api().delete("sample-arg")
     }
@@ -160,7 +164,8 @@ class ProductsTest : TestBase() {
                 "null, \"visibility\": \"sample\", \"delivery_text\": null, \"additional_information\": [], \"other_settings\": {\"faq\": [], " +
                 "\"video_url\": \"sample\", \"redirect_url\": \"sample\", \"product_title\": \"sample\", \"product_description\": \"sample\"}, " +
                 "\"deleted_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, " +
-                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\"}}",
+                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\", \"type\": " +
+                "\"sample\"}}",
         )
         val result = api().publish("sample-arg")
         assertNotNull(result)
@@ -176,7 +181,8 @@ class ProductsTest : TestBase() {
                 "null, \"visibility\": \"sample\", \"delivery_text\": null, \"additional_information\": [], \"other_settings\": {\"faq\": [], " +
                 "\"video_url\": \"sample\", \"redirect_url\": \"sample\", \"product_title\": \"sample\", \"product_description\": \"sample\"}, " +
                 "\"deleted_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, " +
-                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\"}}",
+                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\", \"type\": " +
+                "\"sample\"}}",
         )
         val result = api().duplicate("sample-arg")
         assertNotNull(result)
@@ -192,7 +198,8 @@ class ProductsTest : TestBase() {
                 "null, \"visibility\": \"sample\", \"delivery_text\": null, \"additional_information\": [], \"other_settings\": {\"faq\": [], " +
                 "\"video_url\": \"sample\", \"redirect_url\": \"sample\", \"product_title\": \"sample\", \"product_description\": \"sample\"}, " +
                 "\"deleted_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, " +
-                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\"}}",
+                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\", \"type\": " +
+                "\"sample\"}}",
         )
         val result = api().move("sample-arg", position = 1)
         assertNotNull(result)

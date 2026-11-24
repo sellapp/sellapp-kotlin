@@ -109,7 +109,8 @@ class BookingsTest : TestBase() {
                 "null, \"visibility\": \"sample\", \"delivery_text\": null, \"additional_information\": [], \"other_settings\": {\"faq\": [], " +
                 "\"video_url\": \"sample\", \"redirect_url\": \"sample\", \"product_title\": \"sample\", \"product_description\": \"sample\"}, " +
                 "\"deleted_at\": null, \"created_at\": \"2024-01-01T00:00:00Z\", \"updated_at\": \"2024-01-01T00:00:00Z\", \"store_id\": 0, " +
-                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\"}}",
+                "\"section_id\": null, \"section_order\": null, \"is_discoverable\": false, \"variants\": [], \"url\": \"sample\", \"type\": " +
+                "\"sample\"}}",
         )
         val result = api().create(title = "sample-arg", priceCents = 0)
         assertNotNull(result)
